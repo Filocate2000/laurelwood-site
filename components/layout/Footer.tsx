@@ -87,16 +87,20 @@ export function Footer() {
           </div>
         </div>
 
-        {/* Fine print, ported verbatim from the Wix footer via siteConfig.legal */}
+        {/* Fine print, ported verbatim from the Wix footer via siteConfig.legal.
+            Blog and LARE Report are COMING LATER (hub-and-spoke distribution);
+            do not render footer links to them yet. Placeholders:
+            // <Link href="/blog">Blog</Link>
+            // <Link href="/lare-report">LARE Report</Link> */}
         <div className="border-t border-white/5 py-8 text-[11px] text-ink-300 leading-relaxed space-y-3">
+          <p>{siteConfig.legal.mlsAttribution}</p>
+          <p>{siteConfig.legal.guaranteedRate}</p>
           <p>
             {siteConfig.brokerage.license} {siteConfig.brokerage.addressLine}
-            {calREs ? ` · CalRE# ${calREs}` : ""}
+            {calREs ? ` · Agent CalRE# ${calREs}` : ""}
           </p>
+          <p>{siteConfig.legal.franchise}</p>
           <p>{siteConfig.legal.disclosure}</p>
-          <p>
-            &copy; {year} Coldwell Banker. All rights reserved. {siteConfig.legal.franchise}
-          </p>
           <div className="flex flex-wrap items-center justify-between gap-4 pt-4">
             <p>
               Copyright &copy; {year} {siteConfig.legalName}. All Rights Reserved.
