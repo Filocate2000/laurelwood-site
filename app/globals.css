@@ -1,0 +1,110 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --font-display: "DM Sans", system-ui, sans-serif;
+    --font-sans: "Inter Tight", system-ui, sans-serif;
+    --font-serif: "Cormorant Garamond", ui-serif, Georgia, serif;
+  }
+
+  html, body {
+    overflow-x: hidden;
+    max-width: 100vw;
+    margin: 0;
+    padding: 0;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    @apply bg-navy-950 text-ink-100 font-sans;
+  }
+
+  h1, h2, h3, h4 {
+    @apply font-display font-light text-white;
+    letter-spacing: -0.01em;
+  }
+
+  ::selection {
+    background: rgba(200, 167, 91, 0.35);
+    color: white;
+  }
+}
+
+@layer components {
+  .gold-rule {
+    @apply block h-px w-12 bg-gold-500;
+  }
+  /* -dark is for white bands */
+  .gold-rule-dark {
+    @apply block h-px w-12 bg-gold-600;
+  }
+
+  /* Canonical eyebrow: gold-600 on white bands, gold-500 on navy bands */
+  .eyebrow {
+    @apply text-[11px] uppercase tracking-eyebrow font-medium;
+  }
+
+  .btn-primary {
+    @apply inline-flex items-center justify-center bg-royal-600 hover:bg-royal-500
+           px-8 py-3.5 text-[13px] tracking-nav uppercase text-white
+           transition-colors duration-300;
+  }
+
+  .btn-ghost {
+    @apply inline-flex items-center justify-center bg-transparent border border-white/30
+           hover:border-gold-500 hover:text-gold-500
+           px-8 py-3.5 text-[13px] tracking-nav uppercase text-white
+           transition-colors duration-300;
+  }
+
+  .editorial {
+    @apply mx-auto max-w-editorial px-6 lg:px-12;
+  }
+
+  /* Editorial prose body for ported page copy. Renders on navy bands by
+     default; the .editorial-prose-light variant flips it for white bands. */
+  .editorial-prose {
+    @apply text-ink-100 leading-relaxed;
+  }
+  .editorial-prose > * + * {
+    margin-top: 1.25rem;
+  }
+  .editorial-prose h2 {
+    @apply font-display font-light text-white text-2xl md:text-3xl;
+    margin-top: 2.5rem;
+    margin-bottom: 0.5rem;
+  }
+  .editorial-prose h3 {
+    @apply font-display font-light text-white text-xl;
+    margin-top: 2rem;
+    margin-bottom: 0.5rem;
+  }
+  .editorial-prose ul {
+    list-style: disc;
+    padding-left: 1.5rem;
+  }
+  .editorial-prose li {
+    margin: 0.4rem 0;
+  }
+  .editorial-prose a {
+    @apply text-gold-500 hover:text-gold-400 underline transition-colors;
+  }
+
+  .editorial-prose-light {
+    @apply text-navy-950/75;
+  }
+  .editorial-prose-light h2,
+  .editorial-prose-light h3 {
+    @apply text-navy-950;
+  }
+  .editorial-prose-light a {
+    @apply text-gold-600 hover:text-gold-500;
+  }
+}
