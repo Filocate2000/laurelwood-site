@@ -17,7 +17,7 @@ const NAV_ITEMS: { label: string; href: string }[] = [
   { label: "Home", href: "/" },
   { label: "West Laurelwood", href: "/west-laurelwood" },
   { label: "East Laurelwood", href: "/east-laurelwood" },
-  { label: "Dona Streets", href: "/dona-streets" },
+  { label: "Doña Streets", href: "/dona-streets" },
   { label: "History", href: "/history" },
   { label: "Homeowners", href: "/homeowners" },
   { label: "About", href: "/about" },
@@ -28,7 +28,7 @@ const NAV_ITEMS: { label: string; href: string }[] = [
 const NEIGHBORHOODS: { label: string; href: string }[] = [
   { label: "West Laurelwood", href: "/west-laurelwood" },
   { label: "East Laurelwood", href: "/east-laurelwood" },
-  { label: "Dona Streets", href: "/dona-streets" },
+  { label: "Doña Streets", href: "/dona-streets" },
 ];
 
 // Scroll threshold past which the nav adopts its "scrolled" state: solid navy

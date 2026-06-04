@@ -1,4 +1,4 @@
-# Project State — laurelwood-site
+# Project State: laurelwood-site
 
 Source-of-truth state file for **laurelwood-site**, the public marketing site
 for **laurelwoodestates.com**. Created 2026-06-04.
@@ -111,6 +111,24 @@ must return nothing.
   manifest + filename-hint placement inference) are built and runnable
   (`npm run photos`). `source-photos/` is empty, so PHOTOS is empty and pages
   fall back to the navy gradient.
+- **Phase 3 (the site): DONE.** All pages built in the misraje design language:
+  home (hero, intro, West/East split bands, Doña band, why-Misraje, commute
+  widget, testimonials, CTA); /west-laurelwood + /east-laurelwood (Place
+  JSON-LD); /dona-streets (new, names the Doña streets); /history +
+  /history/development + /history/land-acquisition; /homeowners + its three
+  subpages; /about (Jack + Karen, RealEstateAgent JSON-LD with CalRE); /what-we-do;
+  /contact (reuses misraje's Supabase + Turnstile mechanism, lead source keyed
+  to laurelwoodestates.com via siteConfig.domain); /buying + /selling;
+  /accessibility + /privacy. Nav + footer in the misraje pattern (CB
+  affiliation, agent CalRE numbers, equal-housing + full accessibility text,
+  Blog/LARE commented placeholders, no dead links). Commute widget transplanted
+  with studio-city as the origin. Per-page metadata + OpenGraph + canonical;
+  sitemap.xml + robots.txt; site-wide Organization (RealEstateAgent) JSON-LD.
+- **Phase 4 (verify + document): DONE.** `npm run build` clean (all 18 static
+  routes + 3 API routes); zero em dashes across app/, components/, lib/,
+  content/ (grep). Prerendered HTML spot-checked (content present, fetch-notes
+  stripped, JSON-LD + canonical present). Browser-verification checklist and
+  Future Work below.
 
 ## Photos needing placement review
 
@@ -152,3 +170,98 @@ human can assign its page/section by hand.
     What We Do copy. Replace with the verbatim body once the report loads.
   - (Jack Misraje's CalRE number, previously a blocker, is now resolved:
     01015912, verified.)
+- **No YouTube link was provided** for the home-page video embed. The
+  `YouTubeEmbed` component (gold-framed border-2 gold-500/70 rounded-xl, lazy
+  IntersectionObserver iframe, 16:9 no-layout-shift) is built and wired into the
+  Doña band on the home page, but it only renders when `homeContent.video` is
+  set (`content/home.ts`). To enable: set `video` to
+  `{ id: "<youtube-id>", title: "...", subject: "history|neighborhood|general" }`.
+- **No logo/favicon file in `source-photos/`** (it is empty), so the favicon at
+  `app/icon.svg` is a placeholder (gold serif "L" on navy). Replace it with the
+  real Laurelwood mark when available (lowercase filename; `app/icon.svg` or
+  `app/icon.png`).
+- **`.env.local` NEXT_PUBLIC_SITE_KEY is still "misraje"** (the file was cloned
+  from misraje-site). The contact route ignores it and derives the lead source
+  from `siteConfig.domain` (laurelwoodestates.com), so leads attribute
+  correctly. Optionally update the env value to "laurelwood" for cleanliness;
+  not required.
+
+---
+
+## Browser-verification checklist (Phase 4)
+
+`npm run build` passing only proves it compiles. Run `npm run dev` and walk
+this list in a real browser before any DNS cutover:
+
+- [ ] **Every page renders** with its content and (eventually) photos:
+  `/`, `/west-laurelwood`, `/east-laurelwood`, `/dona-streets`, `/history`,
+  `/history/development`, `/history/land-acquisition`, `/homeowners`,
+  `/homeowners/neighborhood-watch`, `/homeowners/community-news`,
+  `/homeowners/emergency-contacts`, `/about`, `/what-we-do`, `/buying`,
+  `/selling`, `/contact`, `/accessibility`, `/privacy`.
+- [ ] **Home sections in order**: hero, intro, West + East split bands, Doña
+  band, why-Misraje (3 points), commute widget, two testimonials (Vega,
+  Doryon), contact CTA.
+- [ ] **Commute widget loads with LIVE times**: defaults to Studio City, the
+  Google map renders (gold-framed), commute tiles toggle routes on the map,
+  durations populate. Needs `NEXT_PUBLIC_GOOGLE_MAPS_BROWSER_KEY` (browser map)
+  + `GOOGLE_MAPS_API_KEY` (server, NOT referrer-locked) + Supabase
+  commute_cache/route_cache (shared backend). Restart dev fully after any env
+  change.
+- [ ] **Video embed plays** once a YouTube link is configured (see Blockers);
+  no layout shift, lazy-loads on scroll.
+- [ ] **Nav + footer links all resolve, no dead links.** Blog and LARE Report
+  are deliberately absent (commented placeholders only). Drawer opens/closes,
+  Escape closes, agent cards link to /about#karen and /about#jack anchors.
+- [ ] **Contact form submits**: fill it out, confirm the Turnstile challenge,
+  submit, see the success state, and confirm a `contact` row lands in Supabase
+  with `lead_source = laurelwoodestates.com`.
+- [ ] **Mobile layout** on every page (hamburger nav, stacked bands, hero text
+  legible, no horizontal scroll).
+- [ ] **Metadata / JSON-LD present** (view-source spot check): per-page title +
+  description + canonical + OpenGraph; site-wide Organization
+  (RealEstateAgent) JSON-LD; Place JSON-LD on the three neighborhood pages;
+  RealEstateAgent JSON-LD with CalRE on /about; sitemap.xml + robots.txt serve.
+- [ ] **Photo placement looks sensible** page by page once photos are added and
+  `npm run photos` + lib/photos.ts mappings are in place (currently gradients).
+
+## Future Work
+
+- **Photos**: drop neighborhood + team photos into `source-photos/`, run
+  `npm run photos`, populate `lib/photos.ts` (use `inferPlacement`), and replace
+  the placeholder favicon. Add a wide hero for the home page.
+- **Hub recon + registration**: register this site (site_key `laurelwood`) AND
+  frymanestates.com (`fryman`) in the SAME realestategpa hub migration so the
+  blog + LARE Report distribution can target them.
+- **Wire the Blog and LARE Report pages** once registered: build `/blog` (and
+  `/blog/[slug]`) and `/lare-report` (and `/lare-report/[slug]`) on the
+  hub-and-spoke pattern (see misraje-site `lib/blog.ts` / `lib/lare.ts`), then
+  uncomment the Blog + LARE Report placeholders in the nav and footer.
+- **Add a `laurelwood` commute origin hub-side** (misraje-site
+  `lib/commute/origins.ts` + `lib/commute/cities.ts`) with Laurelwood's own
+  coordinates and curated destinations, then point `siteConfig.commuteOriginKey`
+  at it (currently `studio-city`).
+- **Full 301 redirect map** (`content/redirect-map.md`): old Wix URLs to new
+  paths (done), plus the domain redirects: `westlaurelwood.com` to
+  `/west-laurelwood`, `eastlaurelwood.com` to `/east-laurelwood`,
+  `thedonastreets.com` to `/dona-streets`. Implement at the DNS/host/Vercel
+  level (or via `next.config` redirects for the path-level ones).
+- **Re-capture the three fetch-limited pages** verbatim if/when fetchable: home
+  body, /what-we-do body, /selling-in-laurelwood report (see Blockers).
+- **Vercel project creation + env vars**: create the Vercel project, set all
+  `.env.local` keys (confirm `GOOGLE_MAPS_API_KEY` is the server, non-referrer
+  key), set NEXT_PUBLIC_SITE_KEY to `laurelwood`.
+- **DNS cutover (LAST, only after content review)**: this replaces the live Wix
+  site. Point laurelwoodestates.com (and the redirecting domains) at Vercel only
+  after Jack & Karen review the content.
+- **Optional future**: a past-transactions section (the shared
+  `past_transaction` schema is already multi-site-ready via the
+  `past_transaction_site` junction); register/login decision deferred.
+- **Spawning frymanestates.com from this template**: clone this repo, replace
+  `lib/site-config.ts` (siteKey `fryman`, name, domain, commute origin),
+  `content/` (re-run the content inventory against the Fryman Wix site), and
+  `source-photos/`. Nothing else should need to change.
+
+---
+
+LAURELWOOD SITE COMPLETE, awaiting browser verification.
