@@ -473,3 +473,27 @@ extension (navy, NEW)  10. Cultural Legacy in Street Names / Doña sign (white)
 ---
 
 WEST LAURELWOOD COMPLETE.
+
+---
+
+## Editorial float layout on West + East (2026-06-04)
+
+Replaced the grid/flex figure layout on /west-laurelwood and /east-laurelwood
+with true CSS text-wrap. New `components/FloatFigure.tsx`: on md+ the figure
+floats (float-left/float-right, width 30-44%, ~2rem gap on the text side) INSIDE
+the prose flow so paragraphs wrap around it; below md the float collapses to a
+centered full-width block with the caption below. Each floated section ends with
+`clear-both` so floats never bleed into the next band. Archive ad plates use
+fit="hug" (w-fit cream mat that shrink-wraps the image, the tall narrow
+Laurelwood Realty ad capped at md:max-w-[190px]). Text-only sections cap at
+max-w-3xl; sections with a figure use max-w-4xl. Verified in a headless browser
+at desktop (wrap works) and mobile (floats collapse). No wording changed.
+
+Float sides (alternating for balance):
+- West: archive Cannell mother-in-law (left) + Laurelwood Realty ad (right) +
+  Cannell sensations (right); origins billboard (left) + Plan 4B/4C (right) +
+  Tract map (left, links to full size); On the Big Screen video (right);
+  1971 Freeway study map (left) with CA-170/CA-90 shields as ~100px accents
+  under its caption (no plate); Doña sign stays a full-width banner.
+- East: growth kids photo (right) + school-bus photo (left); Real Estate Ads
+  Bel-Air ad (right).

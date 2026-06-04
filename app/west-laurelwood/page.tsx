@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { PageHero } from "@/components/layout/PageHero";
+import { FloatFigure } from "@/components/FloatFigure";
 import { FramedArtifact } from "@/components/FramedArtifact";
 import { SelfHostedVideo } from "@/components/SelfHostedVideo";
 import { ContactCTA } from "@/components/sections/ContactCTA";
@@ -23,6 +25,14 @@ export default function WestLaurelwoodPage() {
   const hero = heroFor("west-laurelwood");
   const film = VIDEOS[c.film.videoKey as keyof typeof VIDEOS];
 
+  const ad0 = photo(c.archival.ads[0]); // Laurelwood Realty listing ad (tall, narrow)
+  const ad1 = photo(c.archival.ads[1]); // Cannell & Chaffin mother-in-law (wide)
+  const ad2 = photo(c.archival.ads[2]); // Cannell & Chaffin sensations
+  const billboard = photo(c.origins.billboard);
+  const renderings = photo(c.origins.renderings);
+  const tract = photo(c.origins.tractMap);
+  const freewayMap = photo(c.freewayDefeat.map);
+
   return (
     <>
       <NeighborhoodJsonLd name="West Laurelwood" description={DESCRIPTION} path="/west-laurelwood" />
@@ -37,185 +47,221 @@ export default function WestLaurelwoodPage() {
         objectPosition="center 60%"
       />
 
-      {/* Intro band (white) */}
+      {/* Birth band (white): text only, capped measure */}
       <section className="bg-white py-20 md:py-28">
-        <div className="editorial max-w-4xl">
+        <div className="editorial max-w-3xl">
           <p className="eyebrow text-gold-600 mb-4">{c.intro.eyebrow}</p>
           <h2 className="font-display font-light text-3xl md:text-4xl text-navy-950 mb-5">
             {c.intro.heading}
           </h2>
           <span className="gold-rule-dark mb-8" />
-          <div className="space-y-5 text-lg text-navy-950/75 leading-relaxed">
+          <div className="text-lg text-navy-950/75 leading-relaxed">
             {c.intro.body.map((p, i) => (
-              <p key={i}>{p}</p>
+              <p key={i} className="mb-5 last:mb-0">
+                {p}
+              </p>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Archival band (navy): framed newspaper ads, 2-up */}
+      {/* Archive band (navy): ads float inside the prose, shrink-wrapped plates */}
       <section className="bg-navy-950 py-20 md:py-28">
-        <div className="editorial">
+        <div className="editorial max-w-4xl">
           <p className="eyebrow text-gold-500 mb-4">{c.archival.eyebrow}</p>
           <h2 className="font-display font-light text-3xl md:text-4xl text-white mb-5">
             {c.archival.heading}
           </h2>
           <span className="gold-rule mb-8" />
-          <p className="text-lg text-ink-100 leading-relaxed max-w-4xl mb-12">
-            {c.archival.intro}
-          </p>
-          <div className="grid sm:grid-cols-2 gap-x-10 gap-y-14 items-end">
-            {c.archival.ads.map((id) => {
-              const p = photo(id);
-              return p ? <FramedArtifact key={id} photo={p} tone="onNavy" variant="ad" /> : null;
-            })}
+          <div className="text-lg text-ink-100 leading-relaxed">
+            {ad1 && (
+              <FloatFigure photo={ad1} side="left" tone="onNavy" fit="fill" width="md:w-[44%]" />
+            )}
+            {ad0 && (
+              <FloatFigure
+                photo={ad0}
+                side="right"
+                tone="onNavy"
+                fit="hug"
+                width="md:w-auto md:max-w-[190px]"
+                maxH={360}
+              />
+            )}
+            <p className="mb-5">{c.archival.intro}</p>
+            {ad2 && (
+              <FloatFigure
+                photo={ad2}
+                side="right"
+                tone="onNavy"
+                fit="hug"
+                width="md:w-auto md:max-w-[240px]"
+                maxH={260}
+              />
+            )}
+            <div className="clear-both" />
           </div>
         </div>
       </section>
 
-      {/* Origins band (white): billboard + renderings + recorded map */}
+      {/* Origins band (white): billboard + renderings + tract, floated */}
       <section className="bg-white py-20 md:py-28">
-        <div className="editorial">
+        <div className="editorial max-w-4xl">
           <p className="eyebrow text-gold-600 mb-4">{c.origins.eyebrow}</p>
           <h2 className="font-display font-light text-3xl md:text-4xl text-navy-950 mb-5">
             {c.origins.heading}
           </h2>
           <span className="gold-rule-dark mb-8" />
-          <p className="text-lg text-navy-950/75 leading-relaxed max-w-4xl mb-12">
-            {c.origins.intro}
-          </p>
-          <div className="grid md:grid-cols-2 gap-x-12 gap-y-14 items-start">
-            {photo(c.origins.billboard) && (
-              <FramedArtifact photo={photo(c.origins.billboard)!} tone="onWhite" variant="photo" />
+          <div className="text-lg text-navy-950/75 leading-relaxed">
+            {billboard && (
+              <FloatFigure photo={billboard} side="left" tone="onWhite" fit="fill" width="md:w-[38%]" />
             )}
-            <div className="flex flex-col gap-14">
-              {photo(c.origins.renderings) && (
-                <FramedArtifact photo={photo(c.origins.renderings)!} tone="onWhite" variant="photo" />
-              )}
-              {photo(c.origins.tractMap) && (
-                <FramedArtifact
-                  photo={photo(c.origins.tractMap)!}
-                  tone="onWhite"
-                  variant="document"
-                  href={photo(c.origins.tractMap)!.src}
-                />
-              )}
-            </div>
+            <p className="mb-5">{c.origins.intro}</p>
+            {renderings && (
+              <FloatFigure photo={renderings} side="right" tone="onWhite" fit="fill" width="md:w-[40%]" />
+            )}
+            {tract && (
+              <FloatFigure
+                photo={tract}
+                side="left"
+                tone="onWhite"
+                fit="fill"
+                width="md:w-[30%]"
+                href={tract.src}
+              />
+            )}
+            <div className="clear-both" />
           </div>
         </div>
       </section>
 
-      {/* Growth band (navy): 1960s-1970s, prose only (kids/bus photos on East) */}
+      {/* Growth band (navy): text only */}
       <section className="bg-navy-950 py-20 md:py-28">
-        <div className="editorial max-w-4xl">
+        <div className="editorial max-w-3xl">
           <p className="eyebrow text-gold-500 mb-4">{c.growth.eyebrow}</p>
           <h2 className="font-display font-light text-3xl md:text-4xl text-white mb-5">
             {c.growth.heading}
           </h2>
           <span className="gold-rule mb-8" />
-          <div className="space-y-5 text-lg text-ink-100 leading-relaxed">
+          <div className="text-lg text-ink-100 leading-relaxed">
             {c.growth.body.map((t, i) => (
-              <p key={i}>{t}</p>
+              <p key={i} className="mb-5 last:mb-0">
+                {t}
+              </p>
             ))}
           </div>
         </div>
       </section>
 
-      {/* On the Big Screen band (white): the Disorderly Orderly clip */}
+      {/* On the Big Screen band (white): the clip floats, copy wraps */}
       {film && (
         <section className="bg-white py-20 md:py-28">
-          <div className="editorial grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
-            <div className="max-w-xl">
-              <p className="eyebrow text-gold-600 mb-4">{c.film.eyebrow}</p>
-              <h2 className="font-display font-light text-3xl md:text-4xl text-navy-950 mb-5">
-                {c.film.heading}
-              </h2>
-              <span className="gold-rule-dark mb-8" />
-              <div className="space-y-5 text-lg text-navy-950/75 leading-relaxed">
-                {c.film.body.map((t, i) => (
-                  <p key={i}>{t}</p>
-                ))}
+          <div className="editorial max-w-4xl">
+            <p className="eyebrow text-gold-600 mb-4">{c.film.eyebrow}</p>
+            <h2 className="font-display font-light text-3xl md:text-4xl text-navy-950 mb-5">
+              {c.film.heading}
+            </h2>
+            <span className="gold-rule-dark mb-8" />
+            <div className="text-lg text-navy-950/75 leading-relaxed">
+              <div className="w-full my-6 md:my-2 md:float-right md:ml-8 md:w-[44%]">
+                <SelfHostedVideo src={film.src} caption={c.film.caption} tone="onWhite" />
               </div>
+              {c.film.body.map((t, i) => (
+                <p key={i} className="mb-5">
+                  {t}
+                </p>
+              ))}
+              <div className="clear-both" />
             </div>
-            <SelfHostedVideo src={film.src} caption={c.film.caption} tone="onWhite" />
           </div>
         </section>
       )}
 
-      {/* 1971 Freeway Defeat band (navy): study map + route shields (West owns this) */}
+      {/* 1971 Freeway Defeat band (navy): study map floats, shields under caption */}
       <section className="bg-navy-950 py-20 md:py-28">
-        <div className="editorial">
-          <div className="max-w-4xl">
-            <p className="eyebrow text-gold-500 mb-4">{c.freewayDefeat.eyebrow}</p>
-            <h2 className="font-display font-light text-3xl md:text-4xl text-white mb-5">
-              {c.freewayDefeat.heading}
-            </h2>
-            <span className="gold-rule mb-8" />
-            <div className="space-y-5 text-lg text-ink-100 leading-relaxed">
-              {c.freewayDefeat.body.map((t, i) => (
-                <p key={i}>{t}</p>
-              ))}
-            </div>
-          </div>
-          <div className="grid lg:grid-cols-[2fr_1fr] gap-12 items-start mt-14">
-            {photo(c.freewayDefeat.map) && (
-              <FramedArtifact
-                photo={photo(c.freewayDefeat.map)!}
+        <div className="editorial max-w-4xl">
+          <p className="eyebrow text-gold-500 mb-4">{c.freewayDefeat.eyebrow}</p>
+          <h2 className="font-display font-light text-3xl md:text-4xl text-white mb-5">
+            {c.freewayDefeat.heading}
+          </h2>
+          <span className="gold-rule mb-8" />
+          <div className="text-lg text-ink-100 leading-relaxed">
+            {freewayMap && (
+              <FloatFigure
+                photo={freewayMap}
+                side="left"
                 tone="onNavy"
-                variant="document"
-                href={photo(c.freewayDefeat.map)!.src}
+                fit="fill"
+                width="md:w-[44%]"
+                href={freewayMap.src}
                 caption={c.freewayDefeat.mapCaption}
-                center={false}
-              />
+              >
+                <div className="mt-3 flex items-center gap-4">
+                  {c.freewayDefeat.shields.map((id) => {
+                    const s = photo(id);
+                    return s ? (
+                      <Image
+                        key={id}
+                        src={s.src}
+                        alt={s.alt}
+                        width={s.width}
+                        height={s.height}
+                        className="h-auto w-[100px]"
+                      />
+                    ) : null;
+                  })}
+                </div>
+              </FloatFigure>
             )}
-            <div className="flex flex-row lg:flex-col gap-8 items-start lg:pt-4">
-              {c.freewayDefeat.shields.map((id) => {
-                const p = photo(id);
-                return p ? (
-                  <FramedArtifact key={id} photo={p} tone="onNavy" variant="shield" center={false} />
-                ) : null;
-              })}
-            </div>
+            {c.freewayDefeat.body.map((t, i) => (
+              <p key={i} className="mb-5">
+                {t}
+              </p>
+            ))}
+            <div className="clear-both" />
           </div>
         </div>
       </section>
 
-      {/* Wilacre Park band (white) */}
+      {/* Wilacre Park band (white): text only */}
       <section className="bg-white py-20 md:py-28">
-        <div className="editorial max-w-4xl">
+        <div className="editorial max-w-3xl">
           <p className="eyebrow text-gold-600 mb-4">{c.preservation.eyebrow}</p>
           <h2 className="font-display font-light text-3xl md:text-4xl text-navy-950 mb-5">
             {c.preservation.heading}
           </h2>
           <span className="gold-rule-dark mb-8" />
-          <div className="space-y-5 text-lg text-navy-950/75 leading-relaxed">
+          <div className="text-lg text-navy-950/75 leading-relaxed">
             {c.preservation.body.map((t, i) => (
-              <p key={i}>{t}</p>
+              <p key={i} className="mb-5 last:mb-0">
+                {t}
+              </p>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Fryman Road Extension band (navy), immediately after Wilacre */}
+      {/* Fryman Road Extension band (navy): text only */}
       <section className="bg-navy-950 py-20 md:py-28">
-        <div className="editorial max-w-4xl">
+        <div className="editorial max-w-3xl">
           <p className="eyebrow text-gold-500 mb-4">{c.frymanRoad.eyebrow}</p>
           <h2 className="font-display font-light text-3xl md:text-4xl text-white mb-5">
             {c.frymanRoad.heading}
           </h2>
           <span className="gold-rule mb-8" />
-          <div className="space-y-5 text-lg text-ink-100 leading-relaxed">
+          <div className="text-lg text-ink-100 leading-relaxed">
             {c.frymanRoad.body.map((t, i) => (
-              <p key={i}>{t}</p>
+              <p key={i} className="mb-5 last:mb-0">
+                {t}
+              </p>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Doña band (white): Cultural Legacy in Street Names, sign banner */}
+      {/* Doña band (white): Cultural Legacy in Street Names, full-width sign banner */}
       <section className="bg-white py-20 md:py-28">
         <div className="editorial">
-          <div className="max-w-4xl mb-10">
+          <div className="max-w-3xl mb-10">
             <p className="eyebrow text-gold-600 mb-4">{c.dona.eyebrow}</p>
             <h2 className="font-display font-light text-3xl md:text-4xl text-navy-950 mb-5">
               {c.dona.heading}
@@ -237,17 +283,19 @@ export default function WestLaurelwoodPage() {
         </div>
       </section>
 
-      {/* West Laurelwood Today closing band (navy) */}
+      {/* West Laurelwood Today band (navy): text only */}
       <section className="bg-navy-950 py-20 md:py-28">
-        <div className="editorial max-w-4xl">
+        <div className="editorial max-w-3xl">
           <p className="eyebrow text-gold-500 mb-4">{c.today.eyebrow}</p>
           <h2 className="font-display font-light text-3xl md:text-4xl text-white mb-5">
             {c.today.heading}
           </h2>
           <span className="gold-rule mb-8" />
-          <div className="space-y-5 text-lg text-ink-100 leading-relaxed">
+          <div className="text-lg text-ink-100 leading-relaxed">
             {c.today.body.map((t, i) => (
-              <p key={i}>{t}</p>
+              <p key={i} className="mb-5 last:mb-0">
+                {t}
+              </p>
             ))}
           </div>
         </div>

@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Fragment } from "react";
 import { PageHero } from "@/components/layout/PageHero";
-import { FramedArtifact } from "@/components/FramedArtifact";
+import { FloatFigure } from "@/components/FloatFigure";
+import { ContactCTA } from "@/components/sections/ContactCTA";
 import { NeighborhoodJsonLd } from "@/components/seo/JsonLd";
 import { eastContent as c } from "@/content/east";
 import { photo, heroFor } from "@/lib/photos";
@@ -40,6 +41,8 @@ function Para({ text, className }: { text: string; className?: string }) {
 export default function EastLaurelwoodPage() {
   const hero = heroFor("east-laurelwood");
   const ad = photo(c.ads.ad);
+  const kids = photo(c.growth.photos[0].id);
+  const bus = photo(c.growth.photos[1].id);
 
   return (
     <>
@@ -54,91 +57,98 @@ export default function EastLaurelwoodPage() {
         subtitle={c.hero.subtitle}
       />
 
-      {/* Vision band (white) */}
+      {/* Vision band (white): text only, capped measure */}
       <section className="bg-white py-20 md:py-28">
-        <div className="editorial max-w-4xl">
+        <div className="editorial max-w-3xl">
           <p className="eyebrow text-gold-600 mb-4">{c.vision.eyebrow}</p>
           <h2 className="font-display font-light text-3xl md:text-4xl text-navy-950 mb-5">
             {c.vision.heading}
           </h2>
           <span className="gold-rule-dark mb-8" />
-          <div className="space-y-5 text-lg text-navy-950/75 leading-relaxed">
+          <div className="text-lg text-navy-950/75 leading-relaxed">
             {c.vision.body.map((t, i) => (
-              <Para key={i} text={t} />
+              <Para key={i} text={t} className="mb-5 last:mb-0" />
             ))}
           </div>
         </div>
       </section>
 
-      {/* Growth band (navy): the school story + the two period photos */}
-      <section className="bg-navy-950 py-20 md:py-28">
-        <div className="editorial">
-          <div className="max-w-4xl">
-            <p className="eyebrow text-gold-500 mb-4">{c.growth.eyebrow}</p>
-            <h2 className="font-display font-light text-3xl md:text-4xl text-white mb-5">
-              {c.growth.heading}
-            </h2>
-            <span className="gold-rule mb-8" />
-            <div className="space-y-5 text-lg text-ink-100 leading-relaxed">
-              {c.growth.bodyBefore.map((t, i) => (
-                <p key={i}>{t}</p>
-              ))}
-            </div>
-          </div>
-
-          <div className="grid sm:grid-cols-2 gap-x-12 gap-y-12 items-start my-14">
-            {c.growth.photos.map((p) => {
-              const ph = photo(p.id);
-              return ph ? (
-                <FramedArtifact key={p.id} photo={ph} tone="onNavy" variant="photo" caption={p.caption} />
-              ) : null;
-            })}
-          </div>
-
-          <div className="max-w-4xl space-y-5 text-lg text-ink-100 leading-relaxed">
-            {c.growth.bodyAfter.map((t, i) => (
-              <p key={i}>{t}</p>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Real Estate Ads band (white): East's archive, with the Bel-Air ad */}
-      <section className="bg-white py-20 md:py-28">
-        <div className="editorial">
-          <div className="max-w-4xl mb-12">
-            <p className="eyebrow text-gold-600 mb-4">{c.ads.eyebrow}</p>
-            <h2 className="font-display font-light text-3xl md:text-4xl text-navy-950 mb-5">
-              {c.ads.heading}
-            </h2>
-            <span className="gold-rule-dark mb-8" />
-          </div>
-          <div className="grid lg:grid-cols-[3fr_2fr] gap-12 lg:gap-16 items-start">
-            <div className="space-y-5 text-lg text-navy-950/75 leading-relaxed">
-              {c.ads.body.map((t, i) => (
-                <Para key={i} text={t} />
-              ))}
-            </div>
-            {ad && (
-              <div className="lg:pt-2">
-                <FramedArtifact photo={ad} tone="onWhite" variant="ad" />
-              </div>
-            )}
-          </div>
-        </div>
-      </section>
-
-      {/* East Laurelwood Today band (navy) */}
+      {/* Growth band (navy): the two period photos float, the school story wraps */}
       <section className="bg-navy-950 py-20 md:py-28">
         <div className="editorial max-w-4xl">
+          <p className="eyebrow text-gold-500 mb-4">{c.growth.eyebrow}</p>
+          <h2 className="font-display font-light text-3xl md:text-4xl text-white mb-5">
+            {c.growth.heading}
+          </h2>
+          <span className="gold-rule mb-8" />
+          <div className="text-lg text-ink-100 leading-relaxed">
+            {kids && (
+              <FloatFigure
+                photo={kids}
+                side="right"
+                tone="onNavy"
+                fit="fill"
+                width="md:w-[40%]"
+                caption={c.growth.photos[0].caption}
+              />
+            )}
+            <p className="mb-5">{c.growth.bodyBefore[0]}</p>
+            <p className="mb-5">{c.growth.bodyBefore[1]}</p>
+            {bus && (
+              <FloatFigure
+                photo={bus}
+                side="left"
+                tone="onNavy"
+                fit="fill"
+                width="md:w-[40%]"
+                caption={c.growth.photos[1].caption}
+              />
+            )}
+            <p className="mb-5">{c.growth.bodyBefore[2]}</p>
+            <p className="mb-5">{c.growth.bodyBefore[3]}</p>
+            {c.growth.bodyAfter.map((t, i) => (
+              <p key={i} className="mb-5 last:mb-0">
+                {t}
+              </p>
+            ))}
+            <div className="clear-both" />
+          </div>
+        </div>
+      </section>
+
+      {/* Real Estate Ads band (white): the Bel-Air ad floats, copy wraps */}
+      <section className="bg-white py-20 md:py-28">
+        <div className="editorial max-w-4xl">
+          <p className="eyebrow text-gold-600 mb-4">{c.ads.eyebrow}</p>
+          <h2 className="font-display font-light text-3xl md:text-4xl text-navy-950 mb-5">
+            {c.ads.heading}
+          </h2>
+          <span className="gold-rule-dark mb-8" />
+          <div className="text-lg text-navy-950/75 leading-relaxed">
+            {ad && (
+              <FloatFigure photo={ad} side="right" tone="onWhite" fit="fill" width="md:w-[38%]" />
+            )}
+            {c.ads.body.map((t, i) => (
+              <Para key={i} text={t} className="mb-5" />
+            ))}
+            <div className="clear-both" />
+          </div>
+        </div>
+      </section>
+
+      {/* East Laurelwood Today band (navy): text only */}
+      <section className="bg-navy-950 py-20 md:py-28">
+        <div className="editorial max-w-3xl">
           <p className="eyebrow text-gold-500 mb-4">{c.today.eyebrow}</p>
           <h2 className="font-display font-light text-3xl md:text-4xl text-white mb-5">
             {c.today.heading}
           </h2>
           <span className="gold-rule mb-8" />
-          <div className="space-y-5 text-lg text-ink-100 leading-relaxed">
+          <div className="text-lg text-ink-100 leading-relaxed">
             {c.today.body.map((t, i) => (
-              <p key={i}>{t}</p>
+              <p key={i} className="mb-5 last:mb-0">
+                {t}
+              </p>
             ))}
           </div>
         </div>
@@ -146,7 +156,7 @@ export default function EastLaurelwoodPage() {
 
       {/* Embrace the Lifestyle band, rendered as the CTA (white) */}
       <section className="bg-white py-20 md:py-28">
-        <div className="editorial text-center max-w-4xl">
+        <div className="editorial text-center max-w-3xl">
           <p className="eyebrow text-gold-600 mb-6">{c.cta.eyebrow}</p>
           <h2 className="font-display font-light text-4xl md:text-5xl text-navy-950 leading-tight mb-8">
             {c.cta.heading}
