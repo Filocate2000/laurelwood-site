@@ -18,7 +18,7 @@
 // After running, update lib/photos.ts so each output file is mapped to its
 // page/section. The script prints a manifest scaffold you can paste in.
 
-import { readdir, mkdir, stat } from "node:fs/promises";
+import { readdir, mkdir, stat, copyFile } from "node:fs/promises";
 import { existsSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -28,10 +28,39 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, "..");
 const SRC_DIR = path.join(ROOT, "source-photos");
 const OUT_DIR = path.join(ROOT, "public", "images");
+const VIDEO_DIR = path.join(ROOT, "public", "videos");
 
 const MAX_WIDTH = 2400;
 const QUALITY = 82;
 const IMAGE_EXTS = new Set([".jpg", ".jpeg", ".png", ".webp", ".tif", ".tiff"]);
+const VIDEO_EXTS = new Set([".mp4", ".webm", ".mov"]);
+
+// Clean, semantic output slugs keyed by the SOURCE basename (without extension).
+// The originals carry camera/scan names (DSC_0094, IMG_1869) or filename typos
+// (mohter); this map gives each artifact a stable, descriptive public name that
+// reflects its verified content (each image was inspected). Sources not listed
+// here fall back to kebab() of their original name.
+const RENAME = {
+  "April_13__1966_E_Laurelwood_Ad_MREP": "april-13-1966-east-laurelwood-ad",
+  "Cannell_Chaffin_mohter_in_law_ad_MREP": "cannell-chaffin-mother-in-law-ad",
+  "Cannell_Chaffin_Sensations_Not_Words_MREP": "cannell-chaffin-sensations-not-words-ad",
+  "Gateway_Homes_Inc_MREP": "bel-air-of-the-valley-ad",
+  "Breaking Ground MREP": "gateway-homes-billboard",
+  "Multi_Home_Plan_4": "plan-4bc-renderings",
+  "Tract_24676": "tract-24676-map",
+  "Feb_6_1970_Proposed_Laurel_Canyon_FreewayMREP": "route-170-freeway-study-map-1970",
+  "Dona_Maria": "dona-maria-street-sign",
+  "Green_170_sign": "ca-170-shield",
+  "California_90_svg": "ca-90-shield",
+  "IMG_1863": "neighborhood-children",
+  "IMG_1869": "school-bus",
+  "DSC_0094": "laurelwood-vista",
+  "Orderly V3E (1)": "disorderly-orderly-1964",
+};
+
+function slugFor(base) {
+  return RENAME[base] ?? kebab(base);
+}
 
 /** kebab-case + lowercase a base filename (no extension). */
 function kebab(name) {
@@ -62,12 +91,25 @@ async function main() {
 
   const entries = await readdir(SRC_DIR);
   const images = [];
+  const videos = [];
   for (const name of entries) {
     const full = path.join(SRC_DIR, name);
     const s = await stat(full);
     if (!s.isFile()) continue;
-    if (!IMAGE_EXTS.has(path.extname(name).toLowerCase())) continue;
-    images.push(name);
+    const ext = path.extname(name).toLowerCase();
+    if (IMAGE_EXTS.has(ext)) images.push(name);
+    else if (VIDEO_EXTS.has(ext)) videos.push(name);
+  }
+
+  // Videos are copied through verbatim (no transcode) to public/videos/.
+  if (videos.length > 0) {
+    await mkdir(VIDEO_DIR, { recursive: true });
+    for (const name of videos) {
+      const ext = path.extname(name).toLowerCase();
+      const outName = `${slugFor(path.basename(name, path.extname(name)))}${ext}`;
+      await copyFile(path.join(SRC_DIR, name), path.join(VIDEO_DIR, outName));
+      console.log(`  ${name}  ->  /videos/${outName}  (copied)`);
+    }
   }
 
   if (images.length === 0) {
@@ -82,7 +124,7 @@ async function main() {
   for (const name of images) {
     const ext = path.extname(name);
     const base = path.basename(name, ext);
-    const outName = `${kebab(base)}${outExt(ext)}`;
+    const outName = `${slugFor(base)}${outExt(ext)}`;
     const src = path.join(SRC_DIR, name);
     const dest = path.join(OUT_DIR, outName);
 

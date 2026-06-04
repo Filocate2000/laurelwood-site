@@ -105,12 +105,25 @@ must return nothing.
   verbatim. Doña streets named in source copy: Doña Emilia Dr., Doña Rosa Dr.,
   Doña Pegita Dr. (there may be more on the live site; only these appear in the
   fetched copy, do not fabricate others).
-- **Phase 2 (photo pipeline): infrastructure DONE, 0 photos processed.**
-  `scripts/process-photos.mjs` (sharp: max 2400px wide, q82, strip metadata,
-  kebab-case lowercase output to `public/images/`) and `lib/photos.ts` (typed
-  manifest + filename-hint placement inference) are built and runnable
-  (`npm run photos`). `source-photos/` is empty, so PHOTOS is empty and pages
-  fall back to the navy gradient.
+- **Phase 2 (photo pipeline): DONE, 14 images + 1 video processed (2026-06-04).**
+  The real historical archive landed in `source-photos/`. `npm run photos`
+  (sharp: max 2400px, q82, metadata stripped) wrote clean, semantically named
+  files to `public/images/` (and the `.mp4` to `public/videos/`). The pipeline
+  now carries a `RENAME` map giving each artifact a descriptive slug (every
+  source image was inspected by eye). `lib/photos.ts` is a real, categorized,
+  captioned manifest (categories: archival-ads, documents, street-signs,
+  period-photos, renderings, highway-shields, vista) with `photo(id)` /
+  `byCategory()` / `heroFor()` accessors. Pages reference images by id for
+  deterministic placement. Watermarked images are intentional, left as-is.
+- **Photo integration / West Laurelwood rebuild: DONE (2026-06-04).**
+  `/west-laurelwood` rebuilt as full-width alternating navy/white bands
+  (`.editorial` inner) with framed-artifact treatment (`components/
+  FramedArtifact.tsx`, cream plate + thin gold frame + italic captions) and a
+  self-hosted clip (`components/SelfHostedVideo.tsx`). Artifacts also placed on
+  `/history/development` (freeway map + CA-170/CA-90 shields),
+  `/history/land-acquisition` (Tract 24676 map), `/east-laurelwood` (freeway
+  map), `/dona-streets` (Doña Maria sign + expanded street list), and the home
+  hero (the modern vista). See the placement report at the end of this file.
 - **Phase 3 (the site): DONE.** All pages built in the misraje design language:
   home (hero, intro, West/East split bands, Doña band, why-Misraje, commute
   widget, testimonials, CTA); /west-laurelwood + /east-laurelwood (Place
@@ -132,21 +145,36 @@ must return nothing.
 
 ## Photos needing placement review
 
-None processed yet (source-photos/ is empty). When photos are added and
-`npm run photos` is run, list here any output file that `inferPlacement()` in
-`lib/photos.ts` returns `page: null` for (unrecognized filename hint), so a
-human can assign its page/section by hand.
+All 14 images (and the 1 video) are placed; nothing is unplaced. The favicon is
+still the placeholder "L" (no logo/mark was in this asset batch).
+
+Notes on judgment calls (verify in the browser):
+- The home + West Laurelwood heroes use `laurelwood-vista` (DSC_0094), a
+  present-day hillside view. It is the only wide landscape asset, so it is the
+  hero rather than a period photo. The period billboard is featured in the West
+  origins band instead.
+- `april-13-1966-east-laurelwood-ad` (source filename said "E_Laurelwood") is
+  placed in the West archival band per the rebuild spec; the ad headline reads
+  "Laurelwood Estates" / Laurelwood Realty Co.
+- `bel-air-of-the-valley-ad` was the source file named `Gateway_Homes_Inc`; by
+  visual content it is the "Bel-Air of the Valley" newspaper ad. The actual
+  Gateway Homes billboard PHOTO is the source file named `Breaking Ground`
+  (id `gateway-homes-billboard`).
+- East Laurelwood has no dedicated hero photo, so its hero uses the navy
+  gradient; the freeway study map is placed in its body (its copy carries the
+  freeway-controversy section).
 
 ---
 
 ## Blockers
 
-- **`source-photos/` is EMPTY** (verified 2026-06-04). Phase 2 (photo pipeline)
-  cannot process any images and Phase 3 pages cannot show matched photos.
-  PageHero falls back to a navy editorial gradient; the home hero likewise.
-  Drop the neighborhood photos into `source-photos/` and re-run the photo
-  pipeline. Team portraits (`/images/team/*.jpg`) are also absent, so the nav
-  drawer uses text-only agent cards.
+- **RESOLVED (2026-06-04): `source-photos/` populated and processed.** The
+  historical archive (14 images + 1 video) was added and run through the
+  pipeline; see Phase 2 above and the placement report at the end of this file.
+  Heroes and bands now show real imagery. Still outstanding from this batch:
+  no team portraits (`/images/team/*.jpg`), so the nav drawer keeps text-only
+  agent cards; no logo/mark, so the favicon stays the placeholder "L"; East
+  Laurelwood has no dedicated hero photo (gradient hero, freeway map in body).
 - **No `laurelwood` commute origin exists hub-side** (checked
   misraje-site/lib/commute/origins.ts). Using the nearest curated origin,
   `studio-city`, as the default (`siteConfig.commuteOriginKey`). A dedicated
@@ -265,3 +293,59 @@ this list in a real browser before any DNS cutover:
 ---
 
 LAURELWOOD SITE COMPLETE, awaiting browser verification.
+
+---
+
+## Image placement report (West Laurelwood rebuild, 2026-06-04)
+
+14 images + 1 video processed by `npm run photos` into `public/images/` and
+`public/videos/`. Per-file placement:
+
+| Output file | Category | Placed on |
+| --- | --- | --- |
+| `laurelwood-vista.jpg` | vista | Home hero + West Laurelwood hero |
+| `april-13-1966-east-laurelwood-ad.png` | archival-ads | West, Archival band |
+| `bel-air-of-the-valley-ad.png` | archival-ads | West, Archival band |
+| `cannell-chaffin-mother-in-law-ad.png` | archival-ads | West, Archival band |
+| `cannell-chaffin-sensations-not-words-ad.png` | archival-ads | West, Archival band |
+| `gateway-homes-billboard.jpg` | period-photos | West, Origins band |
+| `plan-4bc-renderings.png` | renderings | West, Origins band |
+| `tract-24676-map.png` | documents | West Origins band + /history/land-acquisition |
+| `dona-maria-street-sign.png` | street-signs | West Doña band + /dona-streets |
+| `neighborhood-children.png` | period-photos | West, Period-life band |
+| `school-bus.png` | period-photos | West, Period-life band |
+| `route-170-freeway-study-map-1970.png` | documents | /history/development + /east-laurelwood |
+| `ca-170-shield.png` | highway-shields | /history/development |
+| `ca-90-shield.png` | highway-shields | /history/development |
+| `disorderly-orderly-1964.mp4` (video) | n/a | West, Period-life band ("On the Big Screen") |
+
+**Unplaced images:** none. Every processed image is used at least once.
+
+**Copy that references an artifact we now have, and how it was used:**
+- "Tract No. 24676": the recorded map is shown on /history/land-acquisition (its
+  copy names the tract) and in the West Origins band.
+- "The Disorderly Orderly (1964)": the West copy's big-screen reference is now
+  backed by the self-hosted clip in the West Period-life band.
+- "Cannell & Chaffin" model-home decorators (development-history copy): the two
+  Cannell & Chaffin ads are shown in the West Archival band.
+- Proposed Laurel Canyon Freeway / Route 170 (West + East freeway copy): the
+  1970 study map + CA-170/CA-90 shields are on /history/development; the map is
+  also on /east-laurelwood beside its freeway-controversy copy.
+- Doña street names: the Doña Maria Dr. sign is shown on /dona-streets and the
+  West Doña band; the /dona-streets list now carries Doña Dorotea Dr., Doña
+  Emilia Dr., Doña Maria Dr., Doña Mema Pl., Doña Pegita Dr., and Doña Rosa Dr.
+  (Dorotea + Mema provided by the site owner; Maria confirmed by the sign;
+  Emilia/Rosa/Pegita from the ported source copy).
+
+**Copy references with no matching artifact (not used, none available):**
+- The "Betty B. Dearing Trail", "Wilacre Park", and the 1958 model-home
+  fireplaces/floor-plan details are described in copy but have no image in this
+  batch.
+
+**Page-width rule:** every page uses full-width bands (`<section>` background
+spans 100vw) with an inner `.editorial` max-width wrapper, matching the
+misraje-site pattern. PageHero is full-bleed. No page was found built narrower.
+
+---
+
+WEST LAURELWOOD REBUILD DONE, awaiting browser verification.

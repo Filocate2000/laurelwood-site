@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 import { PageHero } from "@/components/layout/PageHero";
+import { FramedArtifact } from "@/components/FramedArtifact";
 import { ContactCTA } from "@/components/sections/ContactCTA";
 import { NeighborhoodJsonLd } from "@/components/seo/JsonLd";
 import { donaContent } from "@/content/dona";
-import { heroFor } from "@/lib/photos";
+import { heroFor, photo } from "@/lib/photos";
 import { absoluteUrl } from "@/lib/site-config";
 
 const DESCRIPTION =
@@ -30,14 +31,20 @@ export default function DonaStreetsPage() {
         subtitle={c.subtitle}
       />
       <section className="bg-white py-20 md:py-28">
-        <div className="editorial max-w-prose">
-          <div className="editorial-prose editorial-prose-light">
+        <div className="editorial">
+          <div className="editorial-prose editorial-prose-light max-w-prose">
             {c.body.map((p, i) => (
               <p key={i}>{p}</p>
             ))}
           </div>
 
-          <div className="mt-12">
+          {photo("dona-maria-street-sign") && (
+            <div className="mt-14 max-w-3xl">
+              <FramedArtifact photo={photo("dona-maria-street-sign")!} tone="onWhite" />
+            </div>
+          )}
+
+          <div className="mt-14 max-w-prose">
             <p className="eyebrow text-gold-600 mb-5">The Doña Streets</p>
             <ul className="grid sm:grid-cols-2 gap-x-8 gap-y-3">
               {c.streets.map((s) => (
@@ -51,8 +58,8 @@ export default function DonaStreetsPage() {
               ))}
             </ul>
             <p className="text-navy-950/60 text-sm mt-4">
-              Streets named in the neighborhood&apos;s source history. The community may
-              include additional Doña streets.
+              The community may include additional Doña streets beyond those
+              listed here.
             </p>
           </div>
 

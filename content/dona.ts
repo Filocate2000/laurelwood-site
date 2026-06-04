@@ -18,8 +18,18 @@ export const donaContent = {
     "In 2001, residents took action to ensure this legacy was preserved, successfully petitioning for the correct use of Spanish accents on the street signs. The inclusion of the tilde over the 'n' in Doña highlights the community's dedication to honoring its cultural background. This small detail marks a significant stand against the erosion of cultural markers and ensures future generations will continue to experience Laurelwood's authentic flair.",
   ],
 
-  // Doña streets named in the fetched source copy.
-  streets: ["Doña Emilia Dr.", "Doña Rosa Dr.", "Doña Pegita Dr."],
+  // Doña streets we can attest to. Emilia/Rosa/Pegita come from the fetched
+  // source copy; Maria Dr. is confirmed by the street-sign asset (3100 N);
+  // Dorotea Dr. and Mema Pl. were provided by the site owner. The live
+  // neighborhood may include more; do not fabricate beyond these.
+  streets: [
+    "Doña Dorotea Dr.",
+    "Doña Emilia Dr.",
+    "Doña Maria Dr.",
+    "Doña Mema Pl.",
+    "Doña Pegita Dr.",
+    "Doña Rosa Dr.",
+  ],
 
   closing:
     "Each Doña street reflects Southern California's historical ties, creating an environment that blends tradition with modern living. Owning a home on one of the Doña streets means owning a piece of that legacy.",

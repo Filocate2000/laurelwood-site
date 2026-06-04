@@ -1,14 +1,15 @@
 // lib/photos.ts
 //
-// Typed photo manifest. Maps each processed image in public/images/ to the
-// page/section where it should appear, inferred from filename hints.
+// Typed photo manifest. Every entry below was produced by the photo pipeline
+// (scripts/process-photos.mjs: sharp, max 2400px wide, q82, metadata stripped,
+// clean kebab-case output to public/images/). Each source image was inspected
+// by eye and categorized + captioned accordingly.
 //
-// STATUS: source-photos/ is currently EMPTY, so PHOTOS is empty and every page
-// falls back to the navy editorial gradient (PageHero) or omits its imagery.
-// When photos are added: drop them in source-photos/, run `npm run photos`,
-// then add one entry per output file to PHOTOS below (the script prints a
-// scaffold). Use inferPlacement() to suggest page/section from the filename,
-// and override by hand where the hint is wrong.
+// Many archival images carry an intentional "MISRAJE REAL ESTATE PARTNERS"
+// watermark; that is by design, left as-is.
+//
+// Pages reference images by `id` via photo(id) for deterministic placement, or
+// by category via byCategory(). heroFor()/bestWideHero() drive the hero slots.
 
 export type PhotoPage =
   | "home"
@@ -25,75 +26,240 @@ export type PhotoPage =
 
 export type PhotoSection = "hero" | "feature" | "gallery" | "team";
 
+export type PhotoCategory =
+  | "archival-ads"
+  | "documents"
+  | "street-signs"
+  | "period-photos"
+  | "renderings"
+  | "highway-shields"
+  | "vista";
+
 export type Photo = {
-  /** Public path, e.g. "/images/west-laurelwood-aerial.jpg". */
+  /** Stable id (the output slug, no path/extension). Used by photo(id). */
+  id: string;
+  /** Public path under /images. */
   src: string;
-  /** Human alt text. */
+  /** Accessibility alt text. */
   alt: string;
-  /** Inferred page placement; null means "needs placement review". */
+  /** Italic caption shown beneath framed artifacts (date where known). */
+  caption?: string;
+  category: PhotoCategory;
+  /** Primary page placement (inference + default). Pages may reference any id. */
   page: PhotoPage | null;
-  /** Section role within the page. */
   section: PhotoSection;
-  /** Pixel dimensions from the pipeline, if known. */
-  width?: number;
-  height?: number;
-  /** True for wide/landscape shots suitable for a full-bleed hero. */
+  width: number;
+  height: number;
+  /** True for landscape shots suitable for a full-bleed hero. */
   wide?: boolean;
 };
 
-// Populated from the photo pipeline. Empty until source-photos/ has images.
-export const PHOTOS: Photo[] = [];
+export const PHOTOS: Photo[] = [
+  // --- Modern vista (hero) -------------------------------------------------
+  {
+    id: "laurelwood-vista",
+    src: "/images/laurelwood-vista.jpg",
+    alt: "Present-day view over the hillside homes and greenery of Laurelwood in Studio City.",
+    caption: "Laurelwood today, from the surrounding hills.",
+    category: "vista",
+    page: "west-laurelwood",
+    section: "hero",
+    width: 2400,
+    height: 1596,
+    wide: true,
+  },
 
-// --- Filename-hint inference ------------------------------------------------
+  // --- Archival newspaper ads (1958-1966) ----------------------------------
+  {
+    id: "april-13-1966-east-laurelwood-ad",
+    src: "/images/april-13-1966-east-laurelwood-ad.png",
+    alt: "Laurelwood Realty Co. classified newspaper ad from April 13, 1966.",
+    caption: "Laurelwood Realty Co. listing ad, April 13, 1966.",
+    category: "archival-ads",
+    page: "west-laurelwood",
+    section: "gallery",
+    width: 302,
+    height: 418,
+  },
+  {
+    id: "cannell-chaffin-mother-in-law-ad",
+    src: "/images/cannell-chaffin-mother-in-law-ad.png",
+    alt: "Cannell & Chaffin newspaper ad for Laurelwood with the line about a happy mother-in-law.",
+    caption: 'Cannell & Chaffin campaign ad, "even my mother-in-law\'s happy."',
+    category: "archival-ads",
+    page: "west-laurelwood",
+    section: "gallery",
+    width: 1150,
+    height: 416,
+  },
+  {
+    id: "cannell-chaffin-sensations-not-words-ad",
+    src: "/images/cannell-chaffin-sensations-not-words-ad.png",
+    alt: 'Cannell & Chaffin model-home ad for Laurelwood, "described in sensations, not words."',
+    caption: 'Cannell & Chaffin model-home ad, "sensations, not words."',
+    category: "archival-ads",
+    page: "west-laurelwood",
+    section: "gallery",
+    width: 396,
+    height: 292,
+  },
+  {
+    id: "bel-air-of-the-valley-ad",
+    src: "/images/bel-air-of-the-valley-ad.png",
+    alt: 'Laurelwood newspaper ad billing it "The Bel-Air of the Valley," new custom homes from $39,950.',
+    caption: 'Laurelwood, "The Bel-Air of the Valley," new custom homes from $39,950.',
+    category: "archival-ads",
+    page: "west-laurelwood",
+    section: "gallery",
+    width: 662,
+    height: 762,
+  },
 
-// Ordered keyword rules. First match wins for the page; section is inferred
-// separately. Tune as the real filenames become known.
-const PAGE_HINTS: { page: PhotoPage; keywords: string[] }[] = [
-  { page: "west-laurelwood", keywords: ["west-laurelwood", "west-laurel", "westlaurelwood", "west"] },
-  { page: "east-laurelwood", keywords: ["east-laurelwood", "east-laurel", "eastlaurelwood", "east"] },
-  { page: "dona-streets", keywords: ["dona", "doña", "street-sign", "street"] },
-  { page: "history", keywords: ["history", "1958", "vintage", "archive", "brochure", "ad", "fryman", "wilacre"] },
-  { page: "about", keywords: ["jack", "karen", "misraje", "portrait", "team", "headshot"] },
-  { page: "homeowners", keywords: ["watch", "emergency", "community", "park", "trail"] },
-  { page: "what-we-do", keywords: ["marketing", "staging", "service"] },
-  { page: "buying", keywords: ["buying", "buyer"] },
-  { page: "selling", keywords: ["selling", "seller", "sold"] },
-  { page: "home", keywords: ["hero", "aerial", "wide", "panorama", "laurelwood", "studio-city", "valley", "mulholland"] },
+  // --- Origins: billboard photo + renderings + recorded map ----------------
+  {
+    id: "gateway-homes-billboard",
+    src: "/images/gateway-homes-billboard.jpg",
+    alt: 'Two men at the "Gateway Homes Inc. at Laurelwood" roadside billboard on the future tract.',
+    caption: "Breaking ground: the Gateway Homes billboard at the Laurelwood tract.",
+    category: "period-photos",
+    page: "west-laurelwood",
+    section: "feature",
+    width: 1102,
+    height: 1226,
+  },
+  {
+    id: "plan-4bc-renderings",
+    src: "/images/plan-4bc-renderings.png",
+    alt: "Architectural renderings of Laurelwood home elevations Plan 4B and Plan 4C.",
+    caption: "Model elevations: Plan 4B and Plan 4C.",
+    category: "renderings",
+    page: "west-laurelwood",
+    section: "feature",
+    width: 1098,
+    height: 448,
+  },
+  {
+    id: "tract-24676-map",
+    src: "/images/tract-24676-map.png",
+    alt: "The recorded subdivision document for Tract No. 24676, West Laurelwood.",
+    caption: "Tract No. 24676, the recorded subdivision map (1958).",
+    category: "documents",
+    page: "west-laurelwood",
+    section: "feature",
+    width: 496,
+    height: 702,
+  },
+
+  // --- Street sign ---------------------------------------------------------
+  {
+    id: "dona-maria-street-sign",
+    src: "/images/dona-maria-street-sign.png",
+    alt: "Doña Maria Dr. street sign, 3100 N, with the Spanish tilde restored.",
+    caption: "Doña Maria Dr., one of Laurelwood's Spanish-named streets.",
+    category: "street-signs",
+    page: "dona-streets",
+    section: "feature",
+    width: 808,
+    height: 222,
+    wide: true,
+  },
+
+  // --- Period life ---------------------------------------------------------
+  {
+    id: "neighborhood-children",
+    src: "/images/neighborhood-children.png",
+    alt: "Children gathered outdoors in the Laurelwood neighborhood.",
+    caption: "Children on the Laurelwood streets.",
+    category: "period-photos",
+    page: "west-laurelwood",
+    section: "gallery",
+    width: 696,
+    height: 472,
+  },
+  {
+    id: "school-bus",
+    src: "/images/school-bus.png",
+    alt: "A child looking out the window of a Los Angeles City Schools bus.",
+    caption: "The Los Angeles City Schools bus through the neighborhood.",
+    category: "period-photos",
+    page: "west-laurelwood",
+    section: "gallery",
+    width: 696,
+    height: 472,
+  },
+
+  // --- Documents: freeway study map ----------------------------------------
+  {
+    id: "route-170-freeway-study-map-1970",
+    src: "/images/route-170-freeway-study-map-1970.png",
+    alt: "Study zone map for the proposed Route 170 (Laurel Canyon) Freeway.",
+    caption: "Study zone map, the proposed Route 170 (Laurel Canyon) Freeway, February 6, 1970.",
+    category: "documents",
+    page: "history",
+    section: "feature",
+    width: 1534,
+    height: 876,
+  },
+
+  // --- Highway shields -----------------------------------------------------
+  {
+    id: "ca-170-shield",
+    src: "/images/ca-170-shield.png",
+    alt: "California State Route 170 highway shield.",
+    caption: "California State Route 170.",
+    category: "highway-shields",
+    page: "history",
+    section: "gallery",
+    width: 552,
+    height: 492,
+  },
+  {
+    id: "ca-90-shield",
+    src: "/images/ca-90-shield.png",
+    alt: "California State Route 90 highway shield.",
+    caption: "California State Route 90.",
+    category: "highway-shields",
+    page: "history",
+    section: "gallery",
+    width: 466,
+    height: 486,
+  },
 ];
 
-/** Suggest a page + section for an output filename. page is null if unclear. */
-export function inferPlacement(filename: string): { page: PhotoPage | null; section: PhotoSection } {
-  const f = filename.toLowerCase();
+// Self-hosted video (copied verbatim by the pipeline to public/videos/).
+export const VIDEOS = {
+  "disorderly-orderly": {
+    src: "/videos/disorderly-orderly-1964.mp4",
+    caption:
+      "Clip: The Disorderly Orderly (1964), which filmed in early West Laurelwood before its lots were built out.",
+  },
+} as const;
 
-  let section: PhotoSection = "gallery";
-  if (/(jack|karen|portrait|headshot|team)/.test(f)) section = "team";
-  else if (/(hero|aerial|wide|panorama|cover|banner)/.test(f)) section = "hero";
-  else if (/(feature|desk|study|interior)/.test(f)) section = "feature";
+// --- Accessors --------------------------------------------------------------
 
-  for (const rule of PAGE_HINTS) {
-    if (rule.keywords.some((k) => f.includes(k))) {
-      return { page: rule.page, section };
-    }
-  }
-  return { page: null, section };
+/** Look up a photo by its stable id. Returns null if missing. */
+export function photo(id: string): Photo | null {
+  return PHOTOS.find((p) => p.id === id) ?? null;
 }
 
-// --- Accessors used by pages ------------------------------------------------
+/** All photos in a category, in manifest order. */
+export function byCategory(category: PhotoCategory): Photo[] {
+  return PHOTOS.filter((p) => p.category === category);
+}
 
 /** The hero image for a page, or null (caller falls back to the gradient). */
 export function heroFor(page: PhotoPage): Photo | null {
   return PHOTOS.find((p) => p.page === page && p.section === "hero") ?? null;
 }
 
-/** All photos assigned to a page (any section). */
+/** All photos whose primary placement is this page. */
 export function photosFor(page: PhotoPage): Photo[] {
   return PHOTOS.filter((p) => p.page === page);
 }
 
-/** The best wide landscape photo for the home hero, or null. */
+/** The best wide landscape photo for a full-bleed hero, or null. */
 export function bestWideHero(): Photo | null {
   return (
-    PHOTOS.find((p) => p.page === "home" && p.section === "hero" && p.wide) ??
     PHOTOS.find((p) => p.section === "hero" && p.wide) ??
     PHOTOS.find((p) => p.wide) ??
     null
