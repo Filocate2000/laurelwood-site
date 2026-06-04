@@ -105,6 +105,19 @@ must return nothing.
   verbatim. Doña streets named in source copy: Doña Emilia Dr., Doña Rosa Dr.,
   Doña Pegita Dr. (there may be more on the live site; only these appear in the
   fetched copy, do not fabricate others).
+- **Phase 2 (photo pipeline): infrastructure DONE, 0 photos processed.**
+  `scripts/process-photos.mjs` (sharp: max 2400px wide, q82, strip metadata,
+  kebab-case lowercase output to `public/images/`) and `lib/photos.ts` (typed
+  manifest + filename-hint placement inference) are built and runnable
+  (`npm run photos`). `source-photos/` is empty, so PHOTOS is empty and pages
+  fall back to the navy gradient.
+
+## Photos needing placement review
+
+None processed yet (source-photos/ is empty). When photos are added and
+`npm run photos` is run, list here any output file that `inferPlacement()` in
+`lib/photos.ts` returns `page: null` for (unrecognized filename hint), so a
+human can assign its page/section by hand.
 
 ---
 
