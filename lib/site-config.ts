@@ -25,6 +25,10 @@ export type Agent = {
   phoneHref: string; // tel: form
   /** California DRE / CalRE license number. */
   calRE: string;
+  /** Nationwide Mortgage Licensing System number, if any. */
+  nmls?: string;
+  /** US patent numbers, if any (printed on the bio page). */
+  patents?: string[];
   /** Path under public/images for the portrait, if present. */
   photo?: string;
 };
@@ -76,10 +80,16 @@ export type SiteConfig = {
   social: SocialLink[];
 
   legal: {
-    /** Equal Housing + fair-housing / informational disclosure, verbatim. */
+    /** MLS data attribution line, verbatim. */
+    mlsAttribution: string;
+    /** Guaranteed Rate Affinity common-ownership disclosure, verbatim. */
+    guaranteedRate: string;
+    /** Equal Housing + informational disclosure, verbatim. */
     disclosure: string;
-    /** Coldwell Banker trademark / franchise statement, verbatim. */
+    /** Coldwell Banker System / fair-housing franchise statement, verbatim. */
     franchise: string;
+    /** Full accessibility statement, verbatim (also rendered on /accessibility). */
+    accessibility: string;
   };
 };
 
@@ -116,7 +126,7 @@ export const siteConfig: SiteConfig = {
       email: "karen@misraje.com",
       phone: "310-488-1030",
       phoneHref: "tel:+13104881030",
-      calRE: "00616212",
+      calRE: "00592639", // verified from the Wix footer + bio (Phase 1)
       photo: "/images/team/karen-portrait.jpg",
     },
     {
@@ -127,7 +137,9 @@ export const siteConfig: SiteConfig = {
       email: "jack@misraje.com",
       phone: "323-209-5225",
       phoneHref: "tel:+13232095225",
-      calRE: "", // TBD: confirm from Wix bio/footer in Phase 1 (do not fabricate)
+      calRE: "01015912", // verified from the Wix footer + bio (Phase 1)
+      nmls: "259077",
+      patents: ["8,145,563", "8,117,120", "7,769,681"],
       photo: "/images/team/jack-portrait.jpg",
     },
   ],
@@ -140,11 +152,17 @@ export const siteConfig: SiteConfig = {
 
   social: [],
 
+  // Ported verbatim from the Wix footer (Phase 1). NO em dashes (the source had none here).
   legal: {
+    mlsAttribution: "Real Estate Data obtained from theMLS.com",
+    guaranteedRate:
+      "Coldwell Banker Realty and Guaranteed Rate Affinity, LLC share common ownership and because of this relationship the brokerage may receive a financial or other benefit. You are not required to use Guaranteed Rate Affinity, LLC as a condition of purchase or sale of any real estate. Operating in the state of New York as GR Affinity, LLC in lieu of the legal name Guaranteed Rate Affinity, LLC.",
     disclosure:
-      "All material presented herein is intended for informational purposes only and is compiled from sources deemed reliable but not verified. Equal Housing Opportunity.",
+      "All material presented herein is intended for informational purposes only and is compiled from sources deemed reliable but not verified. Changes in prices, conditions, sale or withdrawal may be made without notice. No statement is made as to the accuracy of any description. All measurements and square footage are approximated. Equal Housing Opportunity.",
     franchise:
-      "Coldwell Banker, the Coldwell Banker logo and the Coldwell Banker Global Luxury logo are trademarks of Coldwell Banker Real Estate LLC. The Coldwell Banker System is comprised of company owned offices which are owned by a subsidiary of Anywhere Advisors LLC and franchised offices which are independently owned and operated. Coldwell Banker Real Estate LLC fully supports the principles of the Fair Housing Act and the Equal Opportunity Act. Listing information is deemed reliable but is not guaranteed. This website may contain content created by AI and is provided for informational purposes only and should not be relied upon without verification of its accuracy or completeness.",
+      "The Coldwell Banker System is comprised of company owned offices which are owned by a subsidiary of Realogy Brokerage Group LLC and franchised offices which are independently owned and operated. The Coldwell Banker System fully supports the principles of the Fair Housing Act and the Equal Opportunity Act.",
+    accessibility:
+      "Misraje Real Estate Partners is committed to providing a website that is accessible to the broadest possible audience, regardless of technology or ability. We are actively working to increase the accessibility and usability of our website and, in doing so, adhere to many of the available standards and guidelines. Misraje Real Estate Partners does not discriminate on the basis of religion, age, race, color, national origin, gender, marital or parental status, or disability. In order to further our commitment to nondiscrimination, we are working to ensure our site conforms to level Double-A world wide web consortium (W3C) web content accessibility guidelines (WCAG 2.1 AA). Such guidelines detail best practices for ensuring assistive technology users can access the site. The guidelines also make the site more user-friendly for all people. If anyone finds information or functionality inaccessible, please get in touch with us at 323-209-5225. We will make every reasonable effort to accommodate.",
   },
 };
 

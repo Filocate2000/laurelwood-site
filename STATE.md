@@ -95,6 +95,16 @@ must return nothing.
 - **Phase 0 (scaffold): DONE.** Next.js 15 App Router + TypeScript + Tailwind,
   design tokens/fonts/globals ported, `lib/site-config.ts` created, this
   STATE.md created. `npm run build` passing.
+- **Phase 1 (content inventory): DONE.** All 15 Wix pages fetched into
+  `content/source/*.md` (verbatim, em dashes scrubbed, "Acquisition" spelling
+  corrected). `content/redirect-map.md` seeded. Verified from the Wix footer/bio
+  pages and folded into `lib/site-config.ts`: Karen CalRE# 00592639; Jack CalRE#
+  01015912, NMLS# 259077, US patents 8,145,563 / 8,117,120 / 7,769,681; office
+  301 N Canon Dr Suite E, Beverly Hills CA 90210; phones J 323-209-5225 /
+  K 310-488-1030 / O 855-888-SOLD; full Wix legal + accessibility text ported
+  verbatim. Doña streets named in source copy: Doña Emilia Dr., Doña Rosa Dr.,
+  Doña Pegita Dr. (there may be more on the live site; only these appear in the
+  fetched copy, do not fabricate others).
 
 ---
 
@@ -111,5 +121,21 @@ must return nothing.
   `studio-city`, as the default (`siteConfig.commuteOriginKey`). A dedicated
   `laurelwood` origin should be added hub-side later (see Future Work in Phase
   4).
-- **Jack Misraje's CalRE number is unknown.** `siteConfig.agents[jack].calRE`
-  is blank pending confirmation from the Wix bio/footer (do not fabricate).
+- **Three Wix pages would not fetch as full body text** (Phase 1):
+  - **Home** (`/`): the page body truncated on every attempt (Wix page is very
+    long). `content/source/home.md` is assembled from the retrievable section
+    blurbs + services overview + the two testimonials (Vega, Doryon) + framing,
+    clearly noted at the top of the file. Re-capture the verbatim homepage body
+    if it becomes fetchable.
+  - **What We Do** (`/what-we-do`): the fetch returned homepage content instead
+    of the dedicated page body. `content/source/what-we-do.md` uses the
+    retrievable services overview + tagline ("Strategic Solutions, Exceptional
+    Outcomes") and the Who We Are services description. Verify against the live
+    page.
+  - **Selling in Laurelwood** (`/selling-in-laurelwood`): the Wix page renders a
+    dynamic market report that returned "Error loading report data" at capture,
+    so no body was available. `content/source/selling-in-laurelwood.md` carries
+    the heading + a selling-approach summary drawn from the verified Who We Are /
+    What We Do copy. Replace with the verbatim body once the report loads.
+  - (Jack Misraje's CalRE number, previously a blocker, is now resolved:
+    01015912, verified.)
