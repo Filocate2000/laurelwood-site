@@ -1,4 +1,4 @@
-# West Laurelwood — History sections
+# West Laurelwood: History sections
 
 > Source: laurelwoodestates.com West Laurelwood history copy (Wix), provided by Jack 2026-06-04.
 > Style rule applied: no em dashes. Copy otherwise preserved verbatim.

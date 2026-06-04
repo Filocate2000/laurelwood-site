@@ -36,7 +36,7 @@ export default function DevelopmentHistoryPage() {
       {/* Proposed Laurel Canyon Freeway: study map + route shields */}
       <section className="bg-navy-950 py-20 md:py-28">
         <div className="editorial">
-          <div className="max-w-3xl mb-12">
+          <div className="max-w-4xl mb-12">
             <p className="eyebrow text-gold-500 mb-4">{freewaySection.eyebrow}</p>
             <h2 className="font-display font-light text-3xl md:text-4xl text-white mb-5">
               {freewaySection.heading}

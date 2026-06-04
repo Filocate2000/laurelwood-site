@@ -19,7 +19,9 @@ export function Prose({
   return (
     <div
       className={cn(
-        "editorial-prose max-w-prose",
+        // Wider measure (~max-w-4xl) centered within .editorial, balanced
+        // rather than hugging the left with dead space to the right.
+        "editorial-prose max-w-4xl mx-auto",
         variant === "light" && "editorial-prose-light",
         className
       )}

@@ -20,7 +20,7 @@ export default function HomePage() {
 
       {/* Intro band (navy) */}
       <section className="bg-navy-950 py-20 md:py-28">
-        <div className="editorial max-w-3xl">
+        <div className="editorial max-w-4xl">
           <p className="eyebrow text-gold-500 mb-4">{c.intro.eyebrow}</p>
           <h2 className="font-display font-light text-display text-white mb-6 leading-tight">
             {c.intro.heading}
@@ -42,7 +42,7 @@ export default function HomePage() {
             key={n.key}
             className={light ? "bg-white py-20 md:py-28" : "bg-navy-900 py-20 md:py-28"}
           >
-            <div className="editorial max-w-3xl">
+            <div className="editorial max-w-4xl">
               <p className={`eyebrow mb-4 ${light ? "text-gold-600" : "text-gold-500"}`}>
                 {n.eyebrow}
               </p>
@@ -79,7 +79,7 @@ export default function HomePage() {
 
       {/* Doña streets band (navy, with optional video if its subject matches) */}
       <section className="bg-navy-950 py-20 md:py-28">
-        <div className="editorial max-w-3xl">
+        <div className="editorial max-w-4xl">
           <p className="eyebrow text-gold-500 mb-4">{c.dona.eyebrow}</p>
           <h2 className="font-display font-light text-3xl md:text-4xl text-white mb-5">
             {c.dona.title}
@@ -95,7 +95,7 @@ export default function HomePage() {
           </Link>
 
           {c.video && (
-            <div className="mt-12 max-w-3xl">
+            <div className="mt-12 max-w-4xl">
               <YouTubeEmbed id={c.video.id} title={c.video.title} />
             </div>
           )}
@@ -105,7 +105,7 @@ export default function HomePage() {
       {/* Why Misraje (white) */}
       <section className="bg-white py-20 md:py-28">
         <div className="editorial">
-          <div className="mb-16 max-w-2xl">
+          <div className="mb-16 max-w-4xl">
             <p className="eyebrow text-gold-600 mb-4">{c.why.eyebrow}</p>
             <h2 className="font-display font-light text-3xl md:text-4xl lg:text-5xl text-navy-950 leading-[1.1]">
               {c.why.heading}

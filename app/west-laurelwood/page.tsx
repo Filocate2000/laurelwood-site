@@ -39,7 +39,7 @@ export default function WestLaurelwoodPage() {
 
       {/* Intro band (white) */}
       <section className="bg-white py-20 md:py-28">
-        <div className="editorial max-w-3xl">
+        <div className="editorial max-w-4xl">
           <p className="eyebrow text-gold-600 mb-4">{c.intro.eyebrow}</p>
           <h2 className="font-display font-light text-3xl md:text-4xl text-navy-950 mb-5">
             {c.intro.heading}
@@ -61,7 +61,7 @@ export default function WestLaurelwoodPage() {
             {c.archival.heading}
           </h2>
           <span className="gold-rule mb-8" />
-          <p className="text-lg text-ink-100 leading-relaxed max-w-3xl mb-12">
+          <p className="text-lg text-ink-100 leading-relaxed max-w-4xl mb-12">
             {c.archival.intro}
           </p>
           <div className="grid sm:grid-cols-2 gap-x-10 gap-y-14 items-end">
@@ -81,7 +81,7 @@ export default function WestLaurelwoodPage() {
             {c.origins.heading}
           </h2>
           <span className="gold-rule-dark mb-8" />
-          <p className="text-lg text-navy-950/75 leading-relaxed max-w-3xl mb-12">
+          <p className="text-lg text-navy-950/75 leading-relaxed max-w-4xl mb-12">
             {c.origins.intro}
           </p>
           <div className="grid md:grid-cols-2 gap-x-12 gap-y-14 items-start">
@@ -128,7 +128,7 @@ export default function WestLaurelwoodPage() {
 
       {/* Preservation and Wilacre Park band (white) */}
       <section className="bg-white py-20 md:py-28">
-        <div className="editorial max-w-3xl">
+        <div className="editorial max-w-4xl">
           <p className="eyebrow text-gold-600 mb-4">{c.preservation.eyebrow}</p>
           <h2 className="font-display font-light text-3xl md:text-4xl text-navy-950 mb-5">
             {c.preservation.heading}
@@ -145,7 +145,7 @@ export default function WestLaurelwoodPage() {
       {/* Doña band (navy): Cultural Legacy in Street Names, sign banner */}
       <section className="bg-navy-950 py-20 md:py-28">
         <div className="editorial">
-          <div className="max-w-3xl mb-10">
+          <div className="max-w-4xl mb-10">
             <p className="eyebrow text-gold-500 mb-4">{c.dona.eyebrow}</p>
             <h2 className="font-display font-light text-3xl md:text-4xl text-white mb-5">
               {c.dona.heading}
@@ -169,7 +169,7 @@ export default function WestLaurelwoodPage() {
 
       {/* West Laurelwood Today closing band (white) */}
       <section className="bg-white py-20 md:py-28">
-        <div className="editorial max-w-3xl">
+        <div className="editorial max-w-4xl">
           <p className="eyebrow text-gold-600 mb-4">{c.today.eyebrow}</p>
           <h2 className="font-display font-light text-3xl md:text-4xl text-navy-950 mb-5">
             {c.today.heading}

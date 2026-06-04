@@ -56,7 +56,7 @@ export default function EastLaurelwoodPage() {
 
       {/* Vision band (white) */}
       <section className="bg-white py-20 md:py-28">
-        <div className="editorial max-w-3xl">
+        <div className="editorial max-w-4xl">
           <p className="eyebrow text-gold-600 mb-4">{c.vision.eyebrow}</p>
           <h2 className="font-display font-light text-3xl md:text-4xl text-navy-950 mb-5">
             {c.vision.heading}
@@ -73,7 +73,7 @@ export default function EastLaurelwoodPage() {
       {/* Growth band (navy): the school story + the two period photos */}
       <section className="bg-navy-950 py-20 md:py-28">
         <div className="editorial">
-          <div className="max-w-3xl">
+          <div className="max-w-4xl">
             <p className="eyebrow text-gold-500 mb-4">{c.growth.eyebrow}</p>
             <h2 className="font-display font-light text-3xl md:text-4xl text-white mb-5">
               {c.growth.heading}
@@ -95,7 +95,7 @@ export default function EastLaurelwoodPage() {
             })}
           </div>
 
-          <div className="max-w-3xl space-y-5 text-lg text-ink-100 leading-relaxed">
+          <div className="max-w-4xl space-y-5 text-lg text-ink-100 leading-relaxed">
             {c.growth.bodyAfter.map((t, i) => (
               <p key={i}>{t}</p>
             ))}
@@ -106,7 +106,7 @@ export default function EastLaurelwoodPage() {
       {/* Real Estate Ads band (white): East's archive, with the Bel-Air ad */}
       <section className="bg-white py-20 md:py-28">
         <div className="editorial">
-          <div className="max-w-3xl mb-12">
+          <div className="max-w-4xl mb-12">
             <p className="eyebrow text-gold-600 mb-4">{c.ads.eyebrow}</p>
             <h2 className="font-display font-light text-3xl md:text-4xl text-navy-950 mb-5">
               {c.ads.heading}
@@ -130,7 +130,7 @@ export default function EastLaurelwoodPage() {
 
       {/* East Laurelwood Today band (navy) */}
       <section className="bg-navy-950 py-20 md:py-28">
-        <div className="editorial max-w-3xl">
+        <div className="editorial max-w-4xl">
           <p className="eyebrow text-gold-500 mb-4">{c.today.eyebrow}</p>
           <h2 className="font-display font-light text-3xl md:text-4xl text-white mb-5">
             {c.today.heading}
@@ -146,7 +146,7 @@ export default function EastLaurelwoodPage() {
 
       {/* Embrace the Lifestyle band, rendered as the CTA (white) */}
       <section className="bg-white py-20 md:py-28">
-        <div className="editorial text-center max-w-3xl">
+        <div className="editorial text-center max-w-4xl">
           <p className="eyebrow text-gold-600 mb-6">{c.cta.eyebrow}</p>
           <h2 className="font-display font-light text-4xl md:text-5xl text-navy-950 leading-tight mb-8">
             {c.cta.heading}
