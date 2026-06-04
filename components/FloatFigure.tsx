@@ -4,53 +4,50 @@ import type { Photo } from "@/lib/photos";
 import { cn } from "@/lib/utils";
 
 /**
- * An editorial figure that FLOATS inside the prose flow on md+ so paragraphs
- * wrap around it. Below md the float collapses: the figure becomes a centered,
- * full-width block between paragraphs with its caption below.
+ * An editorial figure that IS its own cream plate (the mat hugs the image via
+ * p-3; the caption sits inside the figure). On md+ it floats inside the prose
+ * flow so paragraphs wrap around it; below md the float is off and it becomes a
+ * centered full-width block with its caption below.
  *
- * Place it in the JSX BEFORE the paragraph(s) that should wrap around it, inside
- * the same plain (non-flex, non-grid) prose container. Alternate `side` section
- * to section so the page does not feel lopsided. Add a <div className="clear-both" />
- * at the end of the container so the float never bleeds into the next band.
+ * Usage rules (enforced at the call sites, not here):
+ *   - One float active at a time. A new floated figure may only appear after the
+ *     previous float is cleared (by enough text or a <div className="clear-both" />).
+ *     Never a left float and a right float beside the same paragraph.
+ *   - If a section has several images and little text, float ONE beside the text
+ *     and place the rest after the prose in a single centered row
+ *     (flex flex-wrap justify-center items-start) of `float={false}` plates.
+ *   - The section wrapper gets `overflow-hidden` and ends with clear-both so
+ *     floats never bleed into the next band.
  *
- *   fit="fill"  the cream plate fills the float width (photos, maps, billboard).
- *   fit="hug"   the cream plate shrink-wraps the image (w-fit), a consistent mat
- *               around the artifact, never a big panel with a small ad inside.
- *               Use `width` to cap it (for tall, narrow ads: md:max-w-xs).
+ * `width` sets the float width on md+ (tall narrow ads ~28-30%, wide ads ~40-44%).
+ * For a non-floated row plate pass `float={false}` and cap with `className`
+ * (e.g. "md:max-w-[230px]").
  */
 export function FloatFigure({
   photo,
-  side = "right",
-  tone = "onWhite",
+  float = "right",
+  width = "md:w-[40%]",
   caption,
   href,
-  width = "md:w-[40%]",
-  fit = "fill",
-  maxH,
+  maxImgH,
   priority = false,
   className,
   children,
 }: {
   photo: Photo;
-  side?: "left" | "right";
-  tone?: "onNavy" | "onWhite";
+  float?: "left" | "right" | false;
+  width?: string;
   /** Overrides photo.caption. */
   caption?: string;
   /** Links the plate to the full-size original (opens in a new tab). */
   href?: string;
-  /** Tailwind width/max-width classes for the float on md+ (e.g. "md:w-[40%]"). */
-  width?: string;
-  fit?: "fill" | "hug";
   /** Optional image max-height cap, px. */
-  maxH?: number;
+  maxImgH?: number;
   priority?: boolean;
   className?: string;
   children?: ReactNode;
 }) {
   const cap = caption ?? photo.caption;
-  const captionColor = tone === "onNavy" ? "text-ink-300" : "text-navy-950/60";
-  const linkColor =
-    tone === "onNavy" ? "text-gold-500 hover:text-gold-400" : "text-gold-600 hover:text-gold-500";
 
   const img = (
     <Image
@@ -60,44 +57,30 @@ export function FloatFigure({
       height={photo.height}
       sizes="(min-width: 768px) 42vw, 100vw"
       priority={priority}
-      className={cn("block h-auto", fit === "hug" ? "w-auto" : "w-full")}
-      style={
-        fit === "hug"
-          ? { width: "auto", maxWidth: "100%", maxHeight: maxH ? `${maxH}px` : undefined }
-          : maxH
-            ? { width: "100%", maxHeight: `${maxH}px` }
-            : undefined
-      }
+      className="block w-full h-auto"
+      style={maxImgH ? { maxHeight: `${maxImgH}px`, width: "auto" } : undefined}
     />
   );
 
   return (
     <figure
       className={cn(
-        // mobile: full-width block, centered, vertical breathing room
-        "w-full my-6 md:my-2",
-        // md+: float with a gap on the text side
-        side === "right" ? "md:float-right md:ml-8" : "md:float-left md:mr-8",
-        width,
+        // the figure IS the mat: shrink-wraps the image, p-3 cream border
+        "w-fit max-w-full my-6 bg-[#f6f3ec] border border-gold-500/50 p-3 shadow-[0_8px_24px_rgba(0,0,0,0.22)]",
+        float === "right" && cn("mx-auto md:mx-0 md:float-right md:ml-8", width),
+        float === "left" && cn("mx-auto md:mx-0 md:float-left md:mr-8", width),
         className
       )}
     >
-      <div
-        className={cn(
-          "bg-[#f6f3ec] border border-gold-500/60 p-4 md:p-5 shadow-[0_10px_30px_rgba(0,0,0,0.28)]",
-          fit === "hug" ? "w-fit mx-auto md:mx-0" : "w-full"
-        )}
-      >
-        {href ? (
-          <a href={href} target="_blank" rel="noopener noreferrer" className="block">
-            {img}
-          </a>
-        ) : (
-          img
-        )}
-      </div>
+      {href ? (
+        <a href={href} target="_blank" rel="noopener noreferrer" className="block">
+          {img}
+        </a>
+      ) : (
+        img
+      )}
       {(cap || href) && (
-        <figcaption className={cn("mt-2 text-sm italic leading-snug", captionColor)}>
+        <figcaption className="mt-2 text-sm italic leading-relaxed text-navy-950/60">
           {cap}
           {href && (
             <>
@@ -106,7 +89,7 @@ export function FloatFigure({
                 href={href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className={cn("not-italic underline underline-offset-2", linkColor)}
+                className="not-italic underline underline-offset-2 text-gold-600 hover:text-gold-500"
               >
                 Open full size
               </a>

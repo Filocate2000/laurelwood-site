@@ -57,8 +57,8 @@ export default function EastLaurelwoodPage() {
         subtitle={c.hero.subtitle}
       />
 
-      {/* Vision band (white): text only, capped measure */}
-      <section className="bg-white py-20 md:py-28">
+      {/* Vision band (white): text only */}
+      <section className="bg-white py-20 md:py-28 overflow-hidden">
         <div className="editorial max-w-3xl">
           <p className="eyebrow text-gold-600 mb-4">{c.vision.eyebrow}</p>
           <h2 className="font-display font-light text-3xl md:text-4xl text-navy-950 mb-5">
@@ -73,8 +73,9 @@ export default function EastLaurelwoodPage() {
         </div>
       </section>
 
-      {/* Growth band (navy): the two period photos float, the school story wraps */}
-      <section className="bg-navy-950 py-20 md:py-28">
+      {/* Growth band (navy): kids photo floats right, then (cleared) bus photo
+          floats left, the school story wraps around each one at a time */}
+      <section className="bg-navy-950 py-20 md:py-28 overflow-hidden">
         <div className="editorial max-w-4xl">
           <p className="eyebrow text-gold-500 mb-4">{c.growth.eyebrow}</p>
           <h2 className="font-display font-light text-3xl md:text-4xl text-white mb-5">
@@ -83,26 +84,13 @@ export default function EastLaurelwoodPage() {
           <span className="gold-rule mb-8" />
           <div className="text-lg text-ink-100 leading-relaxed">
             {kids && (
-              <FloatFigure
-                photo={kids}
-                side="right"
-                tone="onNavy"
-                fit="fill"
-                width="md:w-[40%]"
-                caption={c.growth.photos[0].caption}
-              />
+              <FloatFigure photo={kids} float="right" width="md:w-[40%]" caption={c.growth.photos[0].caption} />
             )}
             <p className="mb-5">{c.growth.bodyBefore[0]}</p>
             <p className="mb-5">{c.growth.bodyBefore[1]}</p>
+            <div className="clear-both" />
             {bus && (
-              <FloatFigure
-                photo={bus}
-                side="left"
-                tone="onNavy"
-                fit="fill"
-                width="md:w-[40%]"
-                caption={c.growth.photos[1].caption}
-              />
+              <FloatFigure photo={bus} float="left" width="md:w-[40%]" caption={c.growth.photos[1].caption} />
             )}
             <p className="mb-5">{c.growth.bodyBefore[2]}</p>
             <p className="mb-5">{c.growth.bodyBefore[3]}</p>
@@ -116,8 +104,8 @@ export default function EastLaurelwoodPage() {
         </div>
       </section>
 
-      {/* Real Estate Ads band (white): the Bel-Air ad floats, copy wraps */}
-      <section className="bg-white py-20 md:py-28">
+      {/* Real Estate Ads band (white): the Bel-Air ad floats right, copy wraps */}
+      <section className="bg-white py-20 md:py-28 overflow-hidden">
         <div className="editorial max-w-4xl">
           <p className="eyebrow text-gold-600 mb-4">{c.ads.eyebrow}</p>
           <h2 className="font-display font-light text-3xl md:text-4xl text-navy-950 mb-5">
@@ -125,11 +113,9 @@ export default function EastLaurelwoodPage() {
           </h2>
           <span className="gold-rule-dark mb-8" />
           <div className="text-lg text-navy-950/75 leading-relaxed">
-            {ad && (
-              <FloatFigure photo={ad} side="right" tone="onWhite" fit="fill" width="md:w-[38%]" />
-            )}
+            {ad && <FloatFigure photo={ad} float="right" width="md:w-[38%]" />}
             {c.ads.body.map((t, i) => (
-              <Para key={i} text={t} className="mb-5" />
+              <Para key={i} text={t} className="mb-5 last:mb-0" />
             ))}
             <div className="clear-both" />
           </div>
@@ -137,7 +123,7 @@ export default function EastLaurelwoodPage() {
       </section>
 
       {/* East Laurelwood Today band (navy): text only */}
-      <section className="bg-navy-950 py-20 md:py-28">
+      <section className="bg-navy-950 py-20 md:py-28 overflow-hidden">
         <div className="editorial max-w-3xl">
           <p className="eyebrow text-gold-500 mb-4">{c.today.eyebrow}</p>
           <h2 className="font-display font-light text-3xl md:text-4xl text-white mb-5">

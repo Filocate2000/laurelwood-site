@@ -497,3 +497,20 @@ Float sides (alternating for balance):
   under its caption (no plate); Doña sign stays a full-width banner.
 - East: growth kids photo (right) + school-bus photo (left); Real Estate Ads
   Bel-Air ad (right).
+
+---
+
+## Float layout v2: one-float-at-a-time (2026-06-04)
+
+Fixed the disjointed archive/grid look on /west-laurelwood and /east-laurelwood.
+`components/FloatFigure.tsx` is now the cream plate itself (w-fit, p-3, caption
+inside, muted italic on the mat). Strict rules applied at every editorial
+section: each paragraph is one intact <p> (never split to sit beside an image),
+only ONE float active at a time, a new float only after the previous is cleared
+by text or <div className="clear-both" />, every section has overflow-hidden and
+ends with clear-both. Sections with several images and little text float ONE
+beside the prose and put the rest in a single centered row
+(flex flex-wrap justify-center items-start) of w-fit plates, the only place flex
+is allowed. No grid anywhere. Tall narrow ads float ~28-30%, wide ~40-44%.
+Below md, floats collapse to centered blocks. Verified in a headless browser at
+desktop and mobile; no wording changed.
