@@ -442,3 +442,34 @@ confirmed in a headless browser.
 ---
 
 EAST LAURELWOOD REBUILD DONE.
+
+---
+
+## West Laurelwood completed: recovered history sections (2026-06-04)
+
+`content/source/west-laurelwood-missing-sections.md` (recovered from the actual
+Wix page HTML) was merged into `/west-laurelwood` via `content/west.ts`. Final
+band order (full-width alternating navy/white, `.editorial max-w-4xl` inner):
+
+1. Hero  2. The birth of West Laurelwood (white)  3. From the Archive: Selling
+Laurelwood 1958-1966 (navy)  4. How It Began / Breaking ground (white)  5. The
+growth of East and West Laurelwood (navy, NEW, prose only)  6. On the Big Screen
+/ Disorderly Orderly video (white)  7. The defeat of the Laurel Canyon Freeway
+(navy, NEW)  8. Preservation and Wilacre Park (white)  9. The Fryman Road
+extension (navy, NEW)  10. Cultural Legacy in Street Names / Doña sign (white)
+11. West Laurelwood Today (navy)  12. Contact CTA (white).
+
+- **Billboard caption upgraded** (lib/photos.ts `gateway-homes-billboard`) to the
+  real one: Henry L. Gatz / Joe Staller, Studio City, November 27, 1960.
+- **Freeway artifacts moved to West (primary placement):** the Feb 6 1970 study
+  map (framed document, click-to-full-size, caption "...Study zone map, March
+  1969.") plus the CA-170 / CA-90 shields as small inline accents, all in the
+  1971 Freeway Defeat band. Their manifest `page` is now `west-laurelwood`.
+- **/history/development** keeps the freeway prose but the framed map + shields
+  are gone; it now links to /west-laurelwood ("See the study map and the full
+  story on West Laurelwood"). So West owns the primary placement, history links.
+- Growth band is prose only; the kids/bus photos stay on /east-laurelwood.
+
+---
+
+WEST LAURELWOOD COMPLETE.
