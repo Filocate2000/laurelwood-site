@@ -21,7 +21,7 @@ export const metadata: Metadata = {
 
 export default function WestLaurelwoodPage() {
   const hero = heroFor("west-laurelwood");
-  const film = VIDEOS[c.period.film.videoKey as keyof typeof VIDEOS];
+  const film = VIDEOS[c.film.videoKey as keyof typeof VIDEOS];
 
   return (
     <>
@@ -130,35 +130,22 @@ export default function WestLaurelwoodPage() {
         </div>
       </section>
 
-      {/* Period-life band (white): kids + bus, plus the Disorderly Orderly clip */}
-      <section className="bg-white py-20 md:py-28">
-        <div className="editorial">
-          <div className="max-w-3xl mb-12">
-            <p className="eyebrow text-gold-600 mb-4">{c.period.eyebrow}</p>
-            <h2 className="font-display font-light text-3xl md:text-4xl text-navy-950 mb-5">
-              {c.period.heading}
-            </h2>
-            <span className="gold-rule-dark mb-8" />
-            <p className="text-lg text-navy-950/75 leading-relaxed">{c.period.body}</p>
-          </div>
-          <div className="grid sm:grid-cols-2 gap-x-12 gap-y-12 items-start mb-16">
-            {c.period.photos.map((id) => {
-              const p = photo(id);
-              return p ? <FramedArtifact key={id} photo={p} tone="onWhite" variant="photo" /> : null;
-            })}
-          </div>
-
-          {film && (
-            <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center border-t border-navy-950/10 pt-16">
-              <div>
-                <p className="eyebrow text-gold-600 mb-4">{c.period.film.eyebrow}</p>
-                <p className="text-lg text-navy-950/75 leading-relaxed">{c.period.film.body}</p>
-              </div>
-              <SelfHostedVideo src={film.src} caption={film.caption} tone="onWhite" />
+      {/* On the Big Screen band (white): the Disorderly Orderly clip */}
+      {film && (
+        <section className="bg-white py-20 md:py-28">
+          <div className="editorial grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
+            <div className="max-w-xl">
+              <p className="eyebrow text-gold-600 mb-4">{c.film.eyebrow}</p>
+              <h2 className="font-display font-light text-3xl md:text-4xl text-navy-950 mb-5">
+                {c.film.heading}
+              </h2>
+              <span className="gold-rule-dark mb-8" />
+              <p className="text-lg text-navy-950/75 leading-relaxed">{c.film.body}</p>
             </div>
-          )}
-        </div>
-      </section>
+            <SelfHostedVideo src={film.src} caption={film.caption} tone="onWhite" />
+          </div>
+        </section>
+      )}
 
       <ContactCTA />
     </>

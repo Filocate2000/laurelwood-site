@@ -26,10 +26,11 @@ export const westContent = {
     heading: "Selling Laurelwood, 1958 to 1966",
     intro:
       "The neighborhood was marketed as the Bel-Air of the Valley: custom homes with country living and city convenience, presented in the newspapers of the day by Laurelwood Realty and the decorators of Cannell & Chaffin.",
-    // ids reference lib/photos.ts
+    // ids reference lib/photos.ts. The Bel-Air of the Valley ad moved to
+    // /east-laurelwood (its copy quotes that ad directly); West keeps the
+    // Laurelwood Realty and Cannell & Chaffin ads.
     ads: [
       "april-13-1966-east-laurelwood-ad",
-      "bel-air-of-the-valley-ad",
       "cannell-chaffin-mother-in-law-ad",
       "cannell-chaffin-sensations-not-words-ad",
     ],
@@ -54,15 +55,14 @@ export const westContent = {
     href: "/dona-streets",
   },
 
-  period: {
-    eyebrow: "Neighborhood Life",
-    heading: "Family streets.",
-    body: "From the start, Laurelwood was a place for families. Children grew up on its quiet streets and rode the Los Angeles City Schools bus down the hill, first to Carpenter Avenue Elementary in Studio City, a routine that shaped the neighborhood's close-knit character.",
-    photos: ["neighborhood-children", "school-bus"],
-    film: {
-      eyebrow: "On the Big Screen",
-      body: "In 1964, Hollywood captured the young neighborhood in The Disorderly Orderly, a comedy starring Jerry Lewis. Several scenes featured West Laurelwood in its early stages, showing many unbuilt lots and homes without mature landscaping, a glimpse of Laurelwood's infancy.",
-      videoKey: "disorderly-orderly",
-    },
+  // The period-life photos (kids line-up + school bus) moved to
+  // /east-laurelwood, where the 1964 Carpenter/Colfax school story is told. The
+  // West period band is now the Disorderly Orderly film band, which is
+  // West-specific (the 1964 film featured West Laurelwood's early lots).
+  film: {
+    eyebrow: "On the Big Screen",
+    heading: "The neighborhood on film.",
+    body: "In 1964, Hollywood captured the young neighborhood in The Disorderly Orderly, a comedy starring Jerry Lewis. Several scenes featured West Laurelwood in its early stages, showing many unbuilt lots and homes without mature landscaping, a glimpse of Laurelwood's infancy.",
+    videoKey: "disorderly-orderly",
   },
 };

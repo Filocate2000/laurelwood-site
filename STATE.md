@@ -304,6 +304,12 @@ LAURELWOOD SITE COMPLETE, awaiting browser verification.
 
 ## Image placement report (West Laurelwood rebuild, 2026-06-04)
 
+> SUPERSEDED IN PART by the "East Laurelwood rebuild" section below: the
+> kids/school-bus photos and the Bel-Air of the Valley ad moved from West to
+> East, and the freeway study map was removed from /east-laurelwood (history
+> page only). The table below reflects the original West rebuild, not the
+> current state; trust the East rebuild section for those four assets.
+
 14 images + 1 video processed by `npm run photos` into `public/images/` and
 `public/videos/`. Per-file placement:
 
@@ -392,4 +398,47 @@ freeway map + shields live on the history pages, not on West).
 
 ---
 
-WIDTH + PLACEMENT FIX DONE, awaiting browser verification.
+## East Laurelwood rebuild from authoritative copy (2026-06-04)
+
+`content/source/east-laurelwood.md` was replaced with the full authoritative
+East Laurelwood copy (one of the pages that had failed to fetch from Wix; the
+old fetched version, which included a Laurel Canyon Freeway controversy section,
+is superseded). `/east-laurelwood` was rebuilt from it as full-width alternating
+bands (same canon as West), one band per `##` section in source order, copy
+verbatim and em-dash-free. Copy now lives in `content/east.ts`.
+
+Band structure (alternating, `.editorial` inner):
+1. Hero (navy gradient; East has no dedicated hero photo).
+2. The Vision of East Laurelwood, 1960s (white). "View the original floor plans"
+   links to /history/development.
+3. Growth and Expansion (navy): the 1964 Carpenter/Colfax school story, with the
+   two period photos side by side (kids line-up + school bus) and their exact
+   captions.
+4. Real Estate Ads: A Glimpse into the Past (white): East's archive band, with
+   the Bel-Air of the Valley ad (framed). Links to /history/development.
+5. East Laurelwood Today (navy).
+6. Embrace the East Laurelwood Lifestyle, rendered as the CTA band (white) with
+   a Start a conversation button to /contact (no generic ContactCTA here).
+
+**Images moved between pages (manifest `page` updated in lib/photos.ts):**
+- `neighborhood-children` (kids line-up) and `school-bus`: West period-life band
+  to East Growth band. Captions updated to the authoritative East captions. This
+  is East's story (the Carpenter/Colfax controversy).
+- `bel-air-of-the-valley-ad`: West archival band to East Real Estate Ads band
+  (East's copy quotes that ad directly). West keeps the Laurelwood Realty
+  (`april-13-1966-east-laurelwood-ad`) and the two Cannell & Chaffin ads.
+- `route-170-freeway-study-map-1970`: REMOVED from /east-laurelwood (the new
+  authoritative East copy has no freeway section). It now lives only on
+  /history/development (plus the West page does not carry it either).
+
+**West period-life band slimmed:** with the two photos gone, the West band is
+now the "On the Big Screen" film band (the Disorderly Orderly clip), which is
+West-specific. West archival band is now 3 ads (was 4).
+
+Verified: clean build; rendered HTML confirms East has the two photos + Bel-Air
+ad and two /history/development links, West no longer has them; full-width bands
+confirmed in a headless browser.
+
+---
+
+EAST LAURELWOOD REBUILD DONE.
