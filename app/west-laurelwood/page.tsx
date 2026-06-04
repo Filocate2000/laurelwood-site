@@ -64,10 +64,10 @@ export default function WestLaurelwoodPage() {
           <p className="text-lg text-ink-100 leading-relaxed max-w-3xl mb-12">
             {c.archival.intro}
           </p>
-          <div className="grid sm:grid-cols-2 gap-x-10 gap-y-12 items-start">
+          <div className="grid sm:grid-cols-2 gap-x-10 gap-y-14 items-end">
             {c.archival.ads.map((id) => {
               const p = photo(id);
-              return p ? <FramedArtifact key={id} photo={p} tone="onNavy" /> : null;
+              return p ? <FramedArtifact key={id} photo={p} tone="onNavy" variant="ad" /> : null;
             })}
           </div>
         </div>
@@ -84,16 +84,21 @@ export default function WestLaurelwoodPage() {
           <p className="text-lg text-navy-950/75 leading-relaxed max-w-3xl mb-12">
             {c.origins.intro}
           </p>
-          <div className="grid md:grid-cols-2 gap-x-10 gap-y-12 items-start">
+          <div className="grid md:grid-cols-2 gap-x-12 gap-y-14 items-start">
             {photo(c.origins.billboard) && (
-              <FramedArtifact photo={photo(c.origins.billboard)!} tone="onWhite" />
+              <FramedArtifact photo={photo(c.origins.billboard)!} tone="onWhite" variant="photo" />
             )}
-            <div className="flex flex-col gap-12">
+            <div className="flex flex-col gap-14">
               {photo(c.origins.renderings) && (
-                <FramedArtifact photo={photo(c.origins.renderings)!} tone="onWhite" />
+                <FramedArtifact photo={photo(c.origins.renderings)!} tone="onWhite" variant="photo" />
               )}
               {photo(c.origins.tractMap) && (
-                <FramedArtifact photo={photo(c.origins.tractMap)!} tone="onWhite" />
+                <FramedArtifact
+                  photo={photo(c.origins.tractMap)!}
+                  tone="onWhite"
+                  variant="document"
+                  href={photo(c.origins.tractMap)!.src}
+                />
               )}
             </div>
           </div>
@@ -112,9 +117,7 @@ export default function WestLaurelwoodPage() {
             <p className="text-lg text-ink-100 leading-relaxed">{c.dona.body}</p>
           </div>
           {photo(c.dona.sign) && (
-            <div className="mx-auto max-w-3xl">
-              <FramedArtifact photo={photo(c.dona.sign)!} tone="onNavy" />
-            </div>
+            <FramedArtifact photo={photo(c.dona.sign)!} tone="onNavy" variant="banner" />
           )}
           <div className="mt-10">
             <Link
@@ -138,10 +141,10 @@ export default function WestLaurelwoodPage() {
             <span className="gold-rule-dark mb-8" />
             <p className="text-lg text-navy-950/75 leading-relaxed">{c.period.body}</p>
           </div>
-          <div className="grid sm:grid-cols-2 gap-x-10 gap-y-12 items-start mb-16">
+          <div className="grid sm:grid-cols-2 gap-x-12 gap-y-12 items-start mb-16">
             {c.period.photos.map((id) => {
               const p = photo(id);
-              return p ? <FramedArtifact key={id} photo={p} tone="onWhite" /> : null;
+              return p ? <FramedArtifact key={id} photo={p} tone="onWhite" variant="photo" /> : null;
             })}
           </div>
 

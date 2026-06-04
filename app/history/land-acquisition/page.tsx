@@ -49,7 +49,12 @@ export default function LandAcquisitionHistoryPage() {
               <span className="gold-rule mb-8" />
               <p className="text-lg text-ink-100 leading-relaxed">{tractSection.body}</p>
             </div>
-            <FramedArtifact photo={photo(tractSection.tractMap)!} tone="onNavy" />
+            <FramedArtifact
+              photo={photo(tractSection.tractMap)!}
+              tone="onNavy"
+              variant="document"
+              href={photo(tractSection.tractMap)!.src}
+            />
           </div>
         </section>
       )}

@@ -54,7 +54,12 @@ export default function EastLaurelwoodPage() {
                 plans in 1971.
               </p>
             </div>
-            <FramedArtifact photo={photo("route-170-freeway-study-map-1970")!} tone="onNavy" />
+            <FramedArtifact
+              photo={photo("route-170-freeway-study-map-1970")!}
+              tone="onNavy"
+              variant="document"
+              href={photo("route-170-freeway-study-map-1970")!.src}
+            />
           </div>
         </section>
       )}

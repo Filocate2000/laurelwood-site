@@ -39,8 +39,8 @@ export default function DonaStreetsPage() {
           </div>
 
           {photo("dona-maria-street-sign") && (
-            <div className="mt-14 max-w-3xl">
-              <FramedArtifact photo={photo("dona-maria-street-sign")!} tone="onWhite" />
+            <div className="mt-14">
+              <FramedArtifact photo={photo("dona-maria-street-sign")!} tone="onWhite" variant="banner" />
             </div>
           )}
 

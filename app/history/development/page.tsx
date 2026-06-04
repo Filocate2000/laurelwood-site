@@ -50,13 +50,19 @@ export default function DevelopmentHistoryPage() {
           </div>
           <div className="grid lg:grid-cols-[2fr_1fr] gap-12 items-start">
             {photo(freewaySection.freewayMap) && (
-              <FramedArtifact photo={photo(freewaySection.freewayMap)!} tone="onNavy" />
+              <FramedArtifact
+                photo={photo(freewaySection.freewayMap)!}
+                tone="onNavy"
+                variant="document"
+                href={photo(freewaySection.freewayMap)!.src}
+                center={false}
+              />
             )}
-            <div className="flex flex-row lg:flex-col gap-8 lg:pt-4">
+            <div className="flex flex-row lg:flex-col gap-8 lg:pt-4 items-start">
               {freewaySection.shields.map((id) => {
                 const p = photo(id);
                 return p ? (
-                  <FramedArtifact key={id} photo={p} tone="onNavy" className="w-32" />
+                  <FramedArtifact key={id} photo={p} tone="onNavy" variant="shield" center={false} />
                 ) : null;
               })}
             </div>

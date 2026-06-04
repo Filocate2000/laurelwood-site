@@ -87,6 +87,12 @@ must return nothing.
 - `.env.local`: no spaces around `=`, UTF-8 no BOM. Backend (Supabase, Maps,
   Turnstile keys) is SHARED with misraje-site / realestategpa; the same
   `.env.local` values work here.
+- **A stale server serves mismatched build hashes and the CSS 400s.** After
+  `npm run build`, kill any old `next start` / `next dev` before reloading,
+  otherwise the page can render UNSTYLED (looks like narrow, non-full-width
+  bands) because the served HTML references a CSS hash the old process does not
+  have. Confirm `/_next/static/css/<hash>.css` returns 200. (See the
+  2026-06-04 width fix pass near the end of this file.)
 
 ---
 
@@ -348,4 +354,42 @@ misraje-site pattern. PageHero is full-bleed. No page was found built narrower.
 
 ---
 
-WEST LAURELWOOD REBUILD DONE, awaiting browser verification.
+## Width + image-sizing fix pass (2026-06-04)
+
+**The "bands not full width" report did NOT reproduce as a CSS/layout bug.**
+Measured in a real headless browser via the Chrome DevTools Protocol at
+innerWidth 1898 (1920 minus scrollbar): all seven `<main > section>` bands on
+/west-laurelwood report `left=0, right=1898, width=1898`, i.e. edge to edge.
+There is no max-width wrapper on body/main/section to remove; the structure
+already matches misraje-site (full-width `<section>` bg, inner `.editorial`).
+
+**Root cause of the constrained/unstyled appearance: a STALE server.** A
+`next start` left running from before a rebuild served HTML referencing an old
+CSS hash, so the stylesheet 404/400'd and the page rendered UNSTYLED, which
+looks exactly like "narrow, no full-width bands." After killing the stale
+process and restarting, the referenced CSS returns 200 and the page is styled
+and full-width. **Banked lesson (added to repo cautions): after `npm run build`,
+kill any old `next start`/`next dev` before reloading; a stale server serves
+mismatched build hashes and the CSS 400s, yielding an unstyled page. Verify the
+served `/_next/static/css/<hash>.css` returns 200.** This is the same family as
+the existing "Login fails w/ no error? Check the dev server is RUNNING" rule.
+
+**Image sizing overhaul (the real, actionable fix).** `components/
+FramedArtifact.tsx` now sizes by `variant` and the cream plate HUGS the image
+(it no longer stretches to the grid cell, so small scans are not marooned in an
+oversized frame):
+- `ad` (newspaper ads): natural aspect, max-height ~520px, 2-up grid.
+- `photo` (period/neighborhood): medium plates (~460px), side by side.
+- `document` (tract + freeway maps): ~600px tall, frame links to the full-size
+  original in a new tab (an "Open full size" caption link).
+- `banner` (the Doña Maria sign, a wide strip): fills the `.editorial` width.
+- `shield` (CA-170/CA-90): small ~120px inline accents.
+Applied across /west-laurelwood, /history/development, /history/land-acquisition,
+/east-laurelwood, and /dona-streets. Placement was already per spec and is
+unchanged (archival = the 4 ads only; origins = billboard + Plan 4B/4C +
+Tract 24676 map; Doña band = the sign only; period = kids + bus only; the
+freeway map + shields live on the history pages, not on West).
+
+---
+
+WIDTH + PLACEMENT FIX DONE, awaiting browser verification.
