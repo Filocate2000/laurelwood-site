@@ -1,6 +1,7 @@
-// Self-hosted video in the gold-framed editorial treatment. preload="none" so
-// the file is not fetched until the visitor presses play (no layout shift: the
-// frame holds a 16:9 box). Used for the archival Disorderly Orderly clip.
+// Self-hosted video in the gold-framed editorial treatment. The frame holds a
+// fixed 16:9 box (no layout shift). preload="metadata" loads just enough to show
+// a poster (first) frame; muted, with controls, and no autoplay, so it never
+// plays on its own. Used for the archival Disorderly Orderly clip.
 export function SelfHostedVideo({
   src,
   caption,
@@ -19,10 +20,12 @@ export function SelfHostedVideo({
         <video
           className="absolute inset-0 h-full w-full object-contain"
           controls
-          preload="none"
+          muted
+          preload="metadata"
           playsInline
         >
-          <source src={src} type="video/mp4" />
+          {/* #t=0.1 nudges browsers to render the first frame as the poster. */}
+          <source src={`${src}#t=0.1`} type="video/mp4" />
         </video>
       </div>
       {caption && (

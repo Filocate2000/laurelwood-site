@@ -105,7 +105,44 @@ export default function WestLaurelwoodPage() {
         </div>
       </section>
 
-      {/* Doña band (navy): the street-sign banner on a cream plate */}
+      {/* On the Big Screen band (navy): the Disorderly Orderly clip */}
+      {film && (
+        <section className="bg-navy-950 py-20 md:py-28">
+          <div className="editorial grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
+            <div className="max-w-xl">
+              <p className="eyebrow text-gold-500 mb-4">{c.film.eyebrow}</p>
+              <h2 className="font-display font-light text-3xl md:text-4xl text-white mb-5">
+                {c.film.heading}
+              </h2>
+              <span className="gold-rule mb-8" />
+              <div className="space-y-5 text-lg text-ink-100 leading-relaxed">
+                {c.film.body.map((t, i) => (
+                  <p key={i}>{t}</p>
+                ))}
+              </div>
+            </div>
+            <SelfHostedVideo src={film.src} caption={c.film.caption} tone="onNavy" />
+          </div>
+        </section>
+      )}
+
+      {/* Preservation and Wilacre Park band (white) */}
+      <section className="bg-white py-20 md:py-28">
+        <div className="editorial max-w-3xl">
+          <p className="eyebrow text-gold-600 mb-4">{c.preservation.eyebrow}</p>
+          <h2 className="font-display font-light text-3xl md:text-4xl text-navy-950 mb-5">
+            {c.preservation.heading}
+          </h2>
+          <span className="gold-rule-dark mb-8" />
+          <div className="space-y-5 text-lg text-navy-950/75 leading-relaxed">
+            {c.preservation.body.map((t, i) => (
+              <p key={i}>{t}</p>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Doña band (navy): Cultural Legacy in Street Names, sign banner */}
       <section className="bg-navy-950 py-20 md:py-28">
         <div className="editorial">
           <div className="max-w-3xl mb-10">
@@ -130,22 +167,21 @@ export default function WestLaurelwoodPage() {
         </div>
       </section>
 
-      {/* On the Big Screen band (white): the Disorderly Orderly clip */}
-      {film && (
-        <section className="bg-white py-20 md:py-28">
-          <div className="editorial grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
-            <div className="max-w-xl">
-              <p className="eyebrow text-gold-600 mb-4">{c.film.eyebrow}</p>
-              <h2 className="font-display font-light text-3xl md:text-4xl text-navy-950 mb-5">
-                {c.film.heading}
-              </h2>
-              <span className="gold-rule-dark mb-8" />
-              <p className="text-lg text-navy-950/75 leading-relaxed">{c.film.body}</p>
-            </div>
-            <SelfHostedVideo src={film.src} caption={film.caption} tone="onWhite" />
+      {/* West Laurelwood Today closing band (white) */}
+      <section className="bg-white py-20 md:py-28">
+        <div className="editorial max-w-3xl">
+          <p className="eyebrow text-gold-600 mb-4">{c.today.eyebrow}</p>
+          <h2 className="font-display font-light text-3xl md:text-4xl text-navy-950 mb-5">
+            {c.today.heading}
+          </h2>
+          <span className="gold-rule-dark mb-8" />
+          <div className="space-y-5 text-lg text-navy-950/75 leading-relaxed">
+            {c.today.body.map((t, i) => (
+              <p key={i}>{t}</p>
+            ))}
           </div>
-        </section>
-      )}
+        </div>
+      </section>
 
       <ContactCTA />
     </>

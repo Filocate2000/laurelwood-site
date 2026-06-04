@@ -28,7 +28,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, "..");
 const SRC_DIR = path.join(ROOT, "source-photos");
 const OUT_DIR = path.join(ROOT, "public", "images");
-const VIDEO_DIR = path.join(ROOT, "public", "videos");
+const VIDEO_DIR = path.join(ROOT, "public", "video");
 
 const MAX_WIDTH = 2400;
 const QUALITY = 82;
@@ -101,14 +101,14 @@ async function main() {
     else if (VIDEO_EXTS.has(ext)) videos.push(name);
   }
 
-  // Videos are copied through verbatim (no transcode) to public/videos/.
+  // Videos are copied through verbatim (no transcode) to public/video/.
   if (videos.length > 0) {
     await mkdir(VIDEO_DIR, { recursive: true });
     for (const name of videos) {
       const ext = path.extname(name).toLowerCase();
       const outName = `${slugFor(path.basename(name, path.extname(name)))}${ext}`;
       await copyFile(path.join(SRC_DIR, name), path.join(VIDEO_DIR, outName));
-      console.log(`  ${name}  ->  /videos/${outName}  (copied)`);
+      console.log(`  ${name}  ->  /video/${outName}  (copied)`);
     }
   }
 

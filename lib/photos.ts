@@ -226,12 +226,12 @@ export const PHOTOS: Photo[] = [
   },
 ];
 
-// Self-hosted video (copied verbatim by the pipeline to public/videos/).
+// Self-hosted video (copied verbatim by the pipeline to public/video/). The
+// caption lives with the page copy in content/west.ts; this is a fallback.
 export const VIDEOS = {
   "disorderly-orderly": {
-    src: "/videos/disorderly-orderly-1964.mp4",
-    caption:
-      "Clip: The Disorderly Orderly (1964), which filmed in early West Laurelwood before its lots were built out.",
+    src: "/video/disorderly-orderly-1964.mp4",
+    caption: "West Laurelwood, mid-construction, as seen in The Disorderly Orderly (1964).",
   },
 } as const;
 
