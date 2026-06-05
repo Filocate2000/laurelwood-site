@@ -52,20 +52,20 @@ export default function WestLaurelwoodPage() {
         objectPosition="center 60%"
       />
 
-      {/* Birth band (white): full-width measure; three small floated figures,
-          one float at a time. The tract map is rendered twice with responsive
-          visibility (the only pure-float way to both wrap p1+p2 on desktop AND
-          keep p1 before the map on mobile, since floats cannot reorder per
-          breakpoint without flex/grid). */}
-      <section className="bg-white py-20 md:py-28 overflow-hidden">
+      {/* Birth band (NAVY): full-width measure; three small floated figures.
+          The tract map is rendered twice with responsive visibility (the only
+          pure-float way to wrap p1+p2 on desktop AND keep p1 before the map on
+          mobile, since floats cannot reorder per breakpoint without flex/grid).
+          The captions sit on the cream plates, so they stay dark. */}
+      <section className="bg-navy-950 py-20 md:py-28 overflow-hidden">
         <div className="w-full px-6 md:px-16">
-          <p className="eyebrow text-gold-600 mb-4">{c.intro.eyebrow}</p>
-          <h2 className="font-display font-light text-3xl md:text-4xl text-navy-950 mb-5">
+          <p className="eyebrow text-gold-500 mb-4">{c.intro.eyebrow}</p>
+          <h2 className="font-display font-light text-3xl md:text-4xl text-white mb-5">
             {c.intro.heading}
           </h2>
-          <span className="gold-rule-dark mb-8" />
+          <span className="gold-rule mb-8" />
 
-          <div className="text-lg md:text-xl text-navy-950/75 leading-relaxed">
+          <div className="text-lg md:text-xl text-ink-100 leading-relaxed">
             {/* Figure A (tract) desktop copy: floats right. Both A and B stay
                 active; paragraphs 1-3 flow through the middle channel. */}
             {tract && (
@@ -145,12 +145,9 @@ export default function WestLaurelwoodPage() {
 
             <p className="mb-6">{c.intro.body[2]}</p>
 
-            {/* Figure C (Plan 4B/4C elevations) + brochure copy + feature list in
-                ONE wrapper, placed BEFORE the clear-both so it rises into the
-                middle channel between the still-active floats. w-fit shrinks the
-                wrapper to whatever channel the floats leave (capped at max-w);
-                the paragraph and list are w-full to match the plate width. */}
-            <div className="flow-root w-fit mx-auto max-w-[44rem]">
+            {/* Figure C (Plan 4B/4C elevations) ONLY, in a centered wrapper that
+                rises into the middle channel between the still-active floats. */}
+            <div className="flow-root w-fit mx-auto max-w-[31rem]">
               {renderings && (
                 <figure className="mb-6 bg-[#f6f3ec] p-3 shadow-sm">
                   <Image
@@ -158,7 +155,7 @@ export default function WestLaurelwoodPage() {
                     alt={renderings.alt}
                     width={renderings.width}
                     height={renderings.height}
-                    sizes="(min-width: 768px) 44rem, 100vw"
+                    sizes="(min-width: 768px) 31rem, 100vw"
                     className="block w-full h-auto"
                   />
                   <figcaption className="mt-2 text-sm italic text-slate-500 leading-relaxed">
@@ -166,36 +163,39 @@ export default function WestLaurelwoodPage() {
                   </figcaption>
                 </figure>
               )}
-              <p className="w-full mb-6">{c.intro.brochureIntro}</p>
-              <ul className="w-full list-disc pl-5 mb-6 space-y-2 marker:text-gold-600">
-                {c.intro.brochureFeatures.map((f, i) => {
-                  const idx = f.indexOf(": ");
-                  const term = f.slice(0, idx + 1);
-                  const rest = f.slice(idx + 1);
-                  return (
-                    <li key={i}>
-                      <strong className="font-semibold text-navy-950">{term}</strong>
-                      {rest}
-                    </li>
-                  );
-                })}
-              </ul>
             </div>
 
             <div className="clear-both" />
+
+            {/* Brochure copy + feature list: full page width, after the floats,
+                directly on the band (no background of their own). */}
+            <p className="mb-6">{c.intro.brochureIntro}</p>
+            <ul className="list-disc pl-5 space-y-3 marker:text-gold-500">
+              {c.intro.brochureFeatures.map((f, i) => {
+                const idx = f.indexOf(": ");
+                const term = f.slice(0, idx + 1);
+                const rest = f.slice(idx + 1);
+                return (
+                  <li key={i}>
+                    <strong className="font-semibold text-white">{term}</strong>
+                    {rest}
+                  </li>
+                );
+              })}
+            </ul>
           </div>
         </div>
       </section>
 
-      {/* Archive band (navy): one floated ad + a centered row of the rest */}
-      <section className="bg-navy-950 py-20 md:py-28 overflow-hidden">
+      {/* Archive band (WHITE): one floated ad + a centered row of the rest */}
+      <section className="bg-white py-20 md:py-28 overflow-hidden">
         <div className="editorial max-w-4xl">
-          <p className="eyebrow text-gold-500 mb-4">{c.archival.eyebrow}</p>
-          <h2 className="font-display font-light text-3xl md:text-4xl text-white mb-5">
+          <p className="eyebrow text-gold-600 mb-4">{c.archival.eyebrow}</p>
+          <h2 className="font-display font-light text-3xl md:text-4xl text-navy-950 mb-5">
             {c.archival.heading}
           </h2>
-          <span className="gold-rule mb-8" />
-          <div className="text-lg text-ink-100 leading-relaxed">
+          <span className="gold-rule-dark mb-8" />
+          <div className="text-lg text-navy-950/75 leading-relaxed">
             {motherInLaw && <FloatFigure photo={motherInLaw} float="right" width="md:w-[42%]" />}
             <p>{c.archival.intro}</p>
             <div className="clear-both" />
@@ -207,15 +207,15 @@ export default function WestLaurelwoodPage() {
         </div>
       </section>
 
-      {/* Origins band (white): float billboard, row the renderings + tract map */}
-      <section className="bg-white py-20 md:py-28 overflow-hidden">
+      {/* Origins band (NAVY): float billboard, row the renderings + tract map */}
+      <section className="bg-navy-950 py-20 md:py-28 overflow-hidden">
         <div className="editorial max-w-4xl">
-          <p className="eyebrow text-gold-600 mb-4">{c.origins.eyebrow}</p>
-          <h2 className="font-display font-light text-3xl md:text-4xl text-navy-950 mb-5">
+          <p className="eyebrow text-gold-500 mb-4">{c.origins.eyebrow}</p>
+          <h2 className="font-display font-light text-3xl md:text-4xl text-white mb-5">
             {c.origins.heading}
           </h2>
-          <span className="gold-rule-dark mb-8" />
-          <div className="text-lg text-navy-950/75 leading-relaxed">
+          <span className="gold-rule mb-8" />
+          <div className="text-lg text-ink-100 leading-relaxed">
             {billboard && <FloatFigure photo={billboard} float="left" width="md:w-[38%]" />}
             <p>{c.origins.intro}</p>
             <div className="clear-both" />
@@ -229,15 +229,15 @@ export default function WestLaurelwoodPage() {
         </div>
       </section>
 
-      {/* Growth band (navy): text only */}
-      <section className="bg-navy-950 py-20 md:py-28 overflow-hidden">
+      {/* Growth band (WHITE): text only */}
+      <section className="bg-white py-20 md:py-28 overflow-hidden">
         <div className="editorial max-w-3xl">
-          <p className="eyebrow text-gold-500 mb-4">{c.growth.eyebrow}</p>
-          <h2 className="font-display font-light text-3xl md:text-4xl text-white mb-5">
+          <p className="eyebrow text-gold-600 mb-4">{c.growth.eyebrow}</p>
+          <h2 className="font-display font-light text-3xl md:text-4xl text-navy-950 mb-5">
             {c.growth.heading}
           </h2>
-          <span className="gold-rule mb-8" />
-          <div className="text-lg text-ink-100 leading-relaxed">
+          <span className="gold-rule-dark mb-8" />
+          <div className="text-lg text-navy-950/75 leading-relaxed">
             {c.growth.body.map((t, i) => (
               <p key={i} className="mb-5 last:mb-0">
                 {t}
@@ -247,18 +247,18 @@ export default function WestLaurelwoodPage() {
         </div>
       </section>
 
-      {/* On the Big Screen band (white): clip floats right, copy wraps */}
+      {/* On the Big Screen band (NAVY): clip floats right, copy wraps */}
       {film && (
-        <section className="bg-white py-20 md:py-28 overflow-hidden">
+        <section className="bg-navy-950 py-20 md:py-28 overflow-hidden">
           <div className="editorial max-w-4xl">
-            <p className="eyebrow text-gold-600 mb-4">{c.film.eyebrow}</p>
-            <h2 className="font-display font-light text-3xl md:text-4xl text-navy-950 mb-5">
+            <p className="eyebrow text-gold-500 mb-4">{c.film.eyebrow}</p>
+            <h2 className="font-display font-light text-3xl md:text-4xl text-white mb-5">
               {c.film.heading}
             </h2>
-            <span className="gold-rule-dark mb-8" />
-            <div className="text-lg text-navy-950/75 leading-relaxed">
+            <span className="gold-rule mb-8" />
+            <div className="text-lg text-ink-100 leading-relaxed">
               <div className="w-full md:w-[44%] my-6 md:my-2 mx-auto md:mx-0 md:float-right md:ml-8">
-                <SelfHostedVideo src={film.src} caption={c.film.caption} tone="onWhite" />
+                <SelfHostedVideo src={film.src} caption={c.film.caption} tone="onNavy" />
               </div>
               {c.film.body.map((t, i) => (
                 <p key={i} className="mb-5 last:mb-0">
@@ -271,15 +271,15 @@ export default function WestLaurelwoodPage() {
         </section>
       )}
 
-      {/* 1971 Freeway Defeat band (navy): study map floats right, shields under its caption */}
-      <section className="bg-navy-950 py-20 md:py-28 overflow-hidden">
+      {/* 1971 Freeway Defeat band (WHITE): study map floats right, shields under its caption */}
+      <section className="bg-white py-20 md:py-28 overflow-hidden">
         <div className="editorial max-w-4xl">
-          <p className="eyebrow text-gold-500 mb-4">{c.freewayDefeat.eyebrow}</p>
-          <h2 className="font-display font-light text-3xl md:text-4xl text-white mb-5">
+          <p className="eyebrow text-gold-600 mb-4">{c.freewayDefeat.eyebrow}</p>
+          <h2 className="font-display font-light text-3xl md:text-4xl text-navy-950 mb-5">
             {c.freewayDefeat.heading}
           </h2>
-          <span className="gold-rule mb-8" />
-          <div className="text-lg text-ink-100 leading-relaxed">
+          <span className="gold-rule-dark mb-8" />
+          <div className="text-lg text-navy-950/75 leading-relaxed">
             {freewayMap && (
               <FloatFigure
                 photo={freewayMap}
@@ -315,15 +315,15 @@ export default function WestLaurelwoodPage() {
         </div>
       </section>
 
-      {/* Wilacre Park band (white): text only */}
-      <section className="bg-white py-20 md:py-28 overflow-hidden">
+      {/* Wilacre Park band (NAVY): text only */}
+      <section className="bg-navy-950 py-20 md:py-28 overflow-hidden">
         <div className="editorial max-w-3xl">
-          <p className="eyebrow text-gold-600 mb-4">{c.preservation.eyebrow}</p>
-          <h2 className="font-display font-light text-3xl md:text-4xl text-navy-950 mb-5">
+          <p className="eyebrow text-gold-500 mb-4">{c.preservation.eyebrow}</p>
+          <h2 className="font-display font-light text-3xl md:text-4xl text-white mb-5">
             {c.preservation.heading}
           </h2>
-          <span className="gold-rule-dark mb-8" />
-          <div className="text-lg text-navy-950/75 leading-relaxed">
+          <span className="gold-rule mb-8" />
+          <div className="text-lg text-ink-100 leading-relaxed">
             {c.preservation.body.map((t, i) => (
               <p key={i} className="mb-5 last:mb-0">
                 {t}
@@ -333,15 +333,15 @@ export default function WestLaurelwoodPage() {
         </div>
       </section>
 
-      {/* Fryman Road Extension band (navy): text only */}
-      <section className="bg-navy-950 py-20 md:py-28 overflow-hidden">
+      {/* Fryman Road Extension band (WHITE): text only */}
+      <section className="bg-white py-20 md:py-28 overflow-hidden">
         <div className="editorial max-w-3xl">
-          <p className="eyebrow text-gold-500 mb-4">{c.frymanRoad.eyebrow}</p>
-          <h2 className="font-display font-light text-3xl md:text-4xl text-white mb-5">
+          <p className="eyebrow text-gold-600 mb-4">{c.frymanRoad.eyebrow}</p>
+          <h2 className="font-display font-light text-3xl md:text-4xl text-navy-950 mb-5">
             {c.frymanRoad.heading}
           </h2>
-          <span className="gold-rule mb-8" />
-          <div className="text-lg text-ink-100 leading-relaxed">
+          <span className="gold-rule-dark mb-8" />
+          <div className="text-lg text-navy-950/75 leading-relaxed">
             {c.frymanRoad.body.map((t, i) => (
               <p key={i} className="mb-5 last:mb-0">
                 {t}
@@ -351,22 +351,22 @@ export default function WestLaurelwoodPage() {
         </div>
       </section>
 
-      {/* Doña band (white): Cultural Legacy, sign floats right, copy wraps */}
-      <section className="bg-white py-20 md:py-28 overflow-hidden">
+      {/* Doña band (NAVY): Cultural Legacy, sign floats right, copy wraps */}
+      <section className="bg-navy-950 py-20 md:py-28 overflow-hidden">
         <div className="editorial max-w-4xl">
-          <p className="eyebrow text-gold-600 mb-4">{c.dona.eyebrow}</p>
-          <h2 className="font-display font-light text-3xl md:text-4xl text-navy-950 mb-5">
+          <p className="eyebrow text-gold-500 mb-4">{c.dona.eyebrow}</p>
+          <h2 className="font-display font-light text-3xl md:text-4xl text-white mb-5">
             {c.dona.heading}
           </h2>
-          <span className="gold-rule-dark mb-8" />
-          <div className="text-lg text-navy-950/75 leading-relaxed">
+          <span className="gold-rule mb-8" />
+          <div className="text-lg text-ink-100 leading-relaxed">
             {sign && <FloatFigure photo={sign} float="right" width="md:w-[44%]" />}
             <p>{c.dona.body}</p>
             <div className="clear-both" />
             <div className="mt-8">
               <Link
                 href={c.dona.href}
-                className="inline-flex items-center gap-2 text-[12px] uppercase tracking-[0.2em] text-navy-950 hover:text-gold-600 transition-colors"
+                className="inline-flex items-center gap-2 text-[12px] uppercase tracking-[0.2em] text-white hover:text-gold-500 transition-colors"
               >
                 {c.dona.cta} <span aria-hidden="true">&rarr;</span>
               </Link>
@@ -375,15 +375,15 @@ export default function WestLaurelwoodPage() {
         </div>
       </section>
 
-      {/* West Laurelwood Today band (navy): text only */}
-      <section className="bg-navy-950 py-20 md:py-28 overflow-hidden">
+      {/* West Laurelwood Today band (WHITE): text only */}
+      <section className="bg-white py-20 md:py-28 overflow-hidden">
         <div className="editorial max-w-3xl">
-          <p className="eyebrow text-gold-500 mb-4">{c.today.eyebrow}</p>
-          <h2 className="font-display font-light text-3xl md:text-4xl text-white mb-5">
+          <p className="eyebrow text-gold-600 mb-4">{c.today.eyebrow}</p>
+          <h2 className="font-display font-light text-3xl md:text-4xl text-navy-950 mb-5">
             {c.today.heading}
           </h2>
-          <span className="gold-rule mb-8" />
-          <div className="text-lg text-ink-100 leading-relaxed">
+          <span className="gold-rule-dark mb-8" />
+          <div className="text-lg text-navy-950/75 leading-relaxed">
             {c.today.body.map((t, i) => (
               <p key={i} className="mb-5 last:mb-0">
                 {t}
@@ -393,7 +393,8 @@ export default function WestLaurelwoodPage() {
         </div>
       </section>
 
-      <ContactCTA />
+      {/* Contact CTA band (NAVY) to keep the page alternation */}
+      <ContactCTA tone="navy" />
     </>
   );
 }

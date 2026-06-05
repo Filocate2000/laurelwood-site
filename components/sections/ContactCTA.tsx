@@ -1,23 +1,36 @@
 import Link from "next/link";
 
-export function ContactCTA() {
+export function ContactCTA({ tone = "white" }: { tone?: "white" | "navy" }) {
+  const navy = tone === "navy";
   return (
-    <section className="bg-white py-20 md:py-28">
+    <section className={`${navy ? "bg-navy-950" : "bg-white"} py-20 md:py-28`}>
       <div className="editorial text-center max-w-3xl">
-        <p className="eyebrow text-gold-600 mb-6">Let&apos;s Talk</p>
-        <h2 className="font-display font-light text-4xl md:text-5xl text-navy-950 leading-tight mb-8">
+        <p className={`eyebrow mb-6 ${navy ? "text-gold-500" : "text-gold-600"}`}>Let&apos;s Talk</p>
+        <h2
+          className={`font-display font-light text-4xl md:text-5xl leading-tight mb-8 ${
+            navy ? "text-white" : "text-navy-950"
+          }`}
+        >
           Considering buying or selling
           <br />
-          <span className="text-gold-600">in Laurelwood?</span>
+          <span className={navy ? "text-gold-500" : "text-gold-600"}>in Laurelwood?</span>
         </h2>
-        <span className="gold-rule-dark mx-auto mb-10" />
-        <p className="text-navy-950/70 text-lg leading-relaxed mb-12 max-w-xl mx-auto">
+        <span className={`${navy ? "gold-rule" : "gold-rule-dark"} mx-auto mb-10`} />
+        <p
+          className={`text-lg leading-relaxed mb-12 max-w-xl mx-auto ${
+            navy ? "text-ink-100" : "text-navy-950/70"
+          }`}
+        >
           A conversation is the best place to start. We live here, and we respond
           personally to every inquiry.
         </p>
         <Link
           href="/contact"
-          className="inline-flex items-center justify-center bg-navy-950 hover:bg-gold-600 px-10 py-4 text-[12px] uppercase text-white transition-colors duration-300"
+          className={`inline-flex items-center justify-center px-10 py-4 text-[12px] uppercase transition-colors duration-300 ${
+            navy
+              ? "bg-gold-500 hover:bg-gold-400 text-navy-950"
+              : "bg-navy-950 hover:bg-gold-600 text-white"
+          }`}
           style={{ letterSpacing: "0.25em" }}
         >
           Start a Conversation
