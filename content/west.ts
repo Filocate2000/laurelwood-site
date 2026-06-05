@@ -23,6 +23,16 @@ export const westContent = {
     tractCaption: "Tract No. 24676, recorded with the City of Los Angeles.",
     billboardCaption:
       "Henry L. Gatz, president of Gateway Homes, with Joe Staller, announcing new homes in Laurelwood, November 27, 1960.",
+    elevationsCaption: "Model elevations: Plan 4B and Plan 4C.",
+    // New brochure copy (verbatim). The list lead-ins are bolded at render time
+    // by splitting on the first colon; no words are changed.
+    brochureIntro:
+      'The original brochure invited families to "Take a long hard look at the best the land of Laurelwood offers!" and presented features like:',
+    brochureFeatures: [
+      "Underground utilities: For unobstructed scenic views and a clean aesthetic.",
+      "Genuine plaster and lath construction: A testament to craftsmanship and durability.",
+      "Fireplaces in four distinct styles: Choose from white ruffled Norman brick, plaster, marble, or Spanish tile, bringing warmth and character to every home.",
+    ],
   },
 
   archival: {

@@ -47,8 +47,11 @@ export default function WestLaurelwoodPage() {
         objectPosition="center 60%"
       />
 
-      {/* Birth band (white): full-width measure; tract map floats right, the
-          Gateway Homes billboard floats left. One float at a time. */}
+      {/* Birth band (white): full-width measure; three small floated figures,
+          one float at a time. The tract map is rendered twice with responsive
+          visibility (the only pure-float way to both wrap p1+p2 on desktop AND
+          keep p1 before the map on mobile, since floats cannot reorder per
+          breakpoint without flex/grid). */}
       <section className="bg-white py-20 md:py-28 overflow-hidden">
         <div className="w-full px-6 md:px-16">
           <p className="eyebrow text-gold-600 mb-4">{c.intro.eyebrow}</p>
@@ -58,14 +61,15 @@ export default function WestLaurelwoodPage() {
           <span className="gold-rule-dark mb-8" />
 
           <div className="text-lg md:text-xl text-navy-950/75 leading-relaxed">
+            {/* Figure A (tract) desktop copy: floats right, wrapped by p1 + p2 */}
             {tract && (
-              <figure className="md:float-right md:w-[26%] md:ml-10 mb-8 w-fit max-w-full mx-auto md:mx-0 bg-[#f6f3ec] p-3 shadow-sm">
+              <figure className="hidden md:block md:float-right md:w-[22%] md:ml-10 mb-6 w-fit bg-[#f6f3ec] p-3 shadow-sm">
                 <Image
                   src={tract.src}
                   alt={tract.alt}
                   width={tract.width}
                   height={tract.height}
-                  sizes="(min-width: 768px) 26vw, 100vw"
+                  sizes="22vw"
                   className="block w-full h-auto"
                 />
                 <figcaption className="mt-2 text-sm italic text-slate-500 leading-relaxed">
@@ -74,19 +78,38 @@ export default function WestLaurelwoodPage() {
               </figure>
             )}
 
-            <p className="mb-5">{c.intro.body[0]}</p>
-            <p className="mb-5">{c.intro.body[1]}</p>
+            <p className="mb-6">{c.intro.body[0]}</p>
+
+            {/* Figure A (tract) mobile copy: centered block between p1 and p2 */}
+            {tract && (
+              <figure className="md:hidden my-6 w-fit max-w-full mx-auto bg-[#f6f3ec] p-3 shadow-sm">
+                <Image
+                  src={tract.src}
+                  alt={tract.alt}
+                  width={tract.width}
+                  height={tract.height}
+                  sizes="100vw"
+                  className="block w-full h-auto"
+                />
+                <figcaption className="mt-2 text-sm italic text-slate-500 leading-relaxed">
+                  {c.intro.tractCaption}
+                </figcaption>
+              </figure>
+            )}
+
+            <p className="mb-6">{c.intro.body[1]}</p>
 
             <div className="clear-both" />
 
+            {/* Figure B (billboard): floats left, wrapped by p3 */}
             {billboard && (
-              <figure className="md:float-left md:w-[30%] md:mr-10 my-2 mb-8 w-fit max-w-full mx-auto md:mx-0 bg-[#f6f3ec] p-3 shadow-sm">
+              <figure className="md:float-left md:w-[26%] md:mr-10 mb-6 w-fit max-w-full mx-auto md:mx-0 bg-[#f6f3ec] p-3 shadow-sm">
                 <Image
                   src={billboard.src}
                   alt={billboard.alt}
                   width={billboard.width}
                   height={billboard.height}
-                  sizes="(min-width: 768px) 30vw, 100vw"
+                  sizes="(min-width: 768px) 26vw, 100vw"
                   className="block w-full h-auto"
                 />
                 <figcaption className="mt-2 text-sm italic text-slate-500 leading-relaxed">
@@ -95,7 +118,42 @@ export default function WestLaurelwoodPage() {
               </figure>
             )}
 
-            <p>{c.intro.body[2]}</p>
+            <p className="mb-6">{c.intro.body[2]}</p>
+
+            <div className="clear-both" />
+
+            {/* Figure C (Plan 4B/4C elevations, wide): floats right, wrapped by
+                the brochure copy + features list */}
+            {renderings && (
+              <figure className="md:float-right md:w-[38%] md:ml-10 mb-6 w-fit max-w-full mx-auto md:mx-0 bg-[#f6f3ec] p-3 shadow-sm">
+                <Image
+                  src={renderings.src}
+                  alt={renderings.alt}
+                  width={renderings.width}
+                  height={renderings.height}
+                  sizes="(min-width: 768px) 38vw, 100vw"
+                  className="block w-full h-auto"
+                />
+                <figcaption className="mt-2 text-sm italic text-slate-500 leading-relaxed">
+                  {c.intro.elevationsCaption}
+                </figcaption>
+              </figure>
+            )}
+
+            <p className="mb-6">{c.intro.brochureIntro}</p>
+            <ul className="list-disc pl-5 mb-6 space-y-2 marker:text-gold-600">
+              {c.intro.brochureFeatures.map((f, i) => {
+                const idx = f.indexOf(": ");
+                const term = f.slice(0, idx + 1);
+                const rest = f.slice(idx + 1);
+                return (
+                  <li key={i}>
+                    <strong className="font-semibold text-navy-950">{term}</strong>
+                    {rest}
+                  </li>
+                );
+              })}
+            </ul>
 
             <div className="clear-both" />
           </div>
