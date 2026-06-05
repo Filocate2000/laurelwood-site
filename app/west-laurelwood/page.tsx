@@ -47,20 +47,57 @@ export default function WestLaurelwoodPage() {
         objectPosition="center 60%"
       />
 
-      {/* Birth band (white): text only */}
+      {/* Birth band (white): full-width measure; tract map floats right, the
+          Gateway Homes billboard floats left. One float at a time. */}
       <section className="bg-white py-20 md:py-28 overflow-hidden">
-        <div className="editorial max-w-3xl">
+        <div className="w-full px-6 md:px-16">
           <p className="eyebrow text-gold-600 mb-4">{c.intro.eyebrow}</p>
           <h2 className="font-display font-light text-3xl md:text-4xl text-navy-950 mb-5">
             {c.intro.heading}
           </h2>
           <span className="gold-rule-dark mb-8" />
-          <div className="text-lg text-navy-950/75 leading-relaxed">
-            {c.intro.body.map((p, i) => (
-              <p key={i} className="mb-5 last:mb-0">
-                {p}
-              </p>
-            ))}
+
+          <div className="text-lg md:text-xl text-navy-950/75 leading-relaxed">
+            {tract && (
+              <figure className="md:float-right md:w-[26%] md:ml-10 mb-8 w-fit max-w-full mx-auto md:mx-0 bg-[#f6f3ec] p-3 shadow-sm">
+                <Image
+                  src={tract.src}
+                  alt={tract.alt}
+                  width={tract.width}
+                  height={tract.height}
+                  sizes="(min-width: 768px) 26vw, 100vw"
+                  className="block w-full h-auto"
+                />
+                <figcaption className="mt-2 text-sm italic text-slate-500 leading-relaxed">
+                  {c.intro.tractCaption}
+                </figcaption>
+              </figure>
+            )}
+
+            <p className="mb-5">{c.intro.body[0]}</p>
+            <p className="mb-5">{c.intro.body[1]}</p>
+
+            <div className="clear-both" />
+
+            {billboard && (
+              <figure className="md:float-left md:w-[30%] md:mr-10 my-2 mb-8 w-fit max-w-full mx-auto md:mx-0 bg-[#f6f3ec] p-3 shadow-sm">
+                <Image
+                  src={billboard.src}
+                  alt={billboard.alt}
+                  width={billboard.width}
+                  height={billboard.height}
+                  sizes="(min-width: 768px) 30vw, 100vw"
+                  className="block w-full h-auto"
+                />
+                <figcaption className="mt-2 text-sm italic text-slate-500 leading-relaxed">
+                  {c.intro.billboardCaption}
+                </figcaption>
+              </figure>
+            )}
+
+            <p>{c.intro.body[2]}</p>
+
+            <div className="clear-both" />
           </div>
         </div>
       </section>

@@ -19,6 +19,10 @@ export const westContent = {
       "During the late 1950s, Home Savings & Loan developed the area with 290 custom homes on 5,000-square-foot lots. This development featured various mid-century architectural styles with spacious layouts, panoramic views, and cutting-edge built-in amenities. These homes attracted families seeking suburban serenity while remaining close to urban conveniences.",
       "West Laurelwood is distinguished by Spanish street names that carry the title of respect Doña, among them Doña Dorotea Dr., Doña Mema Pl., and Doña Maria Dr. These names connect the neighborhood to Southern California's cultural roots. In 2001, residents successfully petitioned for the correct use of Spanish accents on the street signs.",
     ],
+    // Figure captions for the birth section (this section, not origins).
+    tractCaption: "Tract No. 24676, recorded with the City of Los Angeles.",
+    billboardCaption:
+      "Henry L. Gatz, president of Gateway Homes, with Joe Staller, announcing new homes in Laurelwood, November 27, 1960.",
   },
 
   archival: {
