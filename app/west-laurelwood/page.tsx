@@ -145,40 +145,42 @@ export default function WestLaurelwoodPage() {
 
             <p className="mb-6">{c.intro.body[2]}</p>
 
-            <div className="clear-both" />
-
-            {/* Figure C (Plan 4B/4C elevations, wide): centered block, not
-                floated. The brochure copy + list render full-width below it. */}
-            {renderings && (
-              <figure className="w-fit max-w-full md:max-w-[55rem] mx-auto my-6 bg-[#f6f3ec] p-3 shadow-sm">
-                <Image
-                  src={renderings.src}
-                  alt={renderings.alt}
-                  width={renderings.width}
-                  height={renderings.height}
-                  sizes="(min-width: 768px) 55rem, 100vw"
-                  className="block w-full h-auto"
-                />
-                <figcaption className="mt-2 text-sm italic text-slate-500 leading-relaxed">
-                  {c.intro.elevationsCaption}
-                </figcaption>
-              </figure>
-            )}
-
-            <p className="mb-6">{c.intro.brochureIntro}</p>
-            <ul className="list-disc pl-5 mb-6 space-y-2 marker:text-gold-600">
-              {c.intro.brochureFeatures.map((f, i) => {
-                const idx = f.indexOf(": ");
-                const term = f.slice(0, idx + 1);
-                const rest = f.slice(idx + 1);
-                return (
-                  <li key={i}>
-                    <strong className="font-semibold text-navy-950">{term}</strong>
-                    {rest}
-                  </li>
-                );
-              })}
-            </ul>
+            {/* Figure C (Plan 4B/4C elevations) + brochure copy + feature list in
+                ONE wrapper, placed BEFORE the clear-both so it rises into the
+                middle channel between the still-active floats. w-fit shrinks the
+                wrapper to whatever channel the floats leave (capped at max-w);
+                the paragraph and list are w-full to match the plate width. */}
+            <div className="flow-root w-fit mx-auto max-w-[44rem]">
+              {renderings && (
+                <figure className="mb-6 bg-[#f6f3ec] p-3 shadow-sm">
+                  <Image
+                    src={renderings.src}
+                    alt={renderings.alt}
+                    width={renderings.width}
+                    height={renderings.height}
+                    sizes="(min-width: 768px) 44rem, 100vw"
+                    className="block w-full h-auto"
+                  />
+                  <figcaption className="mt-2 text-sm italic text-slate-500 leading-relaxed">
+                    {c.intro.elevationsCaption}
+                  </figcaption>
+                </figure>
+              )}
+              <p className="w-full mb-6">{c.intro.brochureIntro}</p>
+              <ul className="w-full list-disc pl-5 mb-6 space-y-2 marker:text-gold-600">
+                {c.intro.brochureFeatures.map((f, i) => {
+                  const idx = f.indexOf(": ");
+                  const term = f.slice(0, idx + 1);
+                  const rest = f.slice(idx + 1);
+                  return (
+                    <li key={i}>
+                      <strong className="font-semibold text-navy-950">{term}</strong>
+                      {rest}
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
 
             <div className="clear-both" />
           </div>
