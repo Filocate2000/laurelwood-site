@@ -61,15 +61,16 @@ export default function WestLaurelwoodPage() {
           <span className="gold-rule-dark mb-8" />
 
           <div className="text-lg md:text-xl text-navy-950/75 leading-relaxed">
-            {/* Figure A (tract) desktop copy: floats right, wrapped by p1 + p2 */}
+            {/* Figure A (tract) desktop copy: floats right. Both A and B stay
+                active; paragraphs 1-3 flow through the middle channel. */}
             {tract && (
-              <figure className="hidden md:block md:float-right md:w-[22%] md:ml-10 mb-6 w-fit bg-[#f6f3ec] p-3 shadow-sm">
+              <figure className="hidden md:block md:float-right md:w-[20%] md:ml-10 mb-6 bg-[#f6f3ec] p-3 shadow-sm">
                 <Image
                   src={tract.src}
                   alt={tract.alt}
                   width={tract.width}
                   height={tract.height}
-                  sizes="22vw"
+                  sizes="20vw"
                   className="block w-full h-auto"
                 />
                 <figcaption className="mt-2 text-sm italic text-slate-500 leading-relaxed">
@@ -80,7 +81,7 @@ export default function WestLaurelwoodPage() {
 
             <p className="mb-6">{c.intro.body[0]}</p>
 
-            {/* Figure A (tract) mobile copy: centered block between p1 and p2 */}
+            {/* Figure A (tract) mobile copy: centered block after p1 */}
             {tract && (
               <figure className="md:hidden my-6 w-fit max-w-full mx-auto bg-[#f6f3ec] p-3 shadow-sm">
                 <Image
@@ -97,19 +98,35 @@ export default function WestLaurelwoodPage() {
               </figure>
             )}
 
-            <p className="mb-6">{c.intro.body[1]}</p>
-
-            <div className="clear-both" />
-
-            {/* Figure B (billboard): floats left, wrapped by p3 */}
+            {/* Figure B (billboard) desktop copy: floats left, opposite the
+                tract (no clear-both, so both floats overlap). */}
             {billboard && (
-              <figure className="md:float-left md:w-[26%] md:mr-10 mb-6 w-fit max-w-full mx-auto md:mx-0 bg-[#f6f3ec] p-3 shadow-sm">
+              <figure className="hidden md:block md:float-left md:w-[24%] md:mr-10 mb-6 bg-[#f6f3ec] p-3 shadow-sm">
                 <Image
                   src={billboard.src}
                   alt={billboard.alt}
                   width={billboard.width}
                   height={billboard.height}
-                  sizes="(min-width: 768px) 26vw, 100vw"
+                  sizes="24vw"
+                  className="block w-full h-auto"
+                />
+                <figcaption className="mt-2 text-sm italic text-slate-500 leading-relaxed">
+                  {c.intro.billboardCaption}
+                </figcaption>
+              </figure>
+            )}
+
+            <p className="mb-6">{c.intro.body[1]}</p>
+
+            {/* Figure B (billboard) mobile copy: centered block after p2 */}
+            {billboard && (
+              <figure className="md:hidden my-6 w-fit max-w-full mx-auto bg-[#f6f3ec] p-3 shadow-sm">
+                <Image
+                  src={billboard.src}
+                  alt={billboard.alt}
+                  width={billboard.width}
+                  height={billboard.height}
+                  sizes="100vw"
                   className="block w-full h-auto"
                 />
                 <figcaption className="mt-2 text-sm italic text-slate-500 leading-relaxed">

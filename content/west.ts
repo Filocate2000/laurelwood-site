@@ -22,7 +22,7 @@ export const westContent = {
     // Figure captions for the birth section (this section, not origins).
     tractCaption: "Tract No. 24676, recorded with the City of Los Angeles.",
     billboardCaption:
-      "Henry L. Gatz, president of Gateway Homes, with Joe Staller, announcing new homes in Laurelwood, November 27, 1960.",
+      'Proudly displaying a sign announcing the construction of 20 new homes in "Laurelwood" by Gateway Homes is Henry L. Gatz, president of the firm, with Joe Staller from the Southern California Gas Company observing. This event took place on November 27, 1960, in Studio City.',
     elevationsCaption: "Model elevations: Plan 4B and Plan 4C.",
     // New brochure copy (verbatim). The list lead-ins are bolded at render time
     // by splitting on the first colon; no words are changed.
