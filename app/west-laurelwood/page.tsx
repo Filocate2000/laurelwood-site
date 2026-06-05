@@ -32,11 +32,18 @@ export default function WestLaurelwoodPage() {
   const tract = photo(c.origins.tractMap);
   const freewayMap = photo(c.freewayDefeat.map);
   const sign = photo(c.dona.sign);
+  const kidsWaiting = photo("neighborhood-children"); // growth band: floats right, top of the stack
+  const kidsOnBus = photo("school-bus"); // growth band: floats right, stacks under the first
 
   // Desktop display height of the Tract No. 24676 document (Figure A). The
   // width follows the aspect ratio. Tune the 26rem here. (Tailwind needs the
   // literal class, so keep md:h-[...] inline in this string.)
   const TRACT_IMG_CLASS = "block h-auto md:h-[26rem] w-auto";
+
+  // Desktop display height of the two stacked growth-band photos. The width
+  // follows the aspect ratio. Step this down (12rem, 11rem) if the stacked pair
+  // ever runs below the last paragraph. (Keep the literal md:h-[...] class here.)
+  const GROWTH_IMG_CLASS = "block h-auto md:h-[13rem] w-auto";
 
   return (
     <>
@@ -253,7 +260,12 @@ export default function WestLaurelwoodPage() {
         </div>
       </section>
 
-      {/* Growth band (NAVY): text only */}
+      {/* Growth band (NAVY): the two kids/bus photos float right and stack;
+          the two paragraphs wrap to their left. Heights are pinned (not widths)
+          so the stacked pair stays within the text block and never runs below
+          the last paragraph. On mobile the floats drop to centered blocks
+          between the paragraphs, in reading order. Captions sit on the cream
+          plates, so they keep the dark muted color (text-slate-500). */}
       <section className="bg-navy-950 py-20 md:py-28 overflow-hidden">
         <div className="editorial max-w-3xl">
           <p className="eyebrow text-gold-500 mb-4">{c.growth.eyebrow}</p>
@@ -262,11 +274,82 @@ export default function WestLaurelwoodPage() {
           </h2>
           <span className="gold-rule mb-8" />
           <div className="text-lg text-ink-100 leading-relaxed">
-            {c.growth.body.map((t, i) => (
-              <p key={i} className="mb-5 last:mb-0">
-                {t}
-              </p>
-            ))}
+            {/* Figure 1 (kids waiting) desktop: floats right at the top. */}
+            {kidsWaiting && (
+              <figure className="hidden md:block md:float-right md:ml-10 mb-6 w-fit max-w-full bg-[#f6f3ec] p-3 shadow-sm">
+                <Image
+                  src={kidsWaiting.src}
+                  alt={kidsWaiting.alt}
+                  width={kidsWaiting.width}
+                  height={kidsWaiting.height}
+                  sizes="320px"
+                  className={GROWTH_IMG_CLASS}
+                />
+                {/* w-0 + min-w-full holds the caption to the image width without
+                    widening the shrink-to-fit plate past the photo. */}
+                <figcaption className="mt-2 w-0 min-w-full text-sm italic text-slate-500 leading-snug">
+                  {kidsWaiting.caption}
+                </figcaption>
+              </figure>
+            )}
+
+            <p className="mb-5">{c.growth.body[0]}</p>
+
+            {/* Figure 1 mobile: centered block after the first paragraph. */}
+            {kidsWaiting && (
+              <figure className="md:hidden my-6 w-fit max-w-full mx-auto bg-[#f6f3ec] p-3 shadow-sm">
+                <Image
+                  src={kidsWaiting.src}
+                  alt={kidsWaiting.alt}
+                  width={kidsWaiting.width}
+                  height={kidsWaiting.height}
+                  sizes="100vw"
+                  className="block w-full h-auto"
+                />
+                <figcaption className="mt-2 text-sm italic text-slate-500 leading-snug">
+                  {kidsWaiting.caption}
+                </figcaption>
+              </figure>
+            )}
+
+            {/* Figure 2 (kids on the bus) desktop: floats right, stacks under
+                Figure 1 (placed mid-text so it rises beside the prose). */}
+            {kidsOnBus && (
+              <figure className="hidden md:block md:float-right md:ml-10 mb-6 w-fit max-w-full bg-[#f6f3ec] p-3 shadow-sm">
+                <Image
+                  src={kidsOnBus.src}
+                  alt={kidsOnBus.alt}
+                  width={kidsOnBus.width}
+                  height={kidsOnBus.height}
+                  sizes="320px"
+                  className={GROWTH_IMG_CLASS}
+                />
+                <figcaption className="mt-2 w-0 min-w-full text-sm italic text-slate-500 leading-snug">
+                  {kidsOnBus.caption}
+                </figcaption>
+              </figure>
+            )}
+
+            <p className="mb-5 last:mb-0">{c.growth.body[1]}</p>
+
+            {/* Figure 2 mobile: centered block after the second paragraph. */}
+            {kidsOnBus && (
+              <figure className="md:hidden my-6 w-fit max-w-full mx-auto bg-[#f6f3ec] p-3 shadow-sm">
+                <Image
+                  src={kidsOnBus.src}
+                  alt={kidsOnBus.alt}
+                  width={kidsOnBus.width}
+                  height={kidsOnBus.height}
+                  sizes="100vw"
+                  className="block w-full h-auto"
+                />
+                <figcaption className="mt-2 text-sm italic text-slate-500 leading-snug">
+                  {kidsOnBus.caption}
+                </figcaption>
+              </figure>
+            )}
+
+            <div className="clear-both" />
           </div>
         </div>
       </section>
