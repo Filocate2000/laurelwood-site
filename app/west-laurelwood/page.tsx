@@ -204,7 +204,7 @@ export default function WestLaurelwoodPage() {
                 </p>
               ))}
             </div>
-            <div className="mt-10 mx-auto w-full md:max-w-[26rem]">
+            <div className="mt-10 mx-auto w-full max-w-[52rem]">
               <SelfHostedVideo src={film.src} caption={c.film.caption} tone="onWhite" />
             </div>
           </div>
