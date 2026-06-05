@@ -33,6 +33,11 @@ export default function WestLaurelwoodPage() {
   const freewayMap = photo(c.freewayDefeat.map);
   const sign = photo(c.dona.sign);
 
+  // Desktop display height of the Tract No. 24676 document (Figure A). The
+  // width follows the aspect ratio. Tune the 26rem here. (Tailwind needs the
+  // literal class, so keep md:h-[...] inline in this string.)
+  const TRACT_IMG_CLASS = "block h-auto md:h-[26rem] w-auto";
+
   return (
     <>
       <NeighborhoodJsonLd name="West Laurelwood" description={DESCRIPTION} path="/west-laurelwood" />
@@ -64,16 +69,19 @@ export default function WestLaurelwoodPage() {
             {/* Figure A (tract) desktop copy: floats right. Both A and B stay
                 active; paragraphs 1-3 flow through the middle channel. */}
             {tract && (
-              <figure className="hidden md:block md:float-right md:w-[20%] md:ml-10 mb-6 bg-[#f6f3ec] p-3 shadow-sm">
+              <figure className="hidden md:block md:float-right md:ml-[100px] mb-6 w-fit max-w-full bg-[#f6f3ec] p-3 shadow-sm">
                 <Image
                   src={tract.src}
                   alt={tract.alt}
                   width={tract.width}
                   height={tract.height}
-                  sizes="20vw"
-                  className="block w-full h-auto"
+                  sizes="320px"
+                  className={TRACT_IMG_CLASS}
                 />
-                <figcaption className="mt-2 text-sm italic text-slate-500 leading-relaxed">
+                {/* w-0 + min-w-full makes the caption fill the image width and
+                    wrap, without widening the shrink-to-fit plate past the image
+                    (plain max-w-full cannot constrain a w-fit figure). */}
+                <figcaption className="mt-2 w-0 min-w-full text-sm italic text-slate-500 leading-relaxed">
                   {c.intro.tractCaption}
                 </figcaption>
               </figure>
@@ -139,16 +147,16 @@ export default function WestLaurelwoodPage() {
 
             <div className="clear-both" />
 
-            {/* Figure C (Plan 4B/4C elevations, wide): floats right, wrapped by
-                the brochure copy + features list */}
+            {/* Figure C (Plan 4B/4C elevations, wide): centered block, not
+                floated. The brochure copy + list render full-width below it. */}
             {renderings && (
-              <figure className="md:float-right md:w-[38%] md:ml-10 mb-6 w-fit max-w-full mx-auto md:mx-0 bg-[#f6f3ec] p-3 shadow-sm">
+              <figure className="w-fit max-w-full md:max-w-[55rem] mx-auto my-6 bg-[#f6f3ec] p-3 shadow-sm">
                 <Image
                   src={renderings.src}
                   alt={renderings.alt}
                   width={renderings.width}
                   height={renderings.height}
-                  sizes="(min-width: 768px) 38vw, 100vw"
+                  sizes="(min-width: 768px) 55rem, 100vw"
                   className="block w-full h-auto"
                 />
                 <figcaption className="mt-2 text-sm italic text-slate-500 leading-relaxed">
