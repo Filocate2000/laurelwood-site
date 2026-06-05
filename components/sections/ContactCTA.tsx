@@ -1,10 +1,18 @@
 import Link from "next/link";
 
-export function ContactCTA({ tone = "white" }: { tone?: "white" | "navy" }) {
+export function ContactCTA({
+  tone = "white",
+  width = "contained",
+}: {
+  tone?: "white" | "navy";
+  width?: "contained" | "full";
+}) {
   const navy = tone === "navy";
+  const container =
+    width === "full" ? "w-full px-6 md:px-16 text-center" : "editorial text-center max-w-3xl";
   return (
     <section className={`${navy ? "bg-navy-950" : "bg-white"} py-20 md:py-28`}>
-      <div className="editorial text-center max-w-3xl">
+      <div className={container}>
         <p className={`eyebrow mb-6 ${navy ? "text-gold-500" : "text-gold-600"}`}>Let&apos;s Talk</p>
         <h2
           className={`font-display font-light text-4xl md:text-5xl leading-tight mb-8 ${
