@@ -187,15 +187,39 @@ export default function WestLaurelwoodPage() {
         </div>
       </section>
 
-      {/* Archive band (WHITE): one floated ad + a centered row of the rest */}
-      <section className="bg-white py-20 md:py-28 overflow-hidden">
+      {/* On the Big Screen band (WHITE): the ONLY content in this band. The two
+          paragraphs run full width; the clip is centered below them. */}
+      {film && (
+        <section className="bg-white py-20 md:py-28">
+          <div className="w-full px-6 md:px-16">
+            <p className="eyebrow text-gold-600 mb-4">{c.film.eyebrow}</p>
+            <h2 className="font-display font-light text-3xl md:text-4xl text-navy-950 mb-5">
+              {c.film.heading}
+            </h2>
+            <span className="gold-rule-dark mb-8" />
+            <div className="text-lg md:text-xl text-navy-950/75 leading-relaxed">
+              {c.film.body.map((t, i) => (
+                <p key={i} className="mb-6 last:mb-0">
+                  {t}
+                </p>
+              ))}
+            </div>
+            <div className="mt-10 mx-auto w-full md:max-w-[26rem]">
+              <SelfHostedVideo src={film.src} caption={c.film.caption} tone="onWhite" />
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Archive band (NAVY): one floated ad + a centered row of the rest */}
+      <section className="bg-navy-950 py-20 md:py-28 overflow-hidden">
         <div className="editorial max-w-4xl">
-          <p className="eyebrow text-gold-600 mb-4">{c.archival.eyebrow}</p>
-          <h2 className="font-display font-light text-3xl md:text-4xl text-navy-950 mb-5">
+          <p className="eyebrow text-gold-500 mb-4">{c.archival.eyebrow}</p>
+          <h2 className="font-display font-light text-3xl md:text-4xl text-white mb-5">
             {c.archival.heading}
           </h2>
-          <span className="gold-rule-dark mb-8" />
-          <div className="text-lg text-navy-950/75 leading-relaxed">
+          <span className="gold-rule mb-8" />
+          <div className="text-lg text-ink-100 leading-relaxed">
             {motherInLaw && <FloatFigure photo={motherInLaw} float="right" width="md:w-[42%]" />}
             <p>{c.archival.intro}</p>
             <div className="clear-both" />
@@ -207,15 +231,15 @@ export default function WestLaurelwoodPage() {
         </div>
       </section>
 
-      {/* Origins band (NAVY): float billboard, row the renderings + tract map */}
-      <section className="bg-navy-950 py-20 md:py-28 overflow-hidden">
+      {/* Origins band (WHITE): float billboard, row the renderings + tract map */}
+      <section className="bg-white py-20 md:py-28 overflow-hidden">
         <div className="editorial max-w-4xl">
-          <p className="eyebrow text-gold-500 mb-4">{c.origins.eyebrow}</p>
-          <h2 className="font-display font-light text-3xl md:text-4xl text-white mb-5">
+          <p className="eyebrow text-gold-600 mb-4">{c.origins.eyebrow}</p>
+          <h2 className="font-display font-light text-3xl md:text-4xl text-navy-950 mb-5">
             {c.origins.heading}
           </h2>
-          <span className="gold-rule mb-8" />
-          <div className="text-lg text-ink-100 leading-relaxed">
+          <span className="gold-rule-dark mb-8" />
+          <div className="text-lg text-navy-950/75 leading-relaxed">
             {billboard && <FloatFigure photo={billboard} float="left" width="md:w-[38%]" />}
             <p>{c.origins.intro}</p>
             <div className="clear-both" />
@@ -229,15 +253,15 @@ export default function WestLaurelwoodPage() {
         </div>
       </section>
 
-      {/* Growth band (WHITE): text only */}
-      <section className="bg-white py-20 md:py-28 overflow-hidden">
+      {/* Growth band (NAVY): text only */}
+      <section className="bg-navy-950 py-20 md:py-28 overflow-hidden">
         <div className="editorial max-w-3xl">
-          <p className="eyebrow text-gold-600 mb-4">{c.growth.eyebrow}</p>
-          <h2 className="font-display font-light text-3xl md:text-4xl text-navy-950 mb-5">
+          <p className="eyebrow text-gold-500 mb-4">{c.growth.eyebrow}</p>
+          <h2 className="font-display font-light text-3xl md:text-4xl text-white mb-5">
             {c.growth.heading}
           </h2>
-          <span className="gold-rule-dark mb-8" />
-          <div className="text-lg text-navy-950/75 leading-relaxed">
+          <span className="gold-rule mb-8" />
+          <div className="text-lg text-ink-100 leading-relaxed">
             {c.growth.body.map((t, i) => (
               <p key={i} className="mb-5 last:mb-0">
                 {t}
@@ -246,30 +270,6 @@ export default function WestLaurelwoodPage() {
           </div>
         </div>
       </section>
-
-      {/* On the Big Screen band (NAVY): clip floats right, copy wraps */}
-      {film && (
-        <section className="bg-navy-950 py-20 md:py-28 overflow-hidden">
-          <div className="editorial max-w-4xl">
-            <p className="eyebrow text-gold-500 mb-4">{c.film.eyebrow}</p>
-            <h2 className="font-display font-light text-3xl md:text-4xl text-white mb-5">
-              {c.film.heading}
-            </h2>
-            <span className="gold-rule mb-8" />
-            <div className="text-lg text-ink-100 leading-relaxed">
-              <div className="w-full md:w-[44%] my-6 md:my-2 mx-auto md:mx-0 md:float-right md:ml-8">
-                <SelfHostedVideo src={film.src} caption={c.film.caption} tone="onNavy" />
-              </div>
-              {c.film.body.map((t, i) => (
-                <p key={i} className="mb-5 last:mb-0">
-                  {t}
-                </p>
-              ))}
-              <div className="clear-both" />
-            </div>
-          </div>
-        </section>
-      )}
 
       {/* 1971 Freeway Defeat band (WHITE): study map floats right, shields under its caption */}
       <section className="bg-white py-20 md:py-28 overflow-hidden">
