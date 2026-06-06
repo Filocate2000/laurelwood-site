@@ -25,7 +25,7 @@ export default function BuyingPage() {
         subtitle="What you need to know about a competitive, sought-after market."
       />
       <section className="bg-white py-20 md:py-28">
-        <div className="editorial">
+        <div className="w-full px-6 md:px-16">
           <Prose variant="light">{body}</Prose>
         </div>
       </section>

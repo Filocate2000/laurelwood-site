@@ -41,7 +41,7 @@ export default function HomeownersPage() {
         subtitle="Practical resources for the people who live in Laurelwood."
       />
       <section className="bg-white py-20 md:py-28">
-        <div className="editorial">
+        <div className="w-full px-6 md:px-16">
           <div className="grid md:grid-cols-3 gap-8">
             {SUBPAGES.map((p) => (
               <Link

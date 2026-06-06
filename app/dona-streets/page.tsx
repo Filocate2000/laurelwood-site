@@ -31,7 +31,7 @@ export default function DonaStreetsPage() {
         subtitle={c.subtitle}
       />
       <section className="bg-white py-20 md:py-28">
-        <div className="editorial">
+        <div className="w-full px-6 md:px-16">
           <div className="editorial-prose editorial-prose-light max-w-prose">
             {c.body.map((p, i) => (
               <p key={i}>{p}</p>

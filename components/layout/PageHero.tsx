@@ -74,7 +74,14 @@ export function PageHero({
       />
       <div className="relative h-full flex items-end pb-16 md:pb-20">
         <div className="w-full text-center px-6">
-          {eyebrow && <div className="eyebrow text-gold-500 mb-4">{eyebrow}</div>}
+          {eyebrow && (
+            <div
+              className="text-[11px] font-medium text-gold-500 mb-4"
+              style={{ letterSpacing: "0.18em" }}
+            >
+              {eyebrow}
+            </div>
+          )}
           <h1
             className="font-serif text-4xl md:text-6xl font-normal text-white"
             style={{ letterSpacing: "-0.01em" }}

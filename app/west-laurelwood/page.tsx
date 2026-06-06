@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
+import { Fragment } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { PageHero } from "@/components/layout/PageHero";
 import { FloatFigure } from "@/components/FloatFigure";
+import { FreewayMapFigure } from "@/components/FreewayMapFigure";
 import { SelfHostedVideo } from "@/components/SelfHostedVideo";
 import { ContactCTA } from "@/components/sections/ContactCTA";
 import { NeighborhoodJsonLd } from "@/components/seo/JsonLd";
@@ -29,6 +31,10 @@ export default function WestLaurelwoodPage() {
   const tract = photo(c.origins.tractMap);
   const freewayMap = photo(c.freewayDefeat.map);
   const sign = photo(c.dona.sign);
+  const cannellAd = photo("cannell-chaffin-sensations-not-words-ad"); // Wilacre band: floats left
+  const motherInLawAd = photo("cannell-chaffin-mother-in-law-ad"); // Today band: centered block, natural size
+  const belAirAd = photo("gateway-belair-ad-full"); // Fryman band: floats left beside p1 (full uncropped scan)
+  const realtyAd = photo("april-13-1966-east-laurelwood-ad"); // Fryman band: floats left beside p2
   const kidsWaiting = photo("neighborhood-children"); // growth band: floats right, top of the stack
   const kidsOnBus = photo("school-bus"); // growth band: floats right, stacks under the first
 
@@ -73,7 +79,7 @@ export default function WestLaurelwoodPage() {
             {/* Figure A (tract) desktop copy: floats right. Both A and B stay
                 active; paragraphs 1-3 flow through the middle channel. */}
             {tract && (
-              <figure className="hidden md:block md:float-right md:ml-[100px] mb-6 w-fit max-w-full bg-[#f6f3ec] p-3 shadow-sm">
+              <figure className="hidden md:block md:float-right md:ml-[100px] mb-6 w-fit max-w-full bg-[#f6f3ec] border border-gold-500/50 p-3 shadow-sm">
                 <Image
                   src={tract.src}
                   alt={tract.alt}
@@ -85,7 +91,7 @@ export default function WestLaurelwoodPage() {
                 {/* w-0 + min-w-full makes the caption fill the image width and
                     wrap, without widening the shrink-to-fit plate past the image
                     (plain max-w-full cannot constrain a w-fit figure). */}
-                <figcaption className="mt-2 w-0 min-w-full text-sm italic text-slate-500 leading-relaxed">
+                <figcaption className="mt-2 w-0 min-w-full text-center text-sm italic text-slate-500 leading-relaxed">
                   {c.intro.tractCaption}
                 </figcaption>
               </figure>
@@ -95,7 +101,7 @@ export default function WestLaurelwoodPage() {
 
             {/* Figure A (tract) mobile copy: centered block after p1 */}
             {tract && (
-              <figure className="md:hidden my-6 w-fit max-w-full mx-auto bg-[#f6f3ec] p-3 shadow-sm">
+              <figure className="md:hidden my-6 w-fit max-w-full mx-auto bg-[#f6f3ec] border border-gold-500/50 p-3 shadow-sm">
                 <Image
                   src={tract.src}
                   alt={tract.alt}
@@ -104,7 +110,7 @@ export default function WestLaurelwoodPage() {
                   sizes="100vw"
                   className="block w-full h-auto"
                 />
-                <figcaption className="mt-2 text-sm italic text-slate-500 leading-relaxed">
+                <figcaption className="mt-2 text-center text-sm italic text-slate-500 leading-relaxed">
                   {c.intro.tractCaption}
                 </figcaption>
               </figure>
@@ -113,7 +119,7 @@ export default function WestLaurelwoodPage() {
             {/* Figure B (billboard) desktop copy: floats left, opposite the
                 tract (no clear-both, so both floats overlap). */}
             {billboard && (
-              <figure className="hidden md:block md:float-left md:w-[24%] md:mr-10 mb-6 bg-[#f6f3ec] p-3 shadow-sm">
+              <figure className="hidden md:block md:float-left md:w-[24%] md:mr-10 mb-6 bg-[#f6f3ec] border border-gold-500/50 p-3 shadow-sm">
                 <Image
                   src={billboard.src}
                   alt={billboard.alt}
@@ -122,7 +128,7 @@ export default function WestLaurelwoodPage() {
                   sizes="24vw"
                   className="block w-full h-auto"
                 />
-                <figcaption className="mt-2 text-sm italic text-slate-500 leading-relaxed">
+                <figcaption className="mt-2 text-center text-sm italic text-slate-500 leading-relaxed">
                   {c.intro.billboardCaption}
                 </figcaption>
               </figure>
@@ -132,7 +138,7 @@ export default function WestLaurelwoodPage() {
 
             {/* Figure B (billboard) mobile copy: centered block after p2 */}
             {billboard && (
-              <figure className="md:hidden my-6 w-fit max-w-full mx-auto bg-[#f6f3ec] p-3 shadow-sm">
+              <figure className="md:hidden my-6 w-fit max-w-full mx-auto bg-[#f6f3ec] border border-gold-500/50 p-3 shadow-sm">
                 <Image
                   src={billboard.src}
                   alt={billboard.alt}
@@ -141,7 +147,7 @@ export default function WestLaurelwoodPage() {
                   sizes="100vw"
                   className="block w-full h-auto"
                 />
-                <figcaption className="mt-2 text-sm italic text-slate-500 leading-relaxed">
+                <figcaption className="mt-2 text-center text-sm italic text-slate-500 leading-relaxed">
                   {c.intro.billboardCaption}
                 </figcaption>
               </figure>
@@ -153,7 +159,7 @@ export default function WestLaurelwoodPage() {
                 rises into the middle channel between the still-active floats. */}
             <div className="flow-root w-fit mx-auto max-w-[31rem]">
               {renderings && (
-                <figure className="mb-6 bg-[#f6f3ec] p-3 shadow-sm">
+                <figure className="mb-6 bg-[#f6f3ec] border border-gold-500/50 p-3 shadow-sm">
                   <Image
                     src={renderings.src}
                     alt={renderings.alt}
@@ -162,7 +168,7 @@ export default function WestLaurelwoodPage() {
                     sizes="(min-width: 768px) 31rem, 100vw"
                     className="block w-full h-auto"
                   />
-                  <figcaption className="mt-2 text-sm italic text-slate-500 leading-relaxed">
+                  <figcaption className="mt-2 text-center text-sm italic text-slate-500 leading-relaxed">
                     {c.intro.elevationsCaption}
                   </figcaption>
                 </figure>
@@ -231,7 +237,7 @@ export default function WestLaurelwoodPage() {
           <div className="text-lg text-ink-100 leading-relaxed">
             {/* Figure 1 (kids waiting) desktop: floats right at the top. */}
             {kidsWaiting && (
-              <figure className="hidden md:block md:float-right md:ml-10 mb-6 w-fit max-w-full bg-[#f6f3ec] p-3 shadow-sm">
+              <figure className="hidden md:block md:float-right md:ml-10 mb-6 w-fit max-w-full bg-[#f6f3ec] border border-gold-500/50 p-3 shadow-sm">
                 <Image
                   src={kidsWaiting.src}
                   alt={kidsWaiting.alt}
@@ -242,7 +248,7 @@ export default function WestLaurelwoodPage() {
                 />
                 {/* w-0 + min-w-full holds the caption to the image width without
                     widening the shrink-to-fit plate past the photo. */}
-                <figcaption className="mt-2 w-0 min-w-full text-sm italic text-slate-500 leading-snug">
+                <figcaption className="mt-2 w-0 min-w-full text-center text-sm italic text-slate-500 leading-snug">
                   {kidsWaiting.caption}
                 </figcaption>
               </figure>
@@ -252,7 +258,7 @@ export default function WestLaurelwoodPage() {
 
             {/* Figure 1 mobile: centered block after the first paragraph. */}
             {kidsWaiting && (
-              <figure className="md:hidden my-6 w-fit max-w-full mx-auto bg-[#f6f3ec] p-3 shadow-sm">
+              <figure className="md:hidden my-6 w-fit max-w-full mx-auto bg-[#f6f3ec] border border-gold-500/50 p-3 shadow-sm">
                 <Image
                   src={kidsWaiting.src}
                   alt={kidsWaiting.alt}
@@ -261,7 +267,7 @@ export default function WestLaurelwoodPage() {
                   sizes="100vw"
                   className="block w-full h-auto"
                 />
-                <figcaption className="mt-2 text-sm italic text-slate-500 leading-snug">
+                <figcaption className="mt-2 text-center text-sm italic text-slate-500 leading-snug">
                   {kidsWaiting.caption}
                 </figcaption>
               </figure>
@@ -270,7 +276,7 @@ export default function WestLaurelwoodPage() {
             {/* Figure 2 (kids on the bus) desktop: floats right, stacks under
                 Figure 1 (placed mid-text so it rises beside the prose). */}
             {kidsOnBus && (
-              <figure className="hidden md:block md:float-right md:ml-10 mb-6 w-fit max-w-full bg-[#f6f3ec] p-3 shadow-sm">
+              <figure className="hidden md:block md:float-right md:ml-10 mb-6 w-fit max-w-full bg-[#f6f3ec] border border-gold-500/50 p-3 shadow-sm">
                 <Image
                   src={kidsOnBus.src}
                   alt={kidsOnBus.alt}
@@ -279,7 +285,7 @@ export default function WestLaurelwoodPage() {
                   sizes="320px"
                   className={GROWTH_IMG_CLASS}
                 />
-                <figcaption className="mt-2 w-0 min-w-full text-sm italic text-slate-500 leading-snug">
+                <figcaption className="mt-2 w-0 min-w-full text-center text-sm italic text-slate-500 leading-snug">
                   {kidsOnBus.caption}
                 </figcaption>
               </figure>
@@ -289,7 +295,7 @@ export default function WestLaurelwoodPage() {
 
             {/* Figure 2 mobile: centered block after the second paragraph. */}
             {kidsOnBus && (
-              <figure className="md:hidden my-6 w-fit max-w-full mx-auto bg-[#f6f3ec] p-3 shadow-sm">
+              <figure className="md:hidden my-6 w-fit max-w-full mx-auto bg-[#f6f3ec] border border-gold-500/50 p-3 shadow-sm">
                 <Image
                   src={kidsOnBus.src}
                   alt={kidsOnBus.alt}
@@ -298,7 +304,7 @@ export default function WestLaurelwoodPage() {
                   sizes="100vw"
                   className="block w-full h-auto"
                 />
-                <figcaption className="mt-2 text-sm italic text-slate-500 leading-snug">
+                <figcaption className="mt-2 text-center text-sm italic text-slate-500 leading-snug">
                   {kidsOnBus.caption}
                 </figcaption>
               </figure>
@@ -319,29 +325,7 @@ export default function WestLaurelwoodPage() {
           <span className="gold-rule-dark mb-8" />
           <div className="text-lg text-navy-950/75 leading-relaxed">
             {freewayMap && (
-              <FloatFigure
-                photo={freewayMap}
-                float="right"
-                width="md:w-[44%]"
-                href={freewayMap.src}
-                caption={c.freewayDefeat.mapCaption}
-              >
-                <div className="mt-3 flex items-center gap-4">
-                  {c.freewayDefeat.shields.map((id) => {
-                    const s = photo(id);
-                    return s ? (
-                      <Image
-                        key={id}
-                        src={s.src}
-                        alt={s.alt}
-                        width={s.width}
-                        height={s.height}
-                        className="h-auto w-[100px]"
-                      />
-                    ) : null;
-                  })}
-                </div>
-              </FloatFigure>
+              <FreewayMapFigure map={freewayMap} caption={c.freewayDefeat.mapCaption} />
             )}
             {c.freewayDefeat.body.map((t, i) => (
               <p key={i} className="mb-5 last:mb-0">
@@ -362,11 +346,47 @@ export default function WestLaurelwoodPage() {
           </h2>
           <span className="gold-rule mb-8" />
           <div className="text-lg text-ink-100 leading-relaxed">
+            {/* Cannell & Chaffin model-home ad: desktop floats LEFT, the prose
+                wraps to its right (opposite the Freeway Defeat map above, which
+                floats right). The caption sits on the cream plate, so it stays
+                dark-muted even on this navy band. */}
+            {cannellAd && (
+              <figure className="hidden md:block md:float-left md:mr-10 mb-6 w-fit max-w-full bg-[#f6f3ec] border border-gold-500/50 p-3 shadow-sm">
+                <Image
+                  src={cannellAd.src}
+                  alt={cannellAd.alt}
+                  width={cannellAd.width}
+                  height={cannellAd.height}
+                  sizes="(min-width: 768px) 16rem, 100vw"
+                  className="block h-auto md:h-[16rem] w-auto"
+                />
+                <figcaption className="mt-2 w-0 min-w-full text-center text-sm italic text-slate-500 leading-relaxed">
+                  {cannellAd.caption}
+                </figcaption>
+              </figure>
+            )}
             {c.preservation.body.map((t, i) => (
-              <p key={i} className="mb-5 last:mb-0">
-                {t}
-              </p>
+              <Fragment key={i}>
+                <p className="mb-5 last:mb-0">{t}</p>
+                {/* Mobile copy: float off, centered after the first paragraph */}
+                {i === 0 && cannellAd && (
+                  <figure className="md:hidden my-6 w-fit max-w-full mx-auto bg-[#f6f3ec] border border-gold-500/50 p-3 shadow-sm">
+                    <Image
+                      src={cannellAd.src}
+                      alt={cannellAd.alt}
+                      width={cannellAd.width}
+                      height={cannellAd.height}
+                      sizes="100vw"
+                      className="block w-full h-auto"
+                    />
+                    <figcaption className="mt-2 text-center text-sm italic text-slate-500 leading-relaxed">
+                      {cannellAd.caption}
+                    </figcaption>
+                  </figure>
+                )}
+              </Fragment>
             ))}
+            <div className="clear-both" />
           </div>
         </div>
       </section>
@@ -381,52 +401,140 @@ export default function WestLaurelwoodPage() {
           <span className="gold-rule-dark mb-8" />
           <div className="text-lg text-navy-950/75 leading-relaxed">
             {c.frymanRoad.body.map((t, i) => (
-              <p key={i} className="mb-5 last:mb-0">
-                {t}
-              </p>
+              <Fragment key={i}>
+                {/* Bel-Air ad (A): desktop floats LEFT beside p1. Tall portrait,
+                    height-pinned with w/h-auto so the whole ad shows uncropped.
+                    Caption on the cream plate stays dark-muted. */}
+                {i === 0 && belAirAd && (
+                  <figure className="hidden md:block md:float-left md:mr-10 mb-6 w-fit max-w-full bg-[#f6f3ec] border border-gold-500/50 p-3 shadow-sm">
+                    <Image
+                      src={belAirAd.src}
+                      alt={belAirAd.alt}
+                      width={belAirAd.width}
+                      height={belAirAd.height}
+                      sizes="(min-width: 768px) 26rem, 100vw"
+                      className="mx-auto block md:h-[26rem] w-auto h-auto"
+                    />
+                    <figcaption className="mt-2 w-0 min-w-full text-center text-sm italic text-slate-500 leading-relaxed">
+                      Laurelwood advertised as the Bel-Air of the Valley.
+                    </figcaption>
+                  </figure>
+                )}
+                {/* Laurelwood Realty listing ad (B): desktop floats RIGHT beside p2,
+                    mirroring A. Same height-pin + w/h-auto, so it shows uncropped. */}
+                {i === 1 && realtyAd && (
+                  <figure className="hidden md:block md:float-right md:ml-10 mb-6 w-fit max-w-full bg-[#f6f3ec] border border-gold-500/50 p-3 shadow-sm">
+                    <Image
+                      src={realtyAd.src}
+                      alt={realtyAd.alt}
+                      width={realtyAd.width}
+                      height={realtyAd.height}
+                      sizes="(min-width: 768px) 22rem, 100vw"
+                      className="mx-auto block md:h-[18rem] w-auto h-auto"
+                    />
+                    <figcaption className="mt-2 w-0 min-w-full text-center text-sm italic text-slate-500 leading-relaxed">
+                      Laurelwood Realty Co. listing ad, April 13, 1966.
+                    </figcaption>
+                  </figure>
+                )}
+                <p className="mb-5 last:mb-0">{t}</p>
+                {/* Mobile copies: floats off, centered after each paragraph
+                    (order: heading, p1, ad A, p2, ad B). */}
+                {i === 0 && belAirAd && (
+                  <figure className="md:hidden my-6 w-fit max-w-full mx-auto bg-[#f6f3ec] border border-gold-500/50 p-3 shadow-sm">
+                    <Image
+                      src={belAirAd.src}
+                      alt={belAirAd.alt}
+                      width={belAirAd.width}
+                      height={belAirAd.height}
+                      sizes="100vw"
+                      className="block w-full h-auto"
+                    />
+                    <figcaption className="mt-2 text-center text-sm italic text-slate-500 leading-relaxed">
+                      Laurelwood advertised as the Bel-Air of the Valley.
+                    </figcaption>
+                  </figure>
+                )}
+                {i === 1 && realtyAd && (
+                  <figure className="md:hidden my-6 w-fit max-w-full mx-auto bg-[#f6f3ec] border border-gold-500/50 p-3 shadow-sm">
+                    <Image
+                      src={realtyAd.src}
+                      alt={realtyAd.alt}
+                      width={realtyAd.width}
+                      height={realtyAd.height}
+                      sizes="100vw"
+                      className="block w-full h-auto"
+                    />
+                    <figcaption className="mt-2 text-center text-sm italic text-slate-500 leading-relaxed">
+                      Laurelwood Realty Co. listing ad, April 13, 1966.
+                    </figcaption>
+                  </figure>
+                )}
+              </Fragment>
             ))}
+            <div className="clear-both" />
           </div>
         </div>
       </section>
 
-      {/* Doña band (NAVY): Cultural Legacy, sign floats right, copy wraps */}
+      {/* West Laurelwood Today band (NAVY): text only */}
       <section className="bg-navy-950 py-20 md:py-28 overflow-hidden">
         <div className="w-full px-6 md:px-16">
-          <p className="eyebrow text-gold-500 mb-4">{c.dona.eyebrow}</p>
+          <p className="eyebrow text-gold-500 mb-4">{c.today.eyebrow}</p>
           <h2 className="font-display font-light text-3xl md:text-4xl text-white mb-5">
-            {c.dona.heading}
+            {c.today.heading}
           </h2>
           <span className="gold-rule mb-8" />
           <div className="text-lg text-ink-100 leading-relaxed">
+            {c.today.body.map((t, i) => (
+              <p key={i} className="mb-5 last:mb-0">
+                {t}
+              </p>
+            ))}
+            {/* Cannell & Chaffin mother-in-law banner ad: full-width centered
+                block after the last paragraph. No float/wrap; renders at its
+                natural pixel size, capped to the viewport by max-w-full. The
+                caption sits on the cream plate, so it keeps the dark-muted
+                color used by the other plated captions on this navy band. */}
+            {motherInLawAd && (
+              <figure className="mt-10 mx-auto w-full max-w-[1150px] bg-[#f6f3ec] border border-gold-500/50 p-3 shadow-sm">
+                <Image
+                  src={motherInLawAd.src}
+                  alt={motherInLawAd.alt}
+                  width={motherInLawAd.width}
+                  height={motherInLawAd.height}
+                  sizes="(min-width: 1278px) 1150px, 100vw"
+                  className="block w-full h-auto"
+                />
+                <figcaption className="mt-2 text-center text-sm italic text-slate-500 leading-relaxed">
+                  {motherInLawAd.caption}
+                </figcaption>
+              </figure>
+            )}
+          </div>
+        </div>
+      </section>
+
+      {/* Doña band (WHITE): Cultural Legacy, sign floats right, copy wraps */}
+      <section className="bg-white py-20 md:py-28 overflow-hidden">
+        <div className="w-full px-6 md:px-16">
+          <p className="eyebrow text-gold-600 mb-4">{c.dona.eyebrow}</p>
+          <h2 className="font-display font-light text-3xl md:text-4xl text-navy-950 mb-5">
+            {c.dona.heading}
+          </h2>
+          <span className="gold-rule-dark mb-8" />
+          <div className="text-lg text-navy-950/75 leading-relaxed">
             {sign && <FloatFigure photo={sign} float="right" width="md:w-[44%]" />}
             <p>{c.dona.body}</p>
             <div className="clear-both" />
             <div className="mt-8">
               <Link
                 href={c.dona.href}
-                className="inline-flex items-center gap-2 text-[12px] uppercase tracking-[0.2em] text-white hover:text-gold-500 transition-colors"
+                className="inline-flex items-center gap-2 text-[12px] uppercase tracking-[0.2em] text-navy-950 hover:text-gold-600 transition-colors"
               >
                 {c.dona.cta} <span aria-hidden="true">&rarr;</span>
               </Link>
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* West Laurelwood Today band (WHITE): text only */}
-      <section className="bg-white py-20 md:py-28 overflow-hidden">
-        <div className="w-full px-6 md:px-16">
-          <p className="eyebrow text-gold-600 mb-4">{c.today.eyebrow}</p>
-          <h2 className="font-display font-light text-3xl md:text-4xl text-navy-950 mb-5">
-            {c.today.heading}
-          </h2>
-          <span className="gold-rule-dark mb-8" />
-          <div className="text-lg text-navy-950/75 leading-relaxed">
-            {c.today.body.map((t, i) => (
-              <p key={i} className="mb-5 last:mb-0">
-                {t}
-              </p>
-            ))}
           </div>
         </div>
       </section>

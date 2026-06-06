@@ -16,6 +16,21 @@ export type OriginEntry = {
 };
 
 export const ORIGINS: Record<string, OriginEntry> = {
+  // Laurelwood Estates: this site's home origin (siteConfig.commuteOriginKey).
+  // Its destinations mirror siteConfig.commuteDefaultDestinations (the five that
+  // start checked in the reworked homepage widget).
+  "laurelwood": {
+    key: "laurelwood",
+    label: "Laurelwood Estates",
+    destinations: [
+      { key: "beverly-hills", label: "Beverly Hills" },
+      { key: "burbank", label: "Burbank" },
+      { key: "sherman-oaks", label: "Sherman Oaks" },
+      { key: "pasadena", label: "Pasadena" },
+      { key: "west-hollywood", label: "West Hollywood" },
+    ],
+  },
+
   // Default origin shown when widget loads
   "beverly-hills": {
     key: "beverly-hills",

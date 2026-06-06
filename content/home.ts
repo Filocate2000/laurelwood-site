@@ -27,6 +27,28 @@ export const homeContent = {
     ],
   },
 
+  // Section 1 of the homepage reorder. Copy supplied by Jack, verbatim from the
+  // live Wix homepage. Accented "Doña" used throughout (the source has it).
+  welcome: {
+    eyebrow: "Why Location Matters in Laurelwood, Studio City",
+    heading: "Welcome to Laurelwood Estates in Studio City",
+    body: "As experienced real estate agents, we understand that location is everything in real estate. Laurelwood is one of the most highly sought-after neighborhoods in Los Angeles, offering an unmatched balance of convenience and centrality. With quick access to key areas like Downtown LA, Hollywood, Beverly Hills, and more, Laurelwood's location makes it an ideal choice for those looking to stay connected to the heart of the city. Below, you'll find live commute data, allowing you to return at any time to check how easily you can navigate from this prime location. The Doña streets of Laurelwood, including Doña Emilia Dr., Doña Sarita Pl., and Doña Dolores Pl., have become iconic within Studio City. Known for their scenic, tree-lined views and close-knit community feel, these streets reflect the charm and history that make Laurelwood such a desirable location.",
+  },
+
+  // Section 3 of the homepage reorder. Copy supplied by Jack, verbatim from the
+  // live Wix homepage. Accented "Doña" + curly apostrophes preserved exactly.
+  // "West Laurelwood" / "East Laurelwood" in paragraphs 1 and 2 are turned into
+  // links to /west-laurelwood and /east-laurelwood at render time (see page.tsx).
+  history: {
+    heading: "A Neighborhood of History, Charm, and Community",
+    body: [
+      "Laurelwood, nestled in the heart of Studio City, stands as one of the area’s most beloved and historic neighborhoods. Divided into West Laurelwood and East Laurelwood, these two areas blend mid-century architectural appeal with modern comforts, making the neighborhood a hidden gem in Los Angeles.",
+      "West Laurelwood, developed in 1958, showcases classic mid-century homes and tree-lined streets, while East Laurelwood, expanded in 1960, offers a balance of modern amenities and timeless charm. Both neighborhoods are not only renowned for their distinct character but are also celebrated for their connection to nature, with easy access to scenic Fryman Canyon and the popular Betty B. Dearing Trail.",
+      "The history of Laurelwood tells a fascinating story of thoughtful urban planning, cultural preservation, and a community dedicated to maintaining its natural beauty. From the iconic Doña streets, with their unique Spanish titles, to the neighborhood’s efforts to halt further development to preserve the local landscape, the story of Laurelwood is one of careful balance between progress and conservation.",
+      "Whether you’re a long-term resident or a newcomer, Laurelwood offers a welcoming community with a rich history, vibrant homeowner involvement, and an unmatched quality of life. Explore the history of Laurelwood and discover how this neighborhood became the sought-after enclave it is today.",
+    ],
+  },
+
   neighborhoods: [
     {
       key: "west-laurelwood",

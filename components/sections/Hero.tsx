@@ -41,12 +41,16 @@ export function Hero() {
       />
 
       <div className="relative w-full text-center px-6 animate-fade-in max-w-6xl mx-auto">
+        {/* Hero type treatment replicated verbatim from misraje-site's home
+            Hero: DM Sans (font-display) wordmark + tagline + italic line, with
+            misraje's exact sizes and letter-spacing. (misraje's home wordmark
+            uses font-display, NOT the Cormorant serif used on inner PageHeroes.) */}
         <h1
-          className="font-serif font-light text-white animate-fade-up"
+          className="font-display font-light text-white animate-fade-up"
           style={{
-            fontSize: "clamp(2.75rem, 9vw, 8.5rem)",
-            letterSpacing: "0.02em",
-            lineHeight: "1.02",
+            fontSize: "clamp(3rem, 11vw, 11rem)",
+            letterSpacing: "0.06em",
+            lineHeight: "1",
             textShadow: "0 4px 40px rgba(0,0,0,0.9), 0 2px 8px rgba(0,0,0,0.7)",
           }}
         >
@@ -54,11 +58,11 @@ export function Hero() {
         </h1>
 
         <p
-          className="font-display font-light text-white animate-fade-up uppercase mt-5"
+          className="font-display font-light text-white animate-fade-up uppercase mt-4"
           style={{
-            fontSize: "clamp(0.7rem, 1.6vw, 1.35rem)",
-            letterSpacing: "0.5em",
-            paddingLeft: "0.5em",
+            fontSize: "clamp(0.7rem, 1.8vw, 1.5rem)",
+            letterSpacing: "0.62em",
+            paddingLeft: "0.62em",
             textShadow: "0 2px 16px rgba(0,0,0,0.9)",
             animationDelay: "0.2s",
           }}
@@ -67,9 +71,9 @@ export function Hero() {
         </p>
 
         <p
-          className="font-serif italic text-white/90 mt-10 animate-fade-up"
+          className="font-display italic text-white mt-12 animate-fade-up"
           style={{
-            fontSize: "clamp(1.1rem, 2vw, 1.6rem)",
+            fontSize: "clamp(1.1rem, 2vw, 1.5rem)",
             animationDelay: "0.4s",
             textShadow: "0 2px 16px rgba(0,0,0,0.9)",
           }}

@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 export default function AccessibilityPage() {
   return (
     <div className="pt-32 pb-24">
-      <div className="editorial max-w-prose">
+      <div className="w-full px-6 md:px-16">
         <p className="eyebrow text-gold-500 mb-4">Commitment</p>
         <h1 className="font-display font-light text-display text-white mb-6">
           Accessibility Statement

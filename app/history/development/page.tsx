@@ -27,7 +27,7 @@ export default function DevelopmentHistoryPage() {
         subtitle="Laurelwood from 1958 to today, a timeless blend of country and city living."
       />
       <section className="bg-white py-20 md:py-28">
-        <div className="editorial">
+        <div className="w-full px-6 md:px-16">
           <Prose variant="light">{body}</Prose>
         </div>
       </section>
@@ -36,7 +36,7 @@ export default function DevelopmentHistoryPage() {
           map and the CA-170/CA-90 shields now live primarily on /west-laurelwood
           (1971 Freeway Defeat band). */}
       <section className="bg-navy-950 py-20 md:py-28">
-        <div className="editorial max-w-4xl">
+        <div className="w-full px-6 md:px-16">
           <p className="eyebrow text-gold-500 mb-4">{freewaySection.eyebrow}</p>
           <h2 className="font-display font-light text-3xl md:text-4xl text-white mb-5">
             {freewaySection.heading}

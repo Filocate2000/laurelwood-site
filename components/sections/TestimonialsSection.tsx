@@ -1,15 +1,24 @@
 import type { Testimonial } from "@/content/home";
 
-export function TestimonialsSection({ testimonials }: { testimonials: Testimonial[] }) {
+export function TestimonialsSection({
+  testimonials,
+  tone = "white",
+}: {
+  testimonials: Testimonial[];
+  /** Band color. The quote cards are navy-900 either way (dark on white, raised on navy). */
+  tone?: "white" | "navy";
+}) {
   if (testimonials.length === 0) return null;
 
+  const navy = tone === "navy";
+
   return (
-    <section className="bg-white py-20 md:py-28">
+    <section className={`${navy ? "bg-navy-950" : "bg-white"} py-20 md:py-28`}>
       <div className="w-full px-6 md:px-12 lg:px-16">
         <div className="text-center mb-16">
-          <p className="eyebrow text-gold-600 mb-4">Client Experiences</p>
-          <h2 className="font-display font-light text-4xl md:text-5xl text-navy-950">
-            What our clients <span className="text-gold-600">say</span>
+          <p className={`eyebrow mb-4 ${navy ? "text-gold-500" : "text-gold-600"}`}>Client Experiences</p>
+          <h2 className={`font-display font-light text-4xl md:text-5xl ${navy ? "text-white" : "text-navy-950"}`}>
+            What our clients <span className={navy ? "text-gold-500" : "text-gold-600"}>say</span>
           </h2>
         </div>
 

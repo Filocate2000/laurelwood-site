@@ -80,7 +80,7 @@ export function FloatFigure({
         img
       )}
       {(cap || href) && (
-        <figcaption className="mt-2 text-sm italic leading-relaxed text-navy-950/60">
+        <figcaption className="mt-2 text-center text-sm italic leading-relaxed text-navy-950/60">
           {cap}
           {href && (
             <>

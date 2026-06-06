@@ -25,7 +25,7 @@ export default function CommunityNewsPage() {
         subtitle="Safety, local government, and real estate updates for the neighborhood."
       />
       <section className="bg-white py-20 md:py-28">
-        <div className="editorial">
+        <div className="w-full px-6 md:px-16">
           <Prose variant="light">{body}</Prose>
         </div>
       </section>

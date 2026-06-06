@@ -36,7 +36,7 @@ export default function HistoryPage() {
         subtitle="How a mid-century vision became one of Studio City's most cherished neighborhoods."
       />
       <section className="bg-white py-20 md:py-28">
-        <div className="editorial">
+        <div className="w-full px-6 md:px-16">
           <div className="grid md:grid-cols-2 gap-8">
             {SUBPAGES.map((p) => (
               <Link

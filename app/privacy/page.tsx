@@ -8,7 +8,7 @@ export default function PrivacyPage() {
 
   return (
     <div className="pt-32 pb-24 bg-white text-navy-950">
-      <div className="max-w-3xl mx-auto px-6 md:px-8">
+      <div className="w-full px-6 md:px-16">
         <button
           onClick={() => router.back()}
           className="text-xs text-stone-500 hover:text-gold-500 transition-colors mb-8 inline-flex items-center gap-2 cursor-pointer"

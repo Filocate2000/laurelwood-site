@@ -44,7 +44,7 @@ export default function AboutPage() {
 
       {/* Partnership intro */}
       <section className="bg-white py-20 md:py-28">
-        <div className="editorial">
+        <div className="w-full px-6 md:px-16">
           <Prose variant="light">{partners}</Prose>
         </div>
       </section>
@@ -59,7 +59,7 @@ export default function AboutPage() {
             id={a.slug}
             className={`scroll-mt-24 py-20 md:py-28 ${light ? "bg-white" : "bg-navy-950"}`}
           >
-            <div className="editorial">
+            <div className="w-full px-6 md:px-16">
               <div className="flex items-center gap-5 mb-8">
                 <Monogram initials={`${a.firstName[0]}${a.lastName[0]}`} />
                 <div>

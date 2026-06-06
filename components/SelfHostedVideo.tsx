@@ -26,7 +26,7 @@ export function SelfHostedVideo({
       </video>
       {caption && (
         <figcaption
-          className={`mt-3 text-sm italic leading-snug ${
+          className={`mt-3 text-center text-sm italic leading-snug ${
             tone === "onNavy" ? "text-ink-300" : "text-navy-950/60"
           }`}
         >

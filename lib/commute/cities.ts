@@ -11,6 +11,11 @@ export type CityCoords = {
 };
 
 export const CITY_COORDS: Record<string, CityCoords> = {
+  // Local origin: Laurelwood Estates. Coordinate is the midpoint of the two
+  // area-weighted polygon centroids in content/source/laurelwood-boundaries.kml
+  // (West + East Laurelwood), i.e. the neighborhood center near Laurel Canyon Blvd.
+  "laurelwood":        { label: "Laurelwood Estates", lat: 34.1291, lng: -118.3804 },
+
   // Valley & adjacent
   "burbank":           { label: "Burbank",           lat: 34.1808, lng: -118.3090 },
   "glendale":          { label: "Glendale",          lat: 34.1425, lng: -118.2551 },

@@ -16,7 +16,7 @@ export default function ContactPage() {
   const o = siteConfig.office;
   return (
     <div className="pt-32 pb-24">
-      <div className="editorial">
+      <div className="w-full px-6 md:px-16">
         <div className="max-w-2xl mb-16">
           <p className="eyebrow text-gold-500 mb-4">Ways to Reach Us</p>
           <h1 className="font-display font-light text-display text-white mb-6">

@@ -56,6 +56,8 @@ export type SiteConfig = {
 
   /** Commute widget origin key (a key in lib/commute/origins.ts). */
   commuteOriginKey: string;
+  /** Destination slugs checked by default in the commute widget (max 5). */
+  commuteDefaultDestinations: string[];
 
   office: {
     street: string;
@@ -103,10 +105,18 @@ export const siteConfig: SiteConfig = {
   description:
     "Laurelwood Estates, the hyperlocal guide to the Laurelwood and Dona streets of Studio City, presented by Misraje Real Estate Partners.",
 
-  // Laurelwood Estates sits in the Studio City hills. No dedicated laurelwood
-  // origin exists hub-side yet (see STATE.md Blockers), so the commute widget
-  // uses the nearest curated origin, studio-city.
-  commuteOriginKey: "studio-city",
+  // Laurelwood Estates is its own commute origin: coords in lib/commute/cities.ts
+  // (the midpoint of the West+East Laurelwood KML polygons) and an entry in
+  // lib/commute/origins.ts. The reworked homepage widget reads this as the fixed
+  // origin (no dropdown) and starts with commuteDefaultDestinations checked.
+  commuteOriginKey: "laurelwood",
+  commuteDefaultDestinations: [
+    "beverly-hills",
+    "burbank",
+    "sherman-oaks",
+    "pasadena",
+    "west-hollywood",
+  ],
 
   office: {
     street: "301 N Canon Dr Suite E",

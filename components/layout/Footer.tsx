@@ -1,12 +1,57 @@
 import Link from "next/link";
+import Image from "next/image";
 import { siteConfig } from "@/lib/site-config";
+
+// Footer design + branding are aligned 1:1 with misraje-site's Footer (the firm
+// brand carried across every neighborhood site, inherited by the future Fryman
+// site via this template): the oversized "MISRAJE" watermark, the Coldwell
+// Banker Global Luxury affiliation logo, and the Coldwell Banker legal block are
+// reproduced verbatim from misraje-site. Contact details still read from
+// siteConfig (they resolve to the same Misraje office + agents).
+//
+// One deliberate addition over misraje-site's footer: the FOOTER_LINKS columns
+// below. misraje-site's footer has no link columns; these keep laurelwood's own
+// pages reachable from the footer, styled to the same footer canon.
+const FOOTER_LINKS: { heading: string; links: { label: string; href: string }[] }[] = [
+  {
+    heading: "Neighborhoods",
+    links: [
+      { label: "West Laurelwood", href: "/west-laurelwood" },
+      { label: "East Laurelwood", href: "/east-laurelwood" },
+      { label: "Doña Streets", href: "/dona-streets" },
+    ],
+  },
+  {
+    heading: "History",
+    links: [
+      { label: "History", href: "/history" },
+      { label: "Development History", href: "/development-history" },
+      { label: "Land Acquisition", href: "/history/land-acquisition" },
+    ],
+  },
+  {
+    heading: "Homeowners",
+    links: [
+      { label: "Homeowners", href: "/homeowners" },
+      { label: "Community News", href: "/homeowners/community-news" },
+      { label: "Emergency Contacts", href: "/homeowners/emergency-contacts" },
+      { label: "Neighborhood Watch", href: "/homeowners/neighborhood-watch" },
+    ],
+  },
+  {
+    heading: "The Firm",
+    links: [
+      { label: "About", href: "/about" },
+      { label: "What We Do", href: "/what-we-do" },
+      { label: "Buying", href: "/buying" },
+      { label: "Selling", href: "/selling" },
+      { label: "Contact", href: "/contact" },
+    ],
+  },
+];
 
 export function Footer() {
   const year = new Date().getFullYear();
-  const calREs = siteConfig.agents
-    .map((a) => a.calRE)
-    .filter(Boolean)
-    .join(" · ");
 
   return (
     <footer className="bg-navy-950 border-t border-white/5 pt-20 overflow-hidden">
@@ -14,7 +59,7 @@ export function Footer() {
         {/* Contact info grid */}
         <div className="grid md:grid-cols-3 gap-12 pb-16">
           <div>
-            <p className="eyebrow text-gold-500 mb-4">Office</p>
+            <p className="eyebrow mb-4">Office</p>
             <p className="text-ink-100 leading-relaxed">
               {siteConfig.office.street}
               <br />
@@ -22,7 +67,7 @@ export function Footer() {
             </p>
           </div>
           <div>
-            <p className="eyebrow text-gold-500 mb-4">Telephone</p>
+            <p className="eyebrow mb-4">Telephone</p>
             <div className="space-y-1 text-ink-100">
               {siteConfig.agents.map((a) => (
                 <p key={a.slug}>
@@ -42,25 +87,49 @@ export function Footer() {
           </div>
         </div>
 
-        {/* Oversized wordmark watermark */}
+        {/* Site navigation links (laurelwood's own pages). misraje-site's footer
+            has no link columns; this block is laurelwood-specific, styled to the
+            footer canon so the firm branding above still matches misraje. */}
+        <div className="border-t border-white/5 py-12 grid grid-cols-2 md:grid-cols-4 gap-x-8 gap-y-10">
+          {FOOTER_LINKS.map((col) => (
+            <div key={col.heading}>
+              <p className="eyebrow mb-4">{col.heading}</p>
+              <ul className="space-y-2.5">
+                {col.links.map((l) => (
+                  <li key={l.href}>
+                    <Link
+                      href={l.href}
+                      className="text-ink-100 text-sm hover:text-gold-500 transition-colors"
+                    >
+                      {l.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+
+        {/* Oversized wordmark watermark (the MISRAJE firm brand, per misraje-site) */}
         <div className="relative py-12">
           <div
             aria-hidden="true"
             className="select-none text-center font-display font-light text-white/[0.04] whitespace-nowrap"
-            style={{ fontSize: "clamp(4rem, 14vw, 12rem)", letterSpacing: "0.12em", lineHeight: "1" }}
+            style={{ fontSize: "clamp(6rem, 18vw, 16rem)", letterSpacing: "0.15em", lineHeight: "1" }}
           >
-            {siteConfig.name.toUpperCase()}
+            MISRAJE
           </div>
         </div>
 
-        {/* Affiliation band: Coldwell Banker Global Luxury + Equal Housing */}
+        {/* Affiliation logos band: Coldwell Banker Global Luxury + Equal Housing Opportunity */}
         <div className="border-t border-white/5 py-10 flex flex-col md:flex-row items-center justify-center gap-10 md:gap-16">
-          <div className="text-center md:text-left">
-            <p className="text-white/80 text-sm font-display font-light tracking-[0.18em] uppercase">
-              {siteConfig.brokerage.name}
-            </p>
-            <p className="text-ink-300 text-[11px] mt-1">{siteConfig.brokerage.license}</p>
-          </div>
+          <Image
+            src="/images/cb-global-luxury-white.png"
+            alt="Coldwell Banker Global Luxury"
+            width={220}
+            height={55}
+            className="opacity-80"
+          />
           <div className="flex items-center gap-3 text-white/70">
             <svg
               role="img"
@@ -87,24 +156,27 @@ export function Footer() {
           </div>
         </div>
 
-        {/* Fine print, ported verbatim from the Wix footer via siteConfig.legal.
-            Blog and LARE Report are COMING LATER (hub-and-spoke distribution);
-            do not render footer links to them yet. Placeholders:
-            // <Link href="/blog">Blog</Link>
-            // <Link href="/lare-report">LARE Report</Link> */}
+        {/* Fine print: Coldwell Banker legal block, reproduced verbatim from
+            misraje-site's footer. */}
         <div className="border-t border-white/5 py-8 text-[11px] text-ink-300 leading-relaxed space-y-3">
-          <p>{siteConfig.legal.mlsAttribution}</p>
-          <p>{siteConfig.legal.guaranteedRate}</p>
+          <p>CalRE# - 00616212 Southern California 450 Exchange | Irvine, CA 92602</p>
           <p>
-            {siteConfig.brokerage.license} {siteConfig.brokerage.addressLine}
-            {calREs ? ` · Agent CalRE# ${calREs}` : ""}
+            All material presented herein is intended for informational purposes only and is compiled
+            from sources deemed reliable but not verified. Equal Housing Opportunity.
           </p>
-          <p>{siteConfig.legal.franchise}</p>
-          <p>{siteConfig.legal.disclosure}</p>
+          <p>
+            &copy; {year} Coldwell Banker. All rights reserved. Coldwell Banker, the Coldwell Banker
+            logo and the Coldwell Banker Global Luxury&reg; logo are trademarks of Coldwell Banker
+            Real Estate LLC. The Coldwell Banker System is comprised of company owned offices which
+            are owned by a subsidiary of Anywhere Advisors LLC and franchised offices which are
+            independently owned and operated. Coldwell Banker Real Estate LLC fully supports the
+            principles of the Fair Housing Act and the Equal Opportunity Act. Listing information is
+            deemed reliable but is not guaranteed. This website may contain content created by AI and
+            is provided for informational purposes only and should not be relied upon without
+            verification of its accuracy or completeness.
+          </p>
           <div className="flex flex-wrap items-center justify-between gap-4 pt-4">
-            <p>
-              Copyright &copy; {year} {siteConfig.legalName}. All Rights Reserved.
-            </p>
+            <p>Copyright &copy; {year} {siteConfig.legalName}. All Rights Reserved.</p>
             <div className="flex gap-6">
               <Link href="/accessibility" className="hover:text-gold-500 transition-colors">
                 Accessibility
