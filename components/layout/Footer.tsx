@@ -18,7 +18,7 @@ const FOOTER_LINKS: { heading: string; links: { label: string; href: string }[] 
     links: [
       { label: "West Laurelwood", href: "/west-laurelwood" },
       { label: "East Laurelwood", href: "/east-laurelwood" },
-      { label: "Doña Streets", href: "/dona-streets" },
+      { label: "The Doña Streets", href: "/dona-streets" },
     ],
   },
   {
@@ -32,8 +32,7 @@ const FOOTER_LINKS: { heading: string; links: { label: string; href: string }[] 
   {
     heading: "Homeowners",
     links: [
-      { label: "Homeowners", href: "/homeowners" },
-      { label: "Community News", href: "/homeowners/community-news" },
+      { label: "Resources", href: "/homeowners" },
       { label: "Emergency Contacts", href: "/homeowners/emergency-contacts" },
       { label: "Neighborhood Watch", href: "/homeowners/neighborhood-watch" },
     ],

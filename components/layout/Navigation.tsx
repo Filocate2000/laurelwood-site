@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
@@ -17,10 +18,9 @@ const NAV_ITEMS: { label: string; href: string }[] = [
   { label: "Home", href: "/" },
   { label: "West Laurelwood", href: "/west-laurelwood" },
   { label: "East Laurelwood", href: "/east-laurelwood" },
-  { label: "Doña Streets", href: "/dona-streets" },
-  { label: "History", href: "/history" },
+  { label: "The Doña Streets", href: "/dona-streets" },
   { label: "Development History", href: "/development-history" },
-  { label: "Homeowners", href: "/homeowners" },
+  { label: "Laurelwood Homeowners", href: "/homeowners" },
   { label: "About", href: "/about" },
   { label: "What We Do", href: "/what-we-do" },
   { label: "Contact", href: "/contact" },
@@ -29,7 +29,7 @@ const NAV_ITEMS: { label: string; href: string }[] = [
 const NEIGHBORHOODS: { label: string; href: string }[] = [
   { label: "West Laurelwood", href: "/west-laurelwood" },
   { label: "East Laurelwood", href: "/east-laurelwood" },
-  { label: "Doña Streets", href: "/dona-streets" },
+  { label: "The Doña Streets", href: "/dona-streets" },
 ];
 
 // Scroll threshold past which the nav adopts its "scrolled" state: solid navy
@@ -155,11 +155,29 @@ export function Navigation() {
             </button>
           </div>
 
-          {/* Agent contact cards (text-only; portraits not yet available for
-              this neighborhood site). */}
+          {/* Agent contact cards with headshots, mirroring misraje-site's menu
+              panel: portrait above name/phone/email. Phone is rendered with
+              spaces (not hyphens) to match misraje exactly. */}
           <div className="grid grid-cols-2 gap-4 mb-7">
             {siteConfig.agents.map((agent) => (
               <div key={agent.slug} className="flex flex-col items-center text-center">
+                <Link
+                  href={`/about#${agent.slug}`}
+                  className="group block overflow-hidden rounded-sm mb-3"
+                  aria-label={`View ${agent.firstName} ${agent.lastName} bio`}
+                >
+                  {agent.photo && (
+                    <Image
+                      src={agent.photo}
+                      alt={`${agent.firstName} ${agent.lastName}`}
+                      width={240}
+                      height={320}
+                      className="block w-[120px] h-[160px] object-cover transition-transform duration-500 group-hover:scale-105"
+                      style={{ objectPosition: "center 25%" }}
+                      priority
+                    />
+                  )}
+                </Link>
                 <Link
                   href={`/about#${agent.slug}`}
                   className="block text-white text-[13px] font-medium hover:text-gold-500 transition-colors mb-1.5"
@@ -170,7 +188,7 @@ export function Navigation() {
                   href={agent.phoneHref}
                   className="block text-gold-500 text-[12px] hover:text-gold-400 transition-colors leading-snug"
                 >
-                  {agent.phone}
+                  {agent.phone.replace(/-/g, " ")}
                 </a>
                 <a
                   href={`mailto:${agent.email}`}

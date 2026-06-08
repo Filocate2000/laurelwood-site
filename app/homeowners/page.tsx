@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { PageHero } from "@/components/layout/PageHero";
 import { ContactCTA } from "@/components/sections/ContactCTA";
+import { photo } from "@/lib/photos";
 import { absoluteUrl } from "@/lib/site-config";
 
 const DESCRIPTION =
@@ -33,28 +34,34 @@ const SUBPAGES = [
 ];
 
 export default function HomeownersPage() {
+  // Reuse the registered valley-view aerial (no reprocessing). object-position
+  // biases down so the hillside neighborhood, not just sky, stays in frame.
+  const hero = photo("neighborhood-watch-hero");
   return (
     <>
       <PageHero
+        image={hero?.src}
+        alt={hero?.alt}
+        objectPosition="center 70%"
         eyebrow="For Residents"
         title="Homeowners"
         subtitle="Practical resources for the people who live in Laurelwood."
       />
-      <section className="bg-white py-20 md:py-28">
+      <section className="bg-navy-950 py-20 md:py-28">
         <div className="w-full px-6 md:px-16">
           <div className="grid md:grid-cols-3 gap-8">
             {SUBPAGES.map((p) => (
               <Link
                 key={p.href}
                 href={p.href}
-                className="group block border border-navy-950/10 p-8 hover:border-gold-600/50 transition-colors"
+                className="group block border border-white/10 p-8 hover:border-gold-500/50 transition-colors"
               >
-                <span className="gold-rule-dark mb-6" />
-                <h2 className="font-display font-light text-xl text-navy-950 mb-3 group-hover:text-gold-600 transition-colors">
+                <span className="gold-rule mb-6" />
+                <h2 className="font-display font-light text-xl text-white mb-3 group-hover:text-gold-500 transition-colors">
                   {p.title}
                 </h2>
-                <p className="text-navy-950/70 text-sm leading-relaxed mb-6">{p.body}</p>
-                <span className="inline-flex items-center gap-2 text-[11px] uppercase tracking-[0.2em] text-navy-950 group-hover:text-gold-600 transition-colors">
+                <p className="text-ink-100/70 text-sm leading-relaxed mb-6">{p.body}</p>
+                <span className="inline-flex items-center gap-2 text-[11px] uppercase tracking-[0.2em] text-white group-hover:text-gold-500 transition-colors">
                   Open <span aria-hidden="true">&rarr;</span>
                 </span>
               </Link>

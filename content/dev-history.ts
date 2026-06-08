@@ -1,15 +1,28 @@
 // content/dev-history.ts
 // Band copy for /development-history. VERBATIM from
-// content/source/dev-history-wix-extraction.md (the Wix extraction). ZERO text
-// changes: straight quotes as-extracted, the hero's " - " hyphen kept (no em
-// dash), the duplicated brochure + decorators passage included ONCE in order.
+// content/source/dev-history-wix-extraction.md (the Wix extraction). Verbatim
+// except one Jack-approved copy fix: the hero title's leading "laurelwood" is
+// capitalized to "Laurelwood". Otherwise: straight quotes as-extracted, the
+// hero's " - " hyphen kept (no em dash), the duplicated brochure + decorators
+// passage included ONCE in order.
 // Galleries carry no Wix heading, so those bands render plates only.
 
 export const devHistoryContent = {
   hero: {
-    title: "laurelwood   RESIDENTIAL DEVELOPMENT",
+    title: "Laurelwood   RESIDENTIAL DEVELOPMENT",
     subtitle:
       "Laurelwood: From 1958 to Today - A Timeless Blend of Country and City Living",
+  },
+
+  // ## SECTION: Two figures who shaped Laurelwood (intro band). Added per Jack's
+  // approved copy; distinguishes Harry C. Fryman (developer/landowner) from
+  // David Freedman, AIA (architect). Verbatim, no em dashes.
+  figures: {
+    heading: "How Laurelwood Began",
+    body:
+      "Two men shaped early Laurelwood, and their similar names are often confused. Harry C. Fryman owned the land, and after his death his heirs sold it. In 1949, Chapman College purchased 134 acres from the Fryman heirs, intending to build a San Fernando Valley campus. That project never came to fruition, and the college sold the land to the Home Savings and Loan Association, which began developing West Laurelwood in 1958. To realize that vision, Home Savings commissioned architect David Freedman, AIA, who designed the homes that gave the new neighborhood its character.",
+    caption:
+      "Harry C. Fryman, a prominent developer, is pictured in a bungalow located on the top floor of a hotel he owned. His heirs later sold the Laurelwood property to Chapman College, which in turn sold it to Home Savings and Loan Association for further development.",
   },
 
   // ## SECTION: The Laurelwood Dream in 1958
@@ -31,17 +44,6 @@ export const devHistoryContent = {
     stagingCaption:
       "Today, sellers stage a home with furniture and photography so buyers can picture themselves living in it. In 1958, Laurelwood did the same thing with a brush and ink. Since the tract was sold before it was built, prospective buyers couldn't walk a model on every lot. Instead, each floor plan was offered with a choice of three different exterior treatments, and an artist rendered each one. Plans 1B, 1C, and 1D were shown with their distinct rooflines, post-and-beam facades, and freshly imagined landscaping. These watercolor elevations were the era's version of staging, a hand-drawn promise of what your home could look like before a single slab was poured.",
   },
-
-  // Floorplan-strip overlay labels. NOTE: these were NOT in the Wix extraction
-  // (the strips had no caption there) — provided by Jack for the in-image
-  // bottom-right overlay. The subtitle is pending confirmation of the trailing
-  // "..." in the request.
-  floorplanLabels: [
-    { title: "West Laurelwood Floor Plan 1", subtitle: "The Choice of Three Different Interiors" },
-    { title: "West Laurelwood Floor Plan 2", subtitle: "The Choice of Three Different Interiors" },
-    { title: "West Laurelwood Floor Plan 3", subtitle: "The Choice of Three Different Interiors" },
-    { title: "West Laurelwood Floor Plan 4", subtitle: "The Choice of Three Different Interiors" },
-  ],
 
   // ## SECTION: Laurelwood in the 21st Century
   century21: {
@@ -108,17 +110,22 @@ export const devHistoryContent = {
       "As you walk through a home in Laurelwood today, you'll find the spirit of 1958 alive in every detail, from the preserved architectural elements to the innovative enhancements that make these homes perfect for modern living. Whether you are drawn to the nostalgia of vintage design or the conveniences of contemporary style, Laurelwood offers a living experience that bridges the past and the present.",
   },
 
-  // ## GALLERY: Exterior home plans (three-line captions, verbatim)
+  // ## GALLERY: Plan rows (paired captions, verbatim). Each row = a LEFT plate of
+  // three exterior-style renderings + a RIGHT plate of the floor-plan blueprint.
   exterior: {
-    // Right-column "Exterior Home Plan" captions, plans 1-4, paired in the Dream
-    // grid. NOTE: plan 1's third line ("1B,1C, and 1D") fills the "[WORDING]"
-    // placeholder Jack left, following the sibling format and the staging
-    // caption's "Plans 1B, 1C, and 1D" — confirm if it should differ.
+    // Left-column captions: the three exterior-STYLE renderings per plan.
+    styles: [
+      ["West Laurelwood Plan 1", "Three Different Exterior Styles"],
+      ["West Laurelwood Plan 2", "Three Different Exterior Styles"],
+      ["West Laurelwood Plan 3", "Three Different Exterior Styles"],
+      ["West Laurelwood Plan 4", "Three Different Exterior Styles"],
+    ],
+    // Right-column captions: the floor-plan blueprint offered per plan.
     plans: [
-      ["West Laurelwood", "Exterior Home Plan", "1B,1C, and 1D"],
-      ["West Laurelwood", "Exterior Home Plan", "2B,2C, and 2D"],
-      ["West Laurelwood", "Exterior Home Plan", "3B,3C, and 3D"],
-      ["West Laurelwood", "Exterior Home Plan", "4B and 4C"],
+      ["West Laurelwood", "Example of the Floor Plan Offered", "1B, 1C, and 1D"],
+      ["West Laurelwood", "Example of the Floor Plan Offered", "2B, 2C, and 2D"],
+      ["West Laurelwood", "Example of the Floor Plan Offered", "3B, 3C, and 3D"],
+      ["West Laurelwood", "Example of the Floor Plan Offered", "4B and 4C"],
     ],
     interiorRendering: ["West Laurelwood", "Interior Rendering"],
   },

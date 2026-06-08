@@ -82,11 +82,37 @@ export function Hero() {
         </p>
       </div>
 
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-white/80">
-        <span className="text-[10px] tracking-eyebrow" style={{ textShadow: "0 1px 8px rgba(0,0,0,0.8)" }}>
-          SCROLL
-        </span>
-        <div className="h-12 w-px bg-gradient-to-b from-white/80 to-transparent animate-pulse" />
+      {/* Scroll cue: a gold label over a soft radial dark scrim, with an
+          animated brighter-gold segment traveling down a faint gold track so
+          motion catches the eye on busy photos. Lives in the shared hero
+          component (every site, incl. fryman, inherits it). The travel
+          animation is disabled under prefers-reduced-motion (see globals.css). */}
+      <div className="absolute bottom-6 md:bottom-8 left-1/2 -translate-x-1/2 z-10">
+        <div className="relative isolate flex flex-col items-center gap-2.5">
+          {/* Soft radial scrim: invisible as a shape, only felt as contrast. */}
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-32 z-0"
+            style={{
+              background:
+                "radial-gradient(closest-side, rgba(0,0,0,0.25), rgba(0,0,0,0.1) 45%, transparent 75%)",
+              filter: "blur(4px)",
+            }}
+          />
+          <span
+            className="relative z-10 text-xs md:text-sm font-medium tracking-[0.3em] text-gold-500"
+            style={{ textShadow: "0 1px 6px rgba(0,0,0,0.9), 0 0 3px rgba(0,0,0,0.75)" }}
+          >
+            SCROLL
+          </span>
+          {/* Faint gold track; a brighter segment travels down it (~2s loop). */}
+          <div className="relative z-10 h-8 w-[1.5px] overflow-hidden rounded-full bg-gold-500/30">
+            <div
+              className="scroll-cue-seg absolute inset-x-0 top-0 h-3 rounded-full bg-gold-400"
+              style={{ filter: "drop-shadow(0 0 3px rgba(200,167,91,0.85))" }}
+            />
+          </div>
+        </div>
       </div>
     </section>
   );

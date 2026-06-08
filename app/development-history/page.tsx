@@ -31,10 +31,13 @@ function Plate({
   photo: p,
   widthClass,
   caption,
+  captionTone = "muted",
 }: {
   photo: Photo;
   widthClass: string;
   caption?: string | readonly string[];
+  /** "muted" = italic slate (galleries); "gold" = gold label (plan rows). */
+  captionTone?: "muted" | "gold";
 }) {
   return (
     <figure
@@ -49,7 +52,11 @@ function Plate({
         className="block w-full h-auto"
       />
       {caption && (
-        <figcaption className="mt-2 text-center text-sm italic text-slate-500 leading-relaxed">
+        <figcaption
+          className={`mt-2 text-center text-sm leading-relaxed ${
+            captionTone === "gold" ? "text-gold-600" : "italic text-slate-500"
+          }`}
+        >
           {Array.isArray(caption)
             ? caption.map((line, i) => (
                 <span key={i} className="block">
@@ -63,51 +70,6 @@ function Plate({
   );
 }
 
-/**
- * A floorplan-strip canon plate with the two-line label set INSIDE the image at
- * the bottom-right (gold, over a soft dark corner scrim + text-shadow so it stays
- * legible on the pale blueprint). Under ~480px the corner gets cramped, so the
- * label drops to a centered gold caption below the image instead.
- */
-function FloorplanPlate({
-  photo: p,
-  label,
-}: {
-  photo: Photo;
-  label: { title: string; subtitle: string };
-}) {
-  const shadow = { textShadow: "0 1px 3px rgba(0,0,0,0.55)" };
-  return (
-    <figure className="mx-auto w-full bg-[#f6f3ec] border border-gold-500/50 p-3 shadow-sm">
-      <div className="relative">
-        <Image
-          src={p.src}
-          alt={p.alt}
-          width={p.width}
-          height={p.height}
-          sizes="(min-width: 768px) 48rem, 100vw"
-          className="block w-full h-auto"
-        />
-        <div className="hidden min-[480px]:block pointer-events-none absolute inset-0">
-          <div className="absolute right-0 bottom-0 h-1/2 w-2/3 bg-gradient-to-tl from-black/45 via-black/15 to-transparent" />
-          <div className="absolute right-4 bottom-3 text-right leading-tight">
-            <span className="block font-semibold text-base text-gold-400" style={shadow}>
-              {label.title}
-            </span>
-            <span className="block text-sm text-gold-400" style={shadow}>
-              {label.subtitle}
-            </span>
-          </div>
-        </div>
-      </div>
-      <figcaption className="min-[480px]:hidden mt-2 text-center leading-tight">
-        <span className="block font-semibold text-base text-gold-600">{label.title}</span>
-        <span className="block text-sm text-gold-600">{label.subtitle}</span>
-      </figcaption>
-    </figure>
-  );
-}
-
 export default function DevelopmentHistoryPage() {
   const hero = heroFor("development-history");
   const strips = [1, 2, 3, 4].map((n) => photo(`laurelwood-floorplan-strip-${n}`));
@@ -115,6 +77,7 @@ export default function DevelopmentHistoryPage() {
   const accent = photo("laurelwood-floorplan-strip-1");
   const exteriorPlans = [1, 2, 3, 4].map((n) => photo(`laurelwood-exterior-plan-${n}`));
   const interior = photo("laurelwood-interior-rendering");
+  const fryman = photo("harry-c-fryman");
 
   return (
     <>
@@ -123,9 +86,69 @@ export default function DevelopmentHistoryPage() {
         image={hero?.src}
         alt={hero?.alt}
         title={c.hero.title}
+        titleClassName="uppercase"
         subtitle={c.hero.subtitle}
         objectPosition="center 50%"
       />
+
+      {/* Two figures who shaped Laurelwood (WHITE): intro distinguishing Harry C.
+          Fryman (developer/landowner) from David Freedman (architect), with the
+          Fryman portrait floated as a cream plate. Inserted between the image hero
+          and the navy Dream band, so the band run alternates WHITE -> NAVY ->
+          WHITE -> NAVY -> WHITE(CTA), no two adjacent same-color bands. Padding
+          is tighter than the full canon bands (py-12 md:py-16) so this short
+          intro hugs its paragraph + plate instead of leaving a tall empty gap. */}
+      <section className="bg-white py-12 md:py-16 overflow-hidden">
+        <div className="w-full px-6 md:px-16">
+          {/* Heading styled to match "The Laurelwood Dream in 1958" below, in the
+              white-band variant (navy text + gold-rule-dark) already used by the
+              21st Century band on this page. */}
+          <h2 className="font-display font-light text-3xl md:text-4xl text-navy-950 mb-5">
+            {c.figures.heading}
+          </h2>
+          <span className="gold-rule-dark mb-8" />
+          <div className="text-lg md:text-xl text-navy-950/75 leading-relaxed">
+            {fryman && (
+              <>
+                {/* desktop: cream plate floats right beside the prose; image LEFT,
+                    caption RIGHT, side by side and vertically centered (shorter,
+                    wider plate). Image pinned to ~14rem tall, uncropped. */}
+                <figure className="hidden md:block md:float-right md:ml-10 mb-6 w-fit max-w-full bg-[#f6f3ec] border border-gold-500/50 p-3 shadow-sm">
+                  <div className="flex items-center gap-4">
+                    <Image
+                      src={fryman.src}
+                      alt={fryman.alt}
+                      width={fryman.width}
+                      height={fryman.height}
+                      sizes="(min-width: 768px) 22rem, 100vw"
+                      className="block h-auto md:h-[14rem] w-auto shrink-0"
+                    />
+                    <figcaption className="w-[18rem] text-sm italic text-slate-500 leading-relaxed">
+                      {c.figures.caption}
+                    </figcaption>
+                  </div>
+                </figure>
+                {/* mobile: centered block above the prose */}
+                <figure className="md:hidden my-6 w-fit max-w-full mx-auto bg-[#f6f3ec] border border-gold-500/50 p-3 shadow-sm">
+                  <Image
+                    src={fryman.src}
+                    alt={fryman.alt}
+                    width={fryman.width}
+                    height={fryman.height}
+                    sizes="100vw"
+                    className="block w-full h-auto"
+                  />
+                  <figcaption className="mt-2 text-center text-sm italic text-slate-500 leading-relaxed">
+                    {c.figures.caption}
+                  </figcaption>
+                </figure>
+              </>
+            )}
+            <p className="mb-0">{c.figures.body}</p>
+            <div className="clear-both" />
+          </div>
+        </div>
+      </section>
 
       {/* The Laurelwood Dream in 1958 (NAVY): vision, brochure passage with the
           gold-dot feature list (west Birth-band treatment), decorators paragraph. */}
@@ -159,17 +182,30 @@ export default function DevelopmentHistoryPage() {
             <p className="mt-10 mb-10 text-lg md:text-xl text-ink-100 leading-relaxed">
               {c.dream.stagingCaption}
             </p>
-            <div className="grid grid-cols-1 md:grid-cols-[repeat(2,minmax(0,34rem))] justify-center gap-x-8 gap-y-8 items-center">
+            {/* Two 34rem columns centered together as a pair (justify-center) with
+                a normal gap, and items-center so the shorter right (floor-plan)
+                plate is vertically centered against the taller left (styles) plate
+                in each row. */}
+            <div className="grid grid-cols-1 md:grid-cols-[repeat(2,minmax(0,34rem))] justify-center gap-x-8 gap-y-10 items-center">
               {strips.map((s, i) => [
+                // LEFT: the three exterior-style renderings (gold caption).
                 s ? (
-                  <FloorplanPlate key={`s${i}`} photo={s} label={c.floorplanLabels[i]} />
+                  <Plate
+                    key={`s${i}`}
+                    photo={s}
+                    widthClass="w-full"
+                    caption={c.exterior.styles[i]}
+                    captionTone="gold"
+                  />
                 ) : null,
+                // RIGHT: the floor-plan blueprint offered (gold caption).
                 exteriorPlans[i] ? (
                   <Plate
                     key={`e${i}`}
                     photo={exteriorPlans[i]}
                     widthClass="w-full"
                     caption={c.exterior.plans[i]}
+                    captionTone="gold"
                   />
                 ) : null,
               ])}

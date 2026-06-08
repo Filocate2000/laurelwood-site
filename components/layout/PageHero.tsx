@@ -7,6 +7,8 @@ type PageHeroProps = {
   alt?: string;
   eyebrow?: string;
   title: string;
+  /** Optional extra classes for the title h1 (e.g. "uppercase"). */
+  titleClassName?: string;
   subtitle?: ReactNode;
   objectPosition?: string;
   scrim?: "default" | "dark";
@@ -23,6 +25,7 @@ export function PageHero({
   alt = "",
   eyebrow,
   title,
+  titleClassName = "",
   subtitle,
   objectPosition = "center",
   scrim = "default",
@@ -83,7 +86,7 @@ export function PageHero({
             </div>
           )}
           <h1
-            className="font-serif text-4xl md:text-6xl font-normal text-white"
+            className={`font-serif text-4xl md:text-6xl font-normal text-white ${titleClassName}`}
             style={{ letterSpacing: "-0.01em" }}
           >
             {title}

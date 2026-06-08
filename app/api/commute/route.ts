@@ -18,6 +18,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import { ORIGINS } from "@/lib/commute/origins";
 import { CITY_COORDS, coordsFor, type CityCoords } from "@/lib/commute/cities";
+import { resolveDestinations } from "@/lib/commute/destinations";
 
 // 1 hour cache TTL. Durations vary by traffic, so we refresh hourly.
 // Without caching: 27 origins × 5 destinations × many visitors per hour = $$$.
@@ -136,15 +137,27 @@ export async function GET(req: NextRequest) {
     );
   }
 
-  const origin = ORIGINS[originKey];
-  if (!origin) {
+  // The origin only needs known coordinates; it no longer has to be a curated
+  // ORIGINS entry (the dynamic widget passes its own destination list).
+  const originCoords = coordsFor(originKey);
+  if (!originCoords) {
     return NextResponse.json(
       { error: `Unknown origin: ${originKey}` },
       { status: 400 }
     );
   }
+  const originLabel = ORIGINS[originKey]?.label ?? originCoords.label;
 
-  const destinationKeys = origin.destinations.map((d) => d.key);
+  // Destinations: a dynamic comma-separated slug list (validated against known
+  // city coords) when provided, else the origin's legacy curated destinations.
+  const destList = resolveDestinations(originKey, searchParams.get("destinations"));
+  if (destList.length === 0) {
+    return NextResponse.json(
+      { error: "No valid destinations." },
+      { status: 400 }
+    );
+  }
+  const destinationKeys = destList.map((d) => d.key);
 
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const supabaseSecretKey = process.env.SUPABASE_SECRET_KEY;
@@ -222,7 +235,7 @@ export async function GET(req: NextRequest) {
   }
 
   // 4. Build response from whatever is now in cacheMap (mix of fresh + stale OK)
-  const destinations: DestinationOutput[] = origin.destinations
+  const destinations: DestinationOutput[] = destList
     .map((d) => {
       const row = cacheMap.get(d.key);
       if (!row) return null;
@@ -238,7 +251,7 @@ export async function GET(req: NextRequest) {
     .filter((d): d is DestinationOutput => d !== null);
 
   return NextResponse.json({
-    origin: { key: origin.key, label: origin.label },
+    origin: { key: originKey, label: originLabel },
     destinations,
   });
 }

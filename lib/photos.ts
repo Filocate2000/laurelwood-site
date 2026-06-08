@@ -35,7 +35,8 @@ export type PhotoCategory =
   | "period-photos"
   | "renderings"
   | "highway-shields"
-  | "vista";
+  | "vista"
+  | "stock";
 
 export type Photo = {
   /** Stable id (the output slug, no path/extension). Used by photo(id). */
@@ -68,6 +69,49 @@ export const PHOTOS: Photo[] = [
     section: "hero",
     width: 2400,
     height: 1596,
+    wide: true,
+  },
+  {
+    id: "dona-streets-aerial-hero",
+    src: "/images/dona-streets-aerial-hero.jpg",
+    alt: "Aerial view over the hillside homes and tree-lined streets of the Doña streets in Laurelwood, Studio City.",
+    category: "vista",
+    page: "dona-streets",
+    section: "hero",
+    width: 2400,
+    height: 1807,
+    wide: true,
+  },
+  {
+    id: "telephone-dialing",
+    src: "/images/telephone-dialing.jpg",
+    alt: "Hands lifting the handset and dialing a desk telephone.",
+    category: "stock",
+    page: "homeowners",
+    section: "hero",
+    width: 2400,
+    height: 1602,
+    wide: true,
+  },
+  {
+    id: "neighborhood-watch-sign",
+    src: "/images/neighborhood-watch-sign.jpg",
+    alt: "A Welcome Neighborhood Watch Program in Force sign against a clear blue sky.",
+    category: "stock",
+    page: "homeowners",
+    section: "feature",
+    width: 2300,
+    height: 3000,
+  },
+  {
+    id: "neighborhood-watch-hero",
+    src: "/images/neighborhood-watch-hero.jpg",
+    alt: "Panoramic view over the Laurelwood hillside homes and the San Fernando Valley.",
+    category: "vista",
+    page: "homeowners",
+    section: "hero",
+    width: 2400,
+    height: 1250,
     wide: true,
   },
 
@@ -493,6 +537,20 @@ export const PHOTOS: Photo[] = [
     section: "gallery",
     width: 2400,
     height: 2006,
+  },
+  {
+    // Intro "two figures" band on /development-history. Same archival portrait
+    // as harry-c-fryman-portrait (land-acquisition), registered here under its
+    // own id for the development-history intro plate. Carries the intentional
+    // MISRAJE REAL ESTATE PARTNERS watermark, left as-is.
+    id: "harry-c-fryman",
+    src: "/images/harry-c-fryman.jpg",
+    alt: "Harry C. Fryman, the developer and landowner whose heirs first held the Laurelwood property, photographed among ornate furnishings in a bungalow atop a hotel he owned.",
+    category: "period-photos",
+    page: "development-history",
+    section: "feature",
+    width: 1409,
+    height: 1279,
   },
 
   // --- Land Acquisition History: mountains hero, Fryman portrait, entrance sign

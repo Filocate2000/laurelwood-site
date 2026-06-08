@@ -56,6 +56,10 @@ const RENAME = {
   "IMG_1869": "school-bus",
   "DSC_0094": "laurelwood-vista",
   "Orderly V3E (1)": "disorderly-orderly-1964",
+  "PXL_20260307_211947442 (1)": "dona-streets-aerial-hero",
+  "Telephone Dialing": "telephone-dialing",
+  "Neighborhood Watch": "neighborhood-watch-sign",
+  "PXL_20260307_211635544.MP": "neighborhood-watch-hero",
 };
 
 function slugFor(base) {

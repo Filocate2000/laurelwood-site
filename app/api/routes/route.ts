@@ -12,6 +12,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import { ORIGINS } from "@/lib/commute/origins";
 import { coordsFor, type CityCoords } from "@/lib/commute/cities";
+import { resolveDestinations } from "@/lib/commute/destinations";
 
 // 30 days. Routes don't change; this is mostly defensive against the rare
 // road-construction reroute. Cost impact at 30-day TTL across 140 pairs:
@@ -91,23 +92,25 @@ export async function GET(req: NextRequest) {
     );
   }
 
-  const origin = ORIGINS[originKey];
-  if (!origin) {
+  const originCoords = coordsFor(originKey);
+  if (!originCoords) {
     return NextResponse.json(
       { error: `Unknown origin: ${originKey}` },
       { status: 400 }
     );
   }
+  const originLabel = ORIGINS[originKey]?.label ?? originCoords.label;
 
-  const originCoords = coordsFor(originKey);
-  if (!originCoords) {
+  // Destinations: a dynamic comma-separated slug list (validated against known
+  // city coords) when provided, else the origin's legacy curated destinations.
+  const destList = resolveDestinations(originKey, searchParams.get("destinations"));
+  if (destList.length === 0) {
     return NextResponse.json(
-      { error: `No coordinates for origin: ${originKey}` },
-      { status: 500 }
+      { error: "No valid destinations." },
+      { status: 400 }
     );
   }
-
-  const destinationKeys = origin.destinations.map((d) => d.key);
+  const destinationKeys = destList.map((d) => d.key);
 
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const supabaseSecretKey = process.env.SUPABASE_SECRET_KEY;
@@ -193,8 +196,8 @@ export async function GET(req: NextRequest) {
     // Fall through and return whatever we have, partial map > broken map.
   }
 
-  // 4. Assemble response in the same order as origin.destinations
-  const routes: RouteOutput[] = origin.destinations
+  // 4. Assemble response in the same order as the requested destinations
+  const routes: RouteOutput[] = destList
     .map((d) => {
       const row = cacheMap.get(d.key);
       if (!row) return null;
@@ -209,8 +212,8 @@ export async function GET(req: NextRequest) {
 
   return NextResponse.json({
     origin: {
-      key: origin.key,
-      label: origin.label,
+      key: originKey,
+      label: originLabel,
       lat: originCoords.lat,
       lng: originCoords.lng,
     },
