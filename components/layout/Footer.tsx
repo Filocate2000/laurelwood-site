@@ -24,9 +24,7 @@ const FOOTER_LINKS: { heading: string; links: { label: string; href: string }[] 
   {
     heading: "History",
     links: [
-      { label: "History", href: "/history" },
       { label: "Development History", href: "/development-history" },
-      { label: "Land Acquisition", href: "/history/land-acquisition" },
     ],
   },
   {

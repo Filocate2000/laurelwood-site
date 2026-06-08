@@ -1,184 +1,21 @@
-"use client";
-
-import { useEffect, useState } from "react";
 import Image from "next/image";
-import {
-  ResponsiveContainer,
-  LineChart,
-  Line,
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-} from "recharts";
 import { PageHero } from "@/components/layout/PageHero";
+import { MarketCharts } from "@/components/sections/MarketCharts";
+import { fmtPrice, fmtPpsf, fmtInt, fmtDays, orDash, DASH } from "@/lib/market/format";
+import type {
+  Listing,
+  MarketData,
+  Quarterly,
+} from "@/lib/market/getMarketData";
 
-// Market-report UI for one neighborhood. Client-side reads /api/listings, then
-// renders the canon hero + alternating navy/white bands:
-//   hero -> Market Snapshot table -> Price Trend (line) -> Price per Sq Ft (bars)
-//        -> Active -> Under Contract -> Recent Sales
-// Analytics come from the API's `quarterly` object (comparison{} + byQuarter[]).
-// Pure presentation of API data — no invented copy beyond section headings.
+// Server-rendered market report for one neighborhood. The page fetches the data
+// (lib/market/getMarketData) and passes it in, so the hero, photo gallery,
+// market-snapshot TABLE, listing CARDS, and the verbatim COMMENTARY are all in
+// the initial server HTML (crawlable). ONLY the two recharts charts are
+// client-rendered, via <MarketCharts/>. `data` is null when the server fetch
+// failed, in which case a graceful error band renders instead of the sections.
 
-type ListingRow = {
-  address_formatted: string | null;
-  street_name: string | null;
-  street_number: string | number | null;
-  bedrooms: number | null;
-  bathrooms: number | null;
-  sqft: number | null;
-  lot_size: number | null;
-  year_built: number | null;
-  pool: boolean | string | null;
-  dom: number | null;
-  status_label: string | null;
-  change_date: string | null;
-  list_price: number | null;
-  current_price: number | null;
-  sale_price: number | null;
-  lp_per_sqft: number | null;
-  sp_lp_ratio: number | null;
-  description: string | null;
-  [column: string]: unknown;
-};
-
-type BucketStats = {
-  count: number;
-  avgPrice: number | null;
-  avgPpsf: number | null;
-  avgDom: number | null;
-};
-
-type QuarterAnalytics = {
-  quarter: string;
-  sold_count: number;
-  avg_sale_price: number | null;
-  median_sale_price: number | null;
-  sold_avg_ppsf: number | null;
-  avg_dom: number | null;
-  highest_sale: number | null;
-  active_avg_ppsf: number | null;
-};
-
-type QuarterSummary = {
-  quarter: string;
-  avg_sale_price: number | null;
-  sold_ppsf: number | null;
-  avg_dom: number | null;
-  highest_sale: number | null;
-};
-
-type Quarterly = {
-  byQuarter: QuarterAnalytics[];
-  comparison: {
-    current: QuarterSummary | null;
-    previous: QuarterSummary | null;
-    change: {
-      avg_sale_price_pct: number | null;
-      sold_ppsf_pct: number | null;
-      avg_dom_days_diff: number | null;
-      highest_sale_pct: number | null;
-    } | null;
-  };
-};
-
-type Commentary = {
-  market_snapshot: string | null;
-  active_listings_analysis: string | null;
-  under_contract_analysis: string | null;
-  recent_sales_analysis: string | null;
-};
-
-type ReportResponse = {
-  neighborhood: string;
-  buckets: {
-    active: ListingRow[];
-    underContract: ListingRow[];
-    soldLast90Days: ListingRow[];
-    soldLast12Months: ListingRow[];
-    soldAll: ListingRow[];
-  };
-  stats: {
-    active: BucketStats;
-    underContract: BucketStats;
-    soldLast90Days: BucketStats;
-    soldLast12Months: BucketStats;
-  };
-  quarterly: Quarterly;
-  commentary: Commentary | null;
-};
-
-// Canon palette for the charts.
-const GOLD = "#C8A75B";
-const NAVY = "#16335c";
-const INK = "#9fb0c8"; // muted light text on navy
-const NAVY_INK = "#0A1F3D"; // dark text on white
-
-const usd0 = new Intl.NumberFormat("en-US", {
-  style: "currency",
-  currency: "USD",
-  maximumFractionDigits: 0,
-});
-
-const DASH = "—";
-
-/** $X,XXX,XXX or a dash. */
-function fmtPrice(v: number | null | undefined): string {
-  return v == null || !Number.isFinite(v) ? DASH : usd0.format(v);
-}
-/** $X,XXX (whole dollars) or a dash. */
-function fmtPpsf(v: number | null | undefined): string {
-  return v == null || !Number.isFinite(v) ? DASH : usd0.format(Math.round(v));
-}
-/** Whole number with thousands separators, or a dash. */
-function fmtInt(v: number | null | undefined): string {
-  return v == null || !Number.isFinite(v)
-    ? DASH
-    : Math.round(v).toLocaleString("en-US");
-}
-/** "N days" or a dash. */
-function fmtDays(v: number | null | undefined): string {
-  return v == null || !Number.isFinite(v) ? DASH : `${fmtInt(v)} days`;
-}
-/** Compact money for chart axes: $X.Xm above a million, else $X,XXX. */
-function fmtAxisMoney(v: number): string {
-  if (!Number.isFinite(v)) return "";
-  return v >= 1_000_000
-    ? `$${(v / 1_000_000).toFixed(1)}m`
-    : usd0.format(Math.round(v));
-}
-/** Show a value or a dash (handles null / empty string). */
-function orDash(v: unknown): string {
-  return v == null || v === "" ? DASH : String(v);
-}
-/** Pool can arrive as boolean or a "Y"/"Yes"/"true" string. */
-function hasPool(v: ListingRow["pool"]): boolean {
-  if (v === true) return true;
-  if (typeof v === "string") return /^(y|yes|true|1)/i.test(v.trim());
-  return false;
-}
-
-/** Change-cell text + color. Per spec: down = red, up = green, none = neutral
- *  (directional only, regardless of whether the metric is "good" up or down). */
-function changeView(
-  kind: "pct" | "days",
-  value: number | null | undefined
-): { text: string; className: string } {
-  if (value == null || !Number.isFinite(value)) {
-    return { text: DASH, className: "text-navy-950/45" };
-  }
-  if (value === 0) return { text: "No change", className: "text-navy-950/45" };
-  const up = value > 0;
-  const mag =
-    kind === "pct" ? `${Math.abs(value).toFixed(1)}%` : `${Math.abs(value)} days`;
-  return {
-    text: `${up ? "Up" : "Down"} ${mag}`,
-    className: up ? "text-green-600" : "text-red-600",
-  };
-}
+// --- Commentary prose (verbatim) -------------------------------------------
 
 /** Stored neighborhood commentary, rendered VERBATIM (speaker labels and all).
  *  Body type (Inter Tight) at canon body size; FULL content width, no max-width
@@ -220,7 +57,33 @@ function statusAccent(label: string | null): { text: string; dot: string } {
   return { text: "text-gold-600", dot: "bg-gold-600" };
 }
 
-function ListingCard({ row }: { row: ListingRow }) {
+/** Pool can arrive as boolean or a "Y"/"Yes"/"true" string. */
+function hasPool(v: Listing["pool"]): boolean {
+  if (v === true) return true;
+  if (typeof v === "string") return /^(y|yes|true|1)/i.test(v.trim());
+  return false;
+}
+
+/** Change-cell text + color. Per spec: down = red, up = green, none = neutral
+ *  (directional only, regardless of whether the metric is "good" up or down). */
+function changeView(
+  kind: "pct" | "days",
+  value: number | null | undefined
+): { text: string; className: string } {
+  if (value == null || !Number.isFinite(value)) {
+    return { text: DASH, className: "text-navy-950/45" };
+  }
+  if (value === 0) return { text: "No change", className: "text-navy-950/45" };
+  const up = value > 0;
+  const mag =
+    kind === "pct" ? `${Math.abs(value).toFixed(1)}%` : `${Math.abs(value)} days`;
+  return {
+    text: `${up ? "Up" : "Down"} ${mag}`,
+    className: up ? "text-green-600" : "text-red-600",
+  };
+}
+
+function ListingCard({ row }: { row: Listing }) {
   const accent = statusAccent(row.status_label);
   const title =
     row.address_formatted?.trim() ||
@@ -277,7 +140,7 @@ function ListingsBand({
   neighborhood: string;
   heading: string;
   note?: string;
-  rows: ListingRow[];
+  rows: Listing[];
   emptyText: string;
   commentary?: string | null;
 }) {
@@ -482,196 +345,15 @@ function SnapshotTableBand({
   );
 }
 
-// --- Section 2: Price Trend line chart (NAVY) ------------------------------
-
-function PriceTrendBand({
-  neighborhood,
-  quarters,
-}: {
-  neighborhood: string;
-  quarters: QuarterAnalytics[];
-}) {
-  const data = quarters.map((q) => ({
-    quarter: q.quarter,
-    avg_sale_price: q.avg_sale_price,
-  }));
-
-  return (
-    <section className="bg-navy-950 py-20 md:py-28 overflow-hidden">
-      <div className="w-full px-6 md:px-16">
-        <p className="eyebrow text-gold-500 mb-4">{neighborhood}</p>
-        <h2 className="font-display font-light text-3xl md:text-4xl text-white mb-5">
-          Price Trend
-        </h2>
-        <span className="gold-rule mb-8" />
-        <p className="text-lg text-ink-100 mb-8">Average Sale Price by Quarter</p>
-
-        {data.length === 0 ? (
-          <p className="text-lg text-ink-100">No quarterly data available.</p>
-        ) : (
-          <div className="h-[340px] sm:h-[400px] md:h-[460px] w-full">
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={data} margin={{ top: 10, right: 24, bottom: 8, left: 8 }}>
-                <CartesianGrid
-                  strokeDasharray="3 3"
-                  stroke="rgba(255,255,255,0.12)"
-                  vertical={false}
-                />
-                <XAxis
-                  dataKey="quarter"
-                  tick={{ fill: INK, fontSize: 12 }}
-                  tickLine={false}
-                  axisLine={{ stroke: "rgba(255,255,255,0.2)" }}
-                  angle={-30}
-                  textAnchor="end"
-                  height={56}
-                  interval="preserveStartEnd"
-                />
-                <YAxis
-                  tickFormatter={(v) => fmtAxisMoney(Number(v))}
-                  tick={{ fill: INK, fontSize: 12 }}
-                  tickLine={false}
-                  axisLine={false}
-                  width={78}
-                />
-                <Tooltip
-                  formatter={(v) => [fmtPrice(Number(v)), "Avg Sale Price"]}
-                  contentStyle={{
-                    background: "#0A1F3D",
-                    border: "1px solid rgba(200,167,91,0.5)",
-                    color: "#fff",
-                  }}
-                  labelStyle={{ color: GOLD }}
-                  itemStyle={{ color: "#fff" }}
-                />
-                <Line
-                  type="monotone"
-                  dataKey="avg_sale_price"
-                  name="Avg Sale Price"
-                  stroke={GOLD}
-                  strokeWidth={2.5}
-                  dot={{ r: 4, fill: GOLD, stroke: GOLD }}
-                  activeDot={{ r: 6 }}
-                  connectNulls
-                />
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
-        )}
-      </div>
-    </section>
-  );
-}
-
-// --- Section 3: Price per Sq Ft grouped bar chart (WHITE) ------------------
-
-function PpsfBand({
-  neighborhood,
-  quarters,
-}: {
-  neighborhood: string;
-  quarters: QuarterAnalytics[];
-}) {
-  const data = quarters.map((q) => ({
-    quarter: q.quarter,
-    sold_avg_ppsf: q.sold_avg_ppsf,
-    // null active bars are skipped by recharts (no bar drawn for that quarter).
-    active_avg_ppsf: q.active_avg_ppsf,
-  }));
-
-  return (
-    <section className="bg-white py-20 md:py-28 overflow-hidden">
-      <div className="w-full px-6 md:px-16">
-        <p className="eyebrow text-gold-600 mb-4">{neighborhood}</p>
-        <h2 className="font-display font-light text-3xl md:text-4xl text-navy-950 mb-5">
-          Price per Sq Ft
-        </h2>
-        <span className="gold-rule-dark mb-8" />
-        <p className="text-lg text-navy-950/60 mb-8">
-          Sold vs Active $/Sq Ft by Quarter
-        </p>
-
-        {data.length === 0 ? (
-          <p className="text-lg text-navy-950/70">No quarterly data available.</p>
-        ) : (
-          <div className="h-[340px] sm:h-[400px] md:h-[460px] w-full">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={data} margin={{ top: 10, right: 24, bottom: 8, left: 8 }}>
-                <CartesianGrid
-                  strokeDasharray="3 3"
-                  stroke="rgba(10,31,61,0.1)"
-                  vertical={false}
-                />
-                <XAxis
-                  dataKey="quarter"
-                  tick={{ fill: NAVY_INK, fontSize: 12 }}
-                  tickLine={false}
-                  axisLine={{ stroke: "rgba(10,31,61,0.2)" }}
-                  angle={-30}
-                  textAnchor="end"
-                  height={56}
-                  interval="preserveStartEnd"
-                />
-                <YAxis
-                  tickFormatter={(v) => fmtPpsf(Number(v))}
-                  tick={{ fill: NAVY_INK, fontSize: 12 }}
-                  tickLine={false}
-                  axisLine={false}
-                  width={78}
-                />
-                <Tooltip
-                  formatter={(v) => (v == null ? DASH : fmtPpsf(Number(v)))}
-                  cursor={{ fill: "rgba(10,31,61,0.06)" }}
-                  contentStyle={{
-                    background: "#fff",
-                    border: "1px solid rgba(200,167,91,0.6)",
-                    color: NAVY_INK,
-                  }}
-                />
-                <Legend />
-                <Bar dataKey="sold_avg_ppsf" name="Sold Avg $/Sq Ft" fill={GOLD} />
-                <Bar dataKey="active_avg_ppsf" name="Active Avg $/Sq Ft" fill={NAVY} />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        )}
-      </div>
-    </section>
-  );
-}
-
 // --- Page composition ------------------------------------------------------
 
-export function MarketReport({ neighborhood }: { neighborhood: string }) {
-  const [status, setStatus] = useState<"loading" | "ready" | "error">("loading");
-  const [data, setData] = useState<ReportResponse | null>(null);
-
-  useEffect(() => {
-    let cancelled = false;
-    setStatus("loading");
-    setData(null);
-    fetch(`/api/listings?neighborhood=${encodeURIComponent(neighborhood)}`)
-      .then(async (res) => {
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        return (await res.json()) as ReportResponse;
-      })
-      .then((json) => {
-        if (!cancelled) {
-          setData(json);
-          setStatus("ready");
-        }
-      })
-      .catch(() => {
-        if (!cancelled) setStatus("error");
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [neighborhood]);
-
-  // Keep the x-axis readable: show roughly the last 12 quarters.
-  const recentQuarters = data ? data.quarterly.byQuarter.slice(-12) : [];
-
+export function MarketReport({
+  neighborhood,
+  data,
+}: {
+  neighborhood: string;
+  data: MarketData | null;
+}) {
   const isWest = neighborhood === "West Laurelwood";
   const heroImage = isWest
     ? "/images/report-hero-west.jpg"
@@ -688,9 +370,12 @@ export function MarketReport({ neighborhood }: { neighborhood: string }) {
         "/images/report-east-3.jpg",
       ];
 
+  // Keep the x-axis readable: show roughly the last 12 quarters.
+  const recentQuarters = data ? data.quarterly.byQuarter.slice(-12) : [];
+
   return (
     <>
-      {/* Hero — full-bleed photo (WH1/EH1). Whole-page band alternation below:
+      {/* Hero — full-bleed photo. Whole-page band alternation below:
           photo hero -> navy(gallery) -> white -> navy -> white -> navy -> white
           -> navy, so no two adjacent solid bands share a color. */}
       <PageHero
@@ -703,26 +388,21 @@ export function MarketReport({ neighborhood }: { neighborhood: string }) {
       {/* Photo gallery (NAVY), three across on desktop, between hero and snapshot. */}
       <GalleryBand neighborhood={neighborhood} images={galleryImages} />
 
-      {status === "loading" && <MessageBand message="Loading market data…" />}
-
-      {status === "error" && (
+      {!data ? (
         <MessageBand message="Market data is temporarily unavailable. Please try again shortly." />
-      )}
-
-      {status === "ready" && data && (
+      ) : (
         <>
-          {/* 1. Market Snapshot comparison table — WHITE */}
+          {/* 1. Market Snapshot comparison table — WHITE (server-rendered) */}
           <SnapshotTableBand
             neighborhood={neighborhood}
             comparison={data.quarterly.comparison}
             commentary={data.commentary?.market_snapshot ?? null}
           />
-          {/* 2. Price Trend line chart — NAVY */}
-          <PriceTrendBand neighborhood={neighborhood} quarters={recentQuarters} />
-          {/* 3. Price per Sq Ft grouped bars — WHITE */}
-          <PpsfBand neighborhood={neighborhood} quarters={recentQuarters} />
 
-          {/* Existing listing sections (unchanged) */}
+          {/* 2 + 3. Charts — the only client-rendered piece (NAVY + WHITE) */}
+          <MarketCharts neighborhood={neighborhood} quarters={recentQuarters} />
+
+          {/* 4. Active Listings — NAVY (server-rendered) */}
           <ListingsBand
             tone="navy"
             neighborhood={neighborhood}
@@ -731,6 +411,7 @@ export function MarketReport({ neighborhood }: { neighborhood: string }) {
             emptyText="No active listings at this time."
             commentary={data.commentary?.active_listings_analysis ?? null}
           />
+          {/* 5. Under Contract — WHITE (server-rendered) */}
           <ListingsBand
             tone="white"
             neighborhood={neighborhood}
@@ -739,6 +420,7 @@ export function MarketReport({ neighborhood }: { neighborhood: string }) {
             emptyText="Nothing under contract at this time."
             commentary={data.commentary?.under_contract_analysis ?? null}
           />
+          {/* 6. Recent Sales — NAVY (server-rendered) */}
           <ListingsBand
             tone="navy"
             neighborhood={neighborhood}

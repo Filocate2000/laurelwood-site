@@ -13,5 +13,14 @@ const nextConfig = {
     // (reading 'call')" on dev pages. (Inherited from misraje-site.)
     devtoolSegmentExplorer: false,
   },
+  // The old /history tree was blended into /development-history. 308-redirect the
+  // retired routes to the live page so links/bookmarks/crawlers consolidate.
+  async redirects() {
+    return [
+      { source: "/history", destination: "/development-history", permanent: true },
+      { source: "/history/development", destination: "/development-history", permanent: true },
+      { source: "/history/land-acquisition", destination: "/development-history", permanent: true },
+    ];
+  },
 };
 export default nextConfig;
