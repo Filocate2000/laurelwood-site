@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import {
   ResponsiveContainer,
   LineChart,
@@ -84,6 +85,13 @@ type Quarterly = {
   };
 };
 
+type Commentary = {
+  market_snapshot: string | null;
+  active_listings_analysis: string | null;
+  under_contract_analysis: string | null;
+  recent_sales_analysis: string | null;
+};
+
 type ReportResponse = {
   neighborhood: string;
   buckets: {
@@ -100,6 +108,7 @@ type ReportResponse = {
     soldLast12Months: BucketStats;
   };
   quarterly: Quarterly;
+  commentary: Commentary | null;
 };
 
 // Canon palette for the charts.
@@ -171,9 +180,48 @@ function changeView(
   };
 }
 
-// --- Listing card + listing band (unchanged) -------------------------------
+/** Stored neighborhood commentary, rendered VERBATIM (speaker labels and all).
+ *  Body type (Inter Tight) at canon body size; FULL content width, no max-width
+ *  cap or mx-auto, exactly like the body paragraphs on /development-history. The
+ *  enclosing band already supplies `w-full px-6 md:px-16`. Light on navy bands,
+ *  navy on white bands. `whitespace-pre-line` keeps the author's line breaks
+ *  without altering the text. Renders nothing when empty. */
+function CommentaryProse({
+  text,
+  tone,
+}: {
+  text: string | null | undefined;
+  tone: "navy" | "white";
+}) {
+  if (!text || text.trim() === "") return null;
+  return (
+    <p
+      className={`mb-10 text-lg md:text-xl leading-relaxed whitespace-pre-line ${
+        tone === "navy" ? "text-ink-100" : "text-navy-950/80"
+      }`}
+    >
+      {text}
+    </p>
+  );
+}
+
+// --- Listing card + listing band -------------------------------------------
+
+/** Status-label accent (label text + matching dot). Tasteful, canon-compatible
+ *  shades; Sold uses slate per Jack. No red is used, so this never collides with
+ *  the comparison table's red/green up/down coloring. Unknown statuses fall back
+ *  to canon gold. */
+function statusAccent(label: string | null): { text: string; dot: string } {
+  const s = (label ?? "").toLowerCase();
+  if (s.includes("active")) return { text: "text-green-700", dot: "bg-green-700" };
+  if (s.includes("under contract"))
+    return { text: "text-blue-700", dot: "bg-blue-700" };
+  if (s.includes("sold")) return { text: "text-slate-500", dot: "bg-slate-500" };
+  return { text: "text-gold-600", dot: "bg-gold-600" };
+}
 
 function ListingCard({ row }: { row: ListingRow }) {
+  const accent = statusAccent(row.status_label);
   const title =
     row.address_formatted?.trim() ||
     [row.street_number, row.street_name].filter(Boolean).join(" ").trim() ||
@@ -193,7 +241,13 @@ function ListingCard({ row }: { row: ListingRow }) {
   return (
     <article className="flex flex-col gap-2 bg-[#f6f3ec] border border-gold-500/50 p-5 shadow-sm">
       {row.status_label && (
-        <p className="eyebrow text-gold-600">{row.status_label}</p>
+        <p className={`eyebrow flex items-center gap-2 ${accent.text}`}>
+          <span
+            aria-hidden="true"
+            className={`inline-block w-1.5 h-1.5 rounded-full ${accent.dot}`}
+          />
+          {row.status_label}
+        </p>
       )}
       <h3 className="font-display font-medium text-lg leading-snug text-navy-950">
         {title}
@@ -217,6 +271,7 @@ function ListingsBand({
   note,
   rows,
   emptyText,
+  commentary,
 }: {
   tone: "navy" | "white";
   neighborhood: string;
@@ -224,6 +279,7 @@ function ListingsBand({
   note?: string;
   rows: ListingRow[];
   emptyText: string;
+  commentary?: string | null;
 }) {
   const navy = tone === "navy";
   return (
@@ -251,6 +307,7 @@ function ListingsBand({
           )}
         </h2>
         <span className={`${navy ? "gold-rule" : "gold-rule-dark"} mb-8`} />
+        <CommentaryProse text={commentary} tone={tone} />
         {rows.length === 0 ? (
           <p className={`text-lg ${navy ? "text-ink-100" : "text-navy-950/70"}`}>
             {emptyText}
@@ -277,14 +334,53 @@ function MessageBand({ message }: { message: string }) {
   );
 }
 
+// --- Photo gallery band (NAVY) ---------------------------------------------
+
+/** Three neighborhood photos in a responsive row (3-across on desktop, stacked
+ *  on mobile), equal sizing via a shared aspect ratio + object-cover so nothing
+ *  crops awkwardly. Softly rounded, subtly bordered cards with a slight shadow,
+ *  on a full-bleed navy band. */
+function GalleryBand({
+  neighborhood,
+  images,
+}: {
+  neighborhood: string;
+  images: string[];
+}) {
+  return (
+    <section className="bg-navy-950 py-20 md:py-28 overflow-hidden">
+      <div className="w-full px-6 md:px-16">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
+          {images.map((src, i) => (
+            <div
+              key={src}
+              className="relative aspect-[4/3] overflow-hidden rounded-xl border border-white/10 shadow-lg shadow-black/30"
+            >
+              <Image
+                src={src}
+                alt={`${neighborhood} neighborhood photo ${i + 1}`}
+                fill
+                sizes="(min-width: 768px) 33vw, 100vw"
+                className="object-cover"
+              />
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 // --- Section 1: Market Snapshot comparison table (WHITE) --------------------
 
 function SnapshotTableBand({
   neighborhood,
   comparison,
+  commentary,
 }: {
   neighborhood: string;
   comparison: Quarterly["comparison"];
+  commentary?: string | null;
 }) {
   const cur = comparison.current;
   const prev = comparison.previous;
@@ -298,6 +394,7 @@ function SnapshotTableBand({
           Market Snapshot
         </h2>
         <span className="gold-rule-dark mb-8" />
+        <CommentaryProse text={commentary} tone="white" />
 
         {!cur ? (
           <p className="text-lg text-navy-950/70">
@@ -575,14 +672,36 @@ export function MarketReport({ neighborhood }: { neighborhood: string }) {
   // Keep the x-axis readable: show roughly the last 12 quarters.
   const recentQuarters = data ? data.quarterly.byQuarter.slice(-12) : [];
 
+  const isWest = neighborhood === "West Laurelwood";
+  const heroImage = isWest
+    ? "/images/report-hero-west.jpg"
+    : "/images/report-hero-east.jpg";
+  const galleryImages = isWest
+    ? [
+        "/images/report-west-1.jpg",
+        "/images/report-west-2.jpg",
+        "/images/report-west-3.jpg",
+      ]
+    : [
+        "/images/report-east-1.jpg",
+        "/images/report-east-2.jpg",
+        "/images/report-east-3.jpg",
+      ];
+
   return (
     <>
-      {/* Hero (navy gradient). Whole-page alternation:
-          navy(hero) -> white -> navy -> white -> navy -> white -> navy */}
+      {/* Hero — full-bleed photo (WH1/EH1). Whole-page band alternation below:
+          photo hero -> navy(gallery) -> white -> navy -> white -> navy -> white
+          -> navy, so no two adjacent solid bands share a color. */}
       <PageHero
+        image={heroImage}
+        alt={neighborhood}
         eyebrow="BUYING OR SELLING IN LAURELWOOD"
         title={`${neighborhood} Market Overview`}
       />
+
+      {/* Photo gallery (NAVY), three across on desktop, between hero and snapshot. */}
+      <GalleryBand neighborhood={neighborhood} images={galleryImages} />
 
       {status === "loading" && <MessageBand message="Loading market data…" />}
 
@@ -596,6 +715,7 @@ export function MarketReport({ neighborhood }: { neighborhood: string }) {
           <SnapshotTableBand
             neighborhood={neighborhood}
             comparison={data.quarterly.comparison}
+            commentary={data.commentary?.market_snapshot ?? null}
           />
           {/* 2. Price Trend line chart — NAVY */}
           <PriceTrendBand neighborhood={neighborhood} quarters={recentQuarters} />
@@ -609,6 +729,7 @@ export function MarketReport({ neighborhood }: { neighborhood: string }) {
             heading="Active Listings"
             rows={data.buckets.active}
             emptyText="No active listings at this time."
+            commentary={data.commentary?.active_listings_analysis ?? null}
           />
           <ListingsBand
             tone="white"
@@ -616,6 +737,7 @@ export function MarketReport({ neighborhood }: { neighborhood: string }) {
             heading="Under Contract"
             rows={data.buckets.underContract}
             emptyText="Nothing under contract at this time."
+            commentary={data.commentary?.under_contract_analysis ?? null}
           />
           <ListingsBand
             tone="navy"
@@ -624,6 +746,7 @@ export function MarketReport({ neighborhood }: { neighborhood: string }) {
             note="last 12 months"
             rows={data.buckets.soldLast12Months}
             emptyText="No recent sales in this period."
+            commentary={data.commentary?.recent_sales_analysis ?? null}
           />
         </>
       )}

@@ -24,6 +24,8 @@ const NAV_ITEMS: { label: string; href: string }[] = [
   { label: "About", href: "/about" },
   { label: "What We Do", href: "/what-we-do" },
   { label: "Contact", href: "/contact" },
+  { label: "Buying or Selling in West Laurelwood Guide", href: "/report" },
+  { label: "Buying or Selling in East Laurelwood Guide", href: "/marketreport" },
 ];
 
 const NEIGHBORHOODS: { label: string; href: string }[] = [
@@ -137,7 +139,7 @@ export function Navigation() {
         aria-modal="true"
         aria-label="Site navigation"
         className={cn(
-          "fixed top-0 right-0 z-50 h-full w-full sm:w-[400px] md:w-[420px]",
+          "fixed top-0 right-0 z-50 h-full w-full sm:w-[480px] md:w-[520px]",
           "bg-navy-950 text-white overflow-y-auto",
           "transition-transform duration-500 ease-out",
           open ? "translate-x-0" : "translate-x-full"
@@ -210,52 +212,59 @@ export function Navigation() {
             </div>
           </div>
 
+          {/* Numbered primary nav in two columns on >= sm (00-05 left, 06-10
+              right); single stacked column on narrow/mobile widths. */}
           <nav className="mb-6">
-            <ul>
-              {NAV_ITEMS.map((item, idx) => {
-                const isActive =
-                  item.href === "/"
-                    ? pathname === "/"
-                    : pathname?.startsWith(item.href);
-                return (
-                  <li key={item.href}>
-                    <Link
-                      href={item.href}
-                      className="group flex items-center gap-3.5 py-2.5 transition-colors"
-                    >
-                      <span
-                        className={cn(
-                          "font-mono text-[10px] tracking-wider w-5 transition-colors",
-                          isActive
-                            ? "text-gold-500"
-                            : "text-white/30 group-hover:text-gold-500/70"
-                        )}
-                      >
-                        {String(idx).padStart(2, "0")}
-                      </span>
-                      <span
-                        className={cn(
-                          "text-[14px] tracking-[0.01em] transition-colors whitespace-nowrap",
-                          isActive
-                            ? "text-white"
-                            : "text-white/75 group-hover:text-white"
-                        )}
-                      >
-                        {item.label}
-                      </span>
-                      <span
-                        className={cn(
-                          "flex-1 h-px transition-all duration-500",
-                          isActive
-                            ? "bg-gold-500"
-                            : "bg-transparent group-hover:bg-white/15"
-                        )}
-                      />
-                    </Link>
-                  </li>
-                );
-              })}
-            </ul>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8">
+              {[NAV_ITEMS.slice(0, 6), NAV_ITEMS.slice(6)].map((col, colIdx) => (
+                <ul key={colIdx}>
+                  {col.map((item, i) => {
+                    const idx = colIdx === 0 ? i : i + 6;
+                    const isActive =
+                      item.href === "/"
+                        ? pathname === "/"
+                        : pathname?.startsWith(item.href);
+                    return (
+                      <li key={item.href}>
+                        <Link
+                          href={item.href}
+                          className="group flex items-center gap-3.5 py-2.5 transition-colors"
+                        >
+                          <span
+                            className={cn(
+                              "font-mono text-[10px] tracking-wider w-5 flex-shrink-0 transition-colors",
+                              isActive
+                                ? "text-gold-500"
+                                : "text-white/30 group-hover:text-gold-500/70"
+                            )}
+                          >
+                            {String(idx).padStart(2, "0")}
+                          </span>
+                          <span
+                            className={cn(
+                              "text-[14px] tracking-[0.01em] min-w-0 transition-colors",
+                              isActive
+                                ? "text-white"
+                                : "text-white/75 group-hover:text-white"
+                            )}
+                          >
+                            {item.label}
+                          </span>
+                          <span
+                            className={cn(
+                              "flex-1 h-px transition-all duration-500",
+                              isActive
+                                ? "bg-gold-500"
+                                : "bg-transparent group-hover:bg-white/15"
+                            )}
+                          />
+                        </Link>
+                      </li>
+                    );
+                  })}
+                </ul>
+              ))}
+            </div>
           </nav>
 
           <div className="mb-5">

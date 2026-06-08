@@ -34,11 +34,23 @@ type BucketStats = {
   avgDom: number | null;
 };
 
+// Neighborhood commentary (laurelwood_commentary). Stored prose, returned
+// verbatim — including its embedded speaker labels.
+type Commentary = {
+  market_snapshot: string | null;
+  active_listings_analysis: string | null;
+  under_contract_analysis: string | null;
+  recent_sales_analysis: string | null;
+};
+
 const ALLOWED_NEIGHBORHOODS = ["West Laurelwood", "East Laurelwood"];
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 const CACHE_TTL_MS = 60 * 60 * 1000; // ~1 hour
-const cache = new Map<string, { at: number; rows: Listing[] }>();
+const cache = new Map<
+  string,
+  { at: number; rows: Listing[]; commentary: Commentary | null }
+>();
 
 /** Coerce a DB value to a finite number, or null. */
 function num(v: unknown): number | null {
@@ -79,12 +91,16 @@ function statsFor(rows: Listing[], sold: boolean): BucketStats {
   };
 }
 
-/** Read the neighborhood's rows (service-role), caching them for ~1 hour. */
-async function loadListings(neighborhood: string): Promise<Listing[]> {
+/** Read the neighborhood's listings + commentary (service-role), sharing one
+ *  cache entry for ~1 hour. The commentary row is optional: a missing row -> null,
+ *  and a commentary read error is logged but does not fail the listings. */
+async function loadNeighborhood(
+  neighborhood: string
+): Promise<{ rows: Listing[]; commentary: Commentary | null }> {
   const now = Date.now();
   const cached = cache.get(neighborhood);
   if (cached && now - cached.at < CACHE_TTL_MS) {
-    return cached.rows;
+    return { rows: cached.rows, commentary: cached.commentary };
   }
 
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -96,6 +112,7 @@ async function loadListings(neighborhood: string): Promise<Listing[]> {
   const supabase = createClient(url, key, {
     auth: { persistSession: false, autoRefreshToken: false },
   });
+
   const { data, error } = await supabase
     .from("laurelwood_listings")
     .select("*")
@@ -103,10 +120,34 @@ async function loadListings(neighborhood: string): Promise<Listing[]> {
     .order("change_date", { ascending: false });
 
   if (error) throw error;
-
   const rows = (data ?? []) as Listing[];
-  cache.set(neighborhood, { at: now, rows });
-  return rows;
+
+  // Commentary: stored verbatim; select only the four prose columns.
+  let commentary: Commentary | null = null;
+  const { data: cRow, error: cErr } = await supabase
+    .from("laurelwood_commentary")
+    .select(
+      "market_snapshot, active_listings_analysis, under_contract_analysis, recent_sales_analysis"
+    )
+    .eq("neighborhood", neighborhood)
+    .maybeSingle();
+
+  if (cErr) {
+    console.error("commentary read error:", cErr);
+  } else if (cRow) {
+    commentary = {
+      market_snapshot: (cRow.market_snapshot as string | null) ?? null,
+      active_listings_analysis:
+        (cRow.active_listings_analysis as string | null) ?? null,
+      under_contract_analysis:
+        (cRow.under_contract_analysis as string | null) ?? null,
+      recent_sales_analysis:
+        (cRow.recent_sales_analysis as string | null) ?? null,
+    };
+  }
+
+  cache.set(neighborhood, { at: now, rows, commentary });
+  return { rows, commentary };
 }
 
 // --- Quarterly analytics ---------------------------------------------------
@@ -267,7 +308,11 @@ function buildQuarterly(soldAll: Listing[], active: Listing[]) {
 
 /** Bucket the rows and assemble the response payload. Canceled rows fall into
  *  no bucket (the buckets are keyed to specific statuses). */
-function buildReport(neighborhood: string, rows: Listing[]) {
+function buildReport(
+  neighborhood: string,
+  rows: Listing[],
+  commentary: Commentary | null
+) {
   const now = Date.now();
   const cutoff90 = now - 90 * DAY_MS;
   const cutoff365 = now - 365 * DAY_MS;
@@ -301,6 +346,8 @@ function buildReport(neighborhood: string, rows: Listing[]) {
     },
     // Additive: calendar-quarter analytics from all sold + active rows.
     quarterly: buildQuarterly(soldAll, active),
+    // Additive: stored neighborhood commentary (verbatim), or null.
+    commentary,
   };
 }
 
@@ -320,8 +367,8 @@ export async function GET(request: Request) {
   }
 
   try {
-    const rows = await loadListings(neighborhood);
-    return NextResponse.json(buildReport(neighborhood, rows));
+    const { rows, commentary } = await loadNeighborhood(neighborhood);
+    return NextResponse.json(buildReport(neighborhood, rows, commentary));
   } catch (err) {
     console.error("listings read error:", err);
     return NextResponse.json(
