@@ -22,6 +22,7 @@ type Listing = {
   current_price: number | null;
   list_price: number | null;
   lp_per_sqft: number | null;
+  sqft: number | null;
   dom: number | null;
   [column: string]: unknown;
 };
@@ -108,6 +109,162 @@ async function loadListings(neighborhood: string): Promise<Listing[]> {
   return rows;
 }
 
+// --- Quarterly analytics ---------------------------------------------------
+
+type QuarterAnalytics = {
+  quarter: string; // "Q1 2026"
+  sold_count: number;
+  avg_sale_price: number | null;
+  median_sale_price: number | null;
+  sold_avg_ppsf: number | null; // computed sale_price / sqft, NOT lp_per_sqft
+  avg_dom: number | null;
+  highest_sale: number | null;
+  active_avg_ppsf: number | null; // list_price / sqft over active in-quarter
+};
+
+/** Calendar-quarter key for a row's change_date (UTC, so date-only strings
+ *  don't drift across the year boundary). null if the date is missing. */
+function quarterOf(r: Listing): { key: string; sortIdx: number } | null {
+  const t = changeMs(r);
+  if (Number.isNaN(t)) return null;
+  const d = new Date(t);
+  const year = d.getUTCFullYear();
+  const q = Math.floor(d.getUTCMonth() / 3) + 1; // Q1..Q4
+  return { key: `Q${q} ${year}`, sortIdx: year * 4 + (q - 1) };
+}
+
+/** Raw mean (no rounding); null if empty. */
+function meanRaw(values: number[]): number | null {
+  if (values.length === 0) return null;
+  return values.reduce((a, b) => a + b, 0) / values.length;
+}
+
+/** Median; null if empty. */
+function median(values: number[]): number | null {
+  if (values.length === 0) return null;
+  const s = [...values].sort((a, b) => a - b);
+  const mid = Math.floor(s.length / 2);
+  return s.length % 2 ? s[mid] : (s[mid - 1] + s[mid]) / 2;
+}
+
+/** Round to a whole number, preserving null. */
+function roundOrNull(v: number | null): number | null {
+  return v == null ? null : Math.round(v);
+}
+
+/** Percent change (current - previous) / previous * 100, 1 decimal; null if
+ *  either side is missing or previous is zero. */
+function pctChange(cur: number | null, prev: number | null): number | null {
+  if (cur == null || prev == null || prev === 0) return null;
+  return Math.round(((cur - prev) / prev) * 1000) / 10;
+}
+
+/** Build the quarterly block from sold + active rows for the neighborhood. Only
+ *  quarters with >= 1 sold listing are emitted; active rows contribute only
+ *  active_avg_ppsf to a quarter that already has sold data. */
+function buildQuarterly(soldAll: Listing[], active: Listing[]) {
+  const groups = new Map<string, { sortIdx: number; sold: Listing[]; active: Listing[] }>();
+
+  for (const r of soldAll) {
+    const q = quarterOf(r);
+    if (!q) continue;
+    let g = groups.get(q.key);
+    if (!g) {
+      g = { sortIdx: q.sortIdx, sold: [], active: [] };
+      groups.set(q.key, g);
+    }
+    g.sold.push(r);
+  }
+  // Active rows only matter for quarters that already have sold data.
+  for (const r of active) {
+    const q = quarterOf(r);
+    if (!q) continue;
+    const g = groups.get(q.key);
+    if (g) g.active.push(r);
+  }
+
+  const ordered = [...groups.entries()].sort((a, b) => a[1].sortIdx - b[1].sortIdx);
+  const byQuarter: QuarterAnalytics[] = ordered.map(([key, g]) => {
+    const salePrices = g.sold
+      .map((r) => num(r.sale_price))
+      .filter((v): v is number => v !== null);
+    const soldPpsf = g.sold
+      .map((r) => {
+        const sp = num(r.sale_price);
+        const sf = num(r.sqft);
+        return sp !== null && sf !== null && sp > 0 && sf > 0 ? sp / sf : null;
+      })
+      .filter((v): v is number => v !== null);
+    const doms = g.sold
+      .map((r) => num(r.dom))
+      .filter((v): v is number => v !== null);
+    const activePpsf = g.active
+      .map((r) => {
+        const lp = num(r.list_price);
+        const sf = num(r.sqft);
+        return lp !== null && sf !== null && lp > 0 && sf > 0 ? lp / sf : null;
+      })
+      .filter((v): v is number => v !== null);
+
+    return {
+      quarter: key,
+      sold_count: g.sold.length,
+      avg_sale_price: roundOrNull(meanRaw(salePrices)),
+      median_sale_price: roundOrNull(median(salePrices)),
+      sold_avg_ppsf: roundOrNull(meanRaw(soldPpsf)),
+      avg_dom: roundOrNull(meanRaw(doms)),
+      highest_sale: salePrices.length ? Math.round(Math.max(...salePrices)) : null,
+      active_avg_ppsf: roundOrNull(meanRaw(activePpsf)),
+    };
+  });
+
+  // Comparison: the two most recent quarters with sold data (all emitted
+  // quarters have sold data by construction).
+  const summarize = (q: QuarterAnalytics) => ({
+    quarter: q.quarter,
+    avg_sale_price: q.avg_sale_price,
+    sold_ppsf: q.sold_avg_ppsf,
+    avg_dom: q.avg_dom,
+    highest_sale: q.highest_sale,
+  });
+
+  const last = byQuarter[byQuarter.length - 1] ?? null;
+  const prev = byQuarter[byQuarter.length - 2] ?? null;
+
+  let comparison: {
+    current: ReturnType<typeof summarize> | null;
+    previous: ReturnType<typeof summarize> | null;
+    change: {
+      avg_sale_price_pct: number | null;
+      sold_ppsf_pct: number | null;
+      avg_dom_days_diff: number | null;
+      highest_sale_pct: number | null;
+    } | null;
+  };
+
+  if (!last) {
+    comparison = { current: null, previous: null, change: null };
+  } else if (!prev) {
+    comparison = { current: summarize(last), previous: null, change: null };
+  } else {
+    const c = summarize(last);
+    const p = summarize(prev);
+    comparison = {
+      current: c,
+      previous: p,
+      change: {
+        avg_sale_price_pct: pctChange(c.avg_sale_price, p.avg_sale_price),
+        sold_ppsf_pct: pctChange(c.sold_ppsf, p.sold_ppsf),
+        avg_dom_days_diff:
+          c.avg_dom != null && p.avg_dom != null ? c.avg_dom - p.avg_dom : null,
+        highest_sale_pct: pctChange(c.highest_sale, p.highest_sale),
+      },
+    };
+  }
+
+  return { byQuarter, comparison };
+}
+
 /** Bucket the rows and assemble the response payload. Canceled rows fall into
  *  no bucket (the buckets are keyed to specific statuses). */
 function buildReport(neighborhood: string, rows: Listing[]) {
@@ -142,6 +299,8 @@ function buildReport(neighborhood: string, rows: Listing[]) {
       soldLast90Days: statsFor(soldLast90Days, true),
       soldLast12Months: statsFor(soldLast12Months, true),
     },
+    // Additive: calendar-quarter analytics from all sold + active rows.
+    quarterly: buildQuarterly(soldAll, active),
   };
 }
 
