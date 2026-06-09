@@ -50,6 +50,7 @@ export type Commentary = {
   active_listings_analysis: string | null;
   under_contract_analysis: string | null;
   recent_sales_analysis: string | null;
+  detailed_analysis: string | null;
 };
 
 export type QuarterAnalytics = {
@@ -188,7 +189,7 @@ async function loadNeighborhood(
   const { data: cRow, error: cErr } = await supabase
     .from("laurelwood_commentary")
     .select(
-      "market_snapshot, active_listings_analysis, under_contract_analysis, recent_sales_analysis"
+      "market_snapshot, active_listings_analysis, under_contract_analysis, recent_sales_analysis, detailed_analysis"
     )
     .eq("neighborhood", neighborhood)
     .maybeSingle();
@@ -204,6 +205,7 @@ async function loadNeighborhood(
         (cRow.under_contract_analysis as string | null) ?? null,
       recent_sales_analysis:
         (cRow.recent_sales_analysis as string | null) ?? null,
+      detailed_analysis: (cRow.detailed_analysis as string | null) ?? null,
     };
   }
 
