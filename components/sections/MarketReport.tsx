@@ -636,47 +636,6 @@ function DetailedAnalysisBand({
     },
   ];
 
-  // Computed firm-voice summary (NOT the stored market_snapshot, which renders
-  // in the Snapshot table band above — this is a numbers narrative like Wix's).
-  const summary = (() => {
-    if (activeCount === 0 && sold12Count === 0) return null;
-    const parts: string[] = [];
-    parts.push(
-      `Misraje Real Estate Partners: With ${fmtInt(activeCount)} active ${
-        activeCount === 1 ? "listing" : "listings"
-      } and ${fmtInt(sold12Count)} closed ${
-        sold12Count === 1 ? "sale" : "sales"
-      } over the last 12 months, the neighborhood is absorbing inventory at a rate of approximately ${
-        absorption != null ? (Math.round(absorption * 10) / 10).toFixed(1) : DASH
-      } months.`
-    );
-    if (avgDomActive != null) {
-      parts.push(
-        `Active listings are averaging ${fmtInt(avgDomActive)} days on market.`
-      );
-    }
-    if (activePpsf && sold12Ppsf && pricingPct != null && pricingPct > 0) {
-      parts.push(
-        `Current active asking prices average ${fmtPpsf(
-          activePpsf
-        )} per square foot, sitting ${Math.abs(pricingPct).toFixed(
-          1
-        )}% above the 12-month closed average of ${fmtPpsf(
-          sold12Ppsf
-        )} per square foot across ${fmtInt(sold12Count)} sales. The 12-month closed average remains the most reliable reference point for where buyers have been willing to transact.`
-      );
-    } else if (activePpsf && sold12Ppsf) {
-      parts.push(
-        `Current active asking prices average ${fmtPpsf(
-          activePpsf
-        )} per square foot against a 12-month closed average of ${fmtPpsf(
-          sold12Ppsf
-        )} per square foot across ${fmtInt(sold12Count)} sales.`
-      );
-    }
-    return parts.join(" ");
-  })();
-
   return (
     <section id="detailed-analysis" className="bg-white py-20 md:py-28 overflow-hidden">
       <div className="w-full px-6 md:px-16">
@@ -714,17 +673,7 @@ function DetailedAnalysisBand({
             </div>
           ))}
         </div>
-        {summary && (() => {
-          const LABEL = "Misraje Real Estate Partners:";
-          const hasLabel = summary.startsWith(LABEL);
-          const rest = hasLabel ? summary.slice(LABEL.length) : summary;
-          return (
-            <p className="text-lg md:text-xl leading-relaxed text-navy-950/80">
-              {hasLabel && <span className="font-semibold">{LABEL}</span>}
-              {hasLabel ? rest : summary}
-            </p>
-          );
-        })()}
+        <CommentaryProse text={data.commentary?.detailed_analysis ?? null} tone="white" />
       </div>
     </section>
   );
