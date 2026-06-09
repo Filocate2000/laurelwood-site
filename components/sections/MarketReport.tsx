@@ -246,6 +246,73 @@ function RecentSalesAveragesPanel({
   );
 }
 
+// --- Under-contract panel (summary + context against closed sales) ----------
+// Renders ONLY when underContract.count > 0. Left box: UC averages. Right box:
+// UC pricing positioned against 90-day and 12-month closed $/sqft, with signed
+// gap labels. $/SqFt is list-based (stats.*.avgPpsf), consistent with the rest.
+
+function UnderContractPanel({
+  stats,
+  tone,
+}: {
+  stats: MarketData["stats"];
+  tone: "navy" | "white";
+}) {
+  if (stats.underContract.count === 0) return null;
+
+  const navy = tone === "navy";
+  const boxClass = navy
+    ? "border-gold-500/30 bg-white/[0.04]"
+    : "border-gold-600/30 bg-navy-950/[0.03]";
+  const labelClass = navy ? "text-ink-100" : "text-navy-950/70";
+  const valueClass = navy ? "text-white" : "text-navy-950";
+
+  const Row = ({ label, value }: { label: string; value: string }) => (
+    <div className="flex items-baseline justify-between border-b border-current/10 py-1.5">
+      <dt className={`text-sm ${labelClass}`}>{label}</dt>
+      <dd className={`text-sm font-semibold ${valueClass}`}>{value}</dd>
+    </div>
+  );
+
+  const ucPpsf = stats.underContract.avgPpsf;
+  const s90 = stats.soldLast90Days.avgPpsf;
+  const s12 = stats.soldLast12Months.avgPpsf;
+
+  const gapLabel = (uc: number | null, sold: number | null): string => {
+    if (!uc || !sold || sold === 0) return DASH;
+    const pct = Math.round((uc / sold - 1) * 1000) / 10;
+    if (pct === 0) return "At parity";
+    return `${pct > 0 ? "Above" : "Below"} ${Math.abs(pct).toFixed(1)}%`;
+  };
+
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 mb-12">
+      <div className={`rounded-xl border p-6 ${boxClass}`}>
+        <h3 className="font-display font-medium text-xl text-blue-300 mb-4">
+          Under Contract Summary
+        </h3>
+        <dl>
+          <Row label="Average Price" value={stats.underContract.avgPrice ? fmtPrice(stats.underContract.avgPrice) : DASH} />
+          <Row label="Average $/SqFt" value={ucPpsf ? fmtPpsf(ucPpsf) : DASH} />
+          <Row label="Average Days on Market" value={stats.underContract.avgDom != null ? `${fmtInt(stats.underContract.avgDom)} days` : DASH} />
+          <Row label="Total Under Contract" value={fmtInt(stats.underContract.count)} />
+        </dl>
+      </div>
+      <div className={`rounded-xl border p-6 ${boxClass}`}>
+        <h3 className="font-display font-medium text-xl text-red-400 mb-4">
+          Context Against Closed Sales
+        </h3>
+        <dl>
+          <Row label="90-Day Sold Avg $/SqFt" value={s90 ? fmtPpsf(s90) : DASH} />
+          <Row label="12-Month Sold Avg $/SqFt" value={s12 ? fmtPpsf(s12) : DASH} />
+          <Row label="Pricing Gap vs 90-Day" value={gapLabel(ucPpsf, s90)} />
+          <Row label="Pricing Gap vs 12-Month" value={gapLabel(ucPpsf, s12)} />
+        </dl>
+      </div>
+    </div>
+  );
+}
+
 function ListingsBand({
   tone,
   neighborhood,
@@ -609,7 +676,7 @@ function DetailedAnalysisBand({
   })();
 
   return (
-    <section className="bg-white py-20 md:py-28 overflow-hidden">
+    <section id="detailed-analysis" className="bg-white py-20 md:py-28 overflow-hidden">
       <div className="w-full px-6 md:px-16">
         <p className="eyebrow text-gold-600 mb-4">{neighborhood}</p>
         <h2 className="font-display font-light text-3xl md:text-4xl text-navy-950 mb-5">
@@ -718,6 +785,7 @@ function SectionNav() {
     { label: "Active Listings", href: "#active" },
     { label: "Under Contract", href: "#under-contract" },
     { label: "Solds", href: "#recent-sales" },
+    { label: "Detailed Analysis", href: "#detailed-analysis" },
   ];
   return (
     <section className="bg-navy-950 pb-12 md:pb-16 overflow-hidden">
@@ -826,6 +894,7 @@ export function MarketReport({
             rows={data.buckets.underContract}
             emptyText="Nothing under contract at this time."
             commentary={data.commentary?.under_contract_analysis ?? null}
+            averages={<UnderContractPanel stats={data.stats} tone="white" />}
           />
           {/* 6. Recent Sales — NAVY (server-rendered) */}
           <ListingsBand
