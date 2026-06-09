@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import Image from "next/image";
 import { PageHero } from "@/components/layout/PageHero";
 import { MarketCharts } from "@/components/sections/MarketCharts";
@@ -31,13 +32,24 @@ function CommentaryProse({
   tone: "navy" | "white";
 }) {
   if (!text || text.trim() === "") return null;
+
+  const SPEAKERS = [
+    "Misraje Real Estate Partners:",
+    "Jack Misraje:",
+    "Karen Misraje:",
+  ];
+  const trimmed = text.trimStart();
+  const label = SPEAKERS.find((s) => trimmed.startsWith(s)) ?? null;
+  const rest = label ? trimmed.slice(label.length) : trimmed;
+
   return (
     <p
       className={`mb-10 text-lg md:text-xl leading-relaxed whitespace-pre-line ${
         tone === "navy" ? "text-ink-100" : "text-navy-950/80"
       }`}
     >
-      {text}
+      {label && <span className="font-semibold">{label}</span>}
+      {label ? rest : trimmed}
     </p>
   );
 }
@@ -127,6 +139,113 @@ function ListingCard({ row }: { row: Listing }) {
   );
 }
 
+// --- Averages panel (two boxes: active averages + 12-month sale averages) ---
+// Renders at the TOP of a listings band (above the cards). Tone-aware so it
+// reads on navy or white. $/SqFt is list-based (stats.*.avgPpsf = lp_per_sqft),
+// matching the legacy report.
+
+function AveragesPanel({
+  stats,
+  tone,
+}: {
+  stats: MarketData["stats"];
+  tone: "navy" | "white";
+}) {
+  const navy = tone === "navy";
+  const boxClass = navy
+    ? "border-gold-500/30 bg-white/[0.04]"
+    : "border-gold-600/30 bg-navy-950/[0.03]";
+  const labelClass = navy ? "text-ink-100" : "text-navy-950/70";
+  const valueClass = navy ? "text-white" : "text-navy-950";
+
+  const Row = ({ label, value }: { label: string; value: string }) => (
+    <div className="flex items-baseline justify-between border-b border-current/10 py-1.5">
+      <dt className={`text-sm ${labelClass}`}>{label}</dt>
+      <dd className={`text-sm font-semibold ${valueClass}`}>{value}</dd>
+    </div>
+  );
+
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 mb-12">
+      <div className={`rounded-xl border p-6 ${boxClass}`}>
+        <h3 className="font-display font-medium text-xl text-green-500 mb-4">
+          Current Listing Averages
+        </h3>
+        <dl>
+          <Row label="Average List Price" value={stats.active.avgPrice ? fmtPrice(stats.active.avgPrice) : DASH} />
+          <Row label="Average $/SqFt" value={stats.active.avgPpsf ? fmtPpsf(stats.active.avgPpsf) : DASH} />
+          <Row label="Average Days on Market" value={stats.active.avgDom != null ? `${fmtInt(stats.active.avgDom)}` : DASH} />
+        </dl>
+      </div>
+      <div className={`rounded-xl border p-6 ${boxClass}`}>
+        <h3 className="font-display font-medium text-xl text-red-400 mb-4">
+          Last 12 Months Sales
+        </h3>
+        <dl>
+          <Row label="Average Sale Price" value={stats.soldLast12Months.avgPrice ? fmtPrice(stats.soldLast12Months.avgPrice) : DASH} />
+          <Row label="Average $/SqFt" value={stats.soldLast12Months.avgPpsf ? fmtPpsf(stats.soldLast12Months.avgPpsf) : DASH} />
+          <Row label="Average Days on Market" value={stats.soldLast12Months.avgDom != null ? `${fmtInt(stats.soldLast12Months.avgDom)}` : DASH} />
+          <Row label="Total Homes Sold" value={fmtInt(stats.soldLast12Months.count)} />
+        </dl>
+      </div>
+    </div>
+  );
+}
+
+// --- Recent-sales averages panel (current-quarter box + 12-month box) -------
+// Renders at the TOP of the Recent Sales band. Left box is the most recent
+// quarter's sale averages (from quarterly.comparison.current); right box is the
+// same 12-month sale summary used in the Active band. Tone-aware.
+
+function RecentSalesAveragesPanel({
+  data,
+  tone,
+}: {
+  data: MarketData;
+  tone: "navy" | "white";
+}) {
+  const navy = tone === "navy";
+  const boxClass = navy
+    ? "border-gold-500/30 bg-white/[0.04]"
+    : "border-gold-600/30 bg-navy-950/[0.03]";
+  const labelClass = navy ? "text-ink-100" : "text-navy-950/70";
+  const valueClass = navy ? "text-white" : "text-navy-950";
+  const cur = data.quarterly.comparison.current;
+
+  const Row = ({ label, value }: { label: string; value: string }) => (
+    <div className="flex items-baseline justify-between border-b border-current/10 py-1.5">
+      <dt className={`text-sm ${labelClass}`}>{label}</dt>
+      <dd className={`text-sm font-semibold ${valueClass}`}>{value}</dd>
+    </div>
+  );
+
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 mb-12">
+      <div className={`rounded-xl border p-6 ${boxClass}`}>
+        <h3 className="font-display font-medium text-xl text-red-400 mb-4">
+          {cur ? `${cur.quarter} Sales Averages` : "Recent Quarter Sales Averages"}
+        </h3>
+        <dl>
+          <Row label="Average Sale Price" value={cur?.avg_sale_price ? fmtPrice(cur.avg_sale_price) : DASH} />
+          <Row label="Average $/SqFt" value={cur?.sold_ppsf ? fmtPpsf(cur.sold_ppsf) : DASH} />
+          <Row label="Average Days on Market" value={cur?.avg_dom != null ? `${fmtInt(cur.avg_dom)}` : DASH} />
+        </dl>
+      </div>
+      <div className={`rounded-xl border p-6 ${boxClass}`}>
+        <h3 className="font-display font-medium text-xl text-red-400 mb-4">
+          Last 12 Months Sales
+        </h3>
+        <dl>
+          <Row label="Average Sale Price" value={data.stats.soldLast12Months.avgPrice ? fmtPrice(data.stats.soldLast12Months.avgPrice) : DASH} />
+          <Row label="Average $/SqFt" value={data.stats.soldLast12Months.avgPpsf ? fmtPpsf(data.stats.soldLast12Months.avgPpsf) : DASH} />
+          <Row label="Average Days on Market" value={data.stats.soldLast12Months.avgDom != null ? `${fmtInt(data.stats.soldLast12Months.avgDom)}` : DASH} />
+          <Row label="Total Homes Sold" value={fmtInt(data.stats.soldLast12Months.count)} />
+        </dl>
+      </div>
+    </div>
+  );
+}
+
 function ListingsBand({
   tone,
   neighborhood,
@@ -135,6 +254,9 @@ function ListingsBand({
   rows,
   emptyText,
   commentary,
+  cta,
+  averages,
+  id,
 }: {
   tone: "navy" | "white";
   neighborhood: string;
@@ -143,10 +265,14 @@ function ListingsBand({
   rows: Listing[];
   emptyText: string;
   commentary?: string | null;
+  cta?: ReactNode;
+  averages?: ReactNode;
+  id?: string;
 }) {
   const navy = tone === "navy";
   return (
     <section
+      id={id}
       className={`${navy ? "bg-navy-950" : "bg-white"} py-20 md:py-28 overflow-hidden`}
     >
       <div className="w-full px-6 md:px-16">
@@ -171,6 +297,7 @@ function ListingsBand({
         </h2>
         <span className={`${navy ? "gold-rule" : "gold-rule-dark"} mb-8`} />
         <CommentaryProse text={commentary} tone={tone} />
+        {averages}
         {rows.length === 0 ? (
           <p className={`text-lg ${navy ? "text-ink-100" : "text-navy-950/70"}`}>
             {emptyText}
@@ -182,6 +309,7 @@ function ListingsBand({
             ))}
           </div>
         )}
+        {cta}
       </div>
     </section>
   );
@@ -345,6 +473,271 @@ function SnapshotTableBand({
   );
 }
 
+// --- Detailed Analysis band (WHITE): three stat cards + computed summary ----
+
+function DetailedAnalysisBand({
+  neighborhood,
+  data,
+}: {
+  neighborhood: string;
+  data: MarketData;
+}) {
+  const activeCount = data.stats.active.count;
+  const sold12Count = data.stats.soldLast12Months.count;
+  const sold90Count = data.stats.soldLast90Days.count;
+  const activePpsf = data.stats.active.avgPpsf;
+  const ucPpsf = data.stats.underContract.avgPpsf;
+  const sold90Ppsf = data.stats.soldLast90Days.avgPpsf;
+  const sold12Ppsf = data.stats.soldLast12Months.avgPpsf;
+  const avgDomActive = data.stats.active.avgDom;
+
+  // Absorption: months of inventory = active / (12-mo solds per month).
+  const perMonth = sold12Count > 0 ? sold12Count / 12 : null;
+  const absorption =
+    perMonth && perMonth > 0 ? activeCount / perMonth : null;
+
+  // Market condition from absorption (months of inventory).
+  const condition =
+    absorption == null
+      ? "Insufficient Data"
+      : absorption < 4
+      ? "Seller Leaning"
+      : absorption <= 6
+      ? "Balanced"
+      : "Buyer Leaning";
+
+  // Pricing position: active list $/sqft vs 12-mo closed $/sqft.
+  const pricingPct =
+    activePpsf && sold12Ppsf && sold12Ppsf > 0
+      ? Math.round(((activePpsf / sold12Ppsf) - 1) * 1000) / 10
+      : null;
+  const pricingLabel =
+    pricingPct == null
+      ? DASH
+      : pricingPct > 0
+      ? `Above ${Math.abs(pricingPct).toFixed(1)}%`
+      : pricingPct < 0
+      ? `Below ${Math.abs(pricingPct).toFixed(1)}%`
+      : "At market";
+
+  const perMonthLabel =
+    perMonth != null ? (Math.round(perMonth * 100) / 100).toFixed(2) : DASH;
+
+  const cards: Array<{
+    title: string;
+    blurb: string;
+    headline: string;
+    rows: Array<{ label: string; value: string }>;
+  }> = [
+    {
+      title: "Market Condition",
+      blurb:
+        "Balance between supply and demand using active inventory, pending activity, recent closings, and exposure time.",
+      headline: condition,
+      rows: [
+        { label: "Active Listings", value: fmtInt(activeCount) },
+        { label: "Under Contract", value: fmtInt(data.stats.underContract.count) },
+        { label: "Sold Last 90 Days", value: fmtInt(sold90Count) },
+        { label: "Avg DOM Active", value: avgDomActive != null ? `${fmtInt(avgDomActive)} days` : DASH },
+      ],
+    },
+    {
+      title: "Absorption Rate",
+      blurb:
+        "How quickly current inventory would sell at the pace of the last 12 months of closed sales. Lower months indicate stronger demand.",
+      headline: absorption != null ? `${(Math.round(absorption * 10) / 10).toFixed(1)} mo` : DASH,
+      rows: [
+        { label: "Active Homes", value: fmtInt(activeCount) },
+        { label: "Sold Last 12 Months", value: fmtInt(sold12Count) },
+        { label: "Homes Sold Per Month", value: perMonthLabel },
+        { label: "Market Pace", value: condition },
+      ],
+    },
+    {
+      title: "Pricing Position",
+      blurb:
+        "Today's active and under-contract asking prices against where homes have actually closed. Whether asking levels sit above, near, or below the closed-sale range.",
+      headline: pricingLabel,
+      rows: [
+        { label: "Active Avg $/SqFt", value: activePpsf ? fmtPpsf(activePpsf) : DASH },
+        { label: "Under Contract Avg $/SqFt", value: ucPpsf ? fmtPpsf(ucPpsf) : DASH },
+        { label: "90-Day Sold Avg $/SqFt", value: sold90Ppsf ? fmtPpsf(sold90Ppsf) : DASH },
+        { label: "12-Month Sold Avg $/SqFt", value: sold12Ppsf ? fmtPpsf(sold12Ppsf) : DASH },
+      ],
+    },
+  ];
+
+  // Computed firm-voice summary (NOT the stored market_snapshot, which renders
+  // in the Snapshot table band above — this is a numbers narrative like Wix's).
+  const summary = (() => {
+    if (activeCount === 0 && sold12Count === 0) return null;
+    const parts: string[] = [];
+    parts.push(
+      `Misraje Real Estate Partners: With ${fmtInt(activeCount)} active ${
+        activeCount === 1 ? "listing" : "listings"
+      } and ${fmtInt(sold12Count)} closed ${
+        sold12Count === 1 ? "sale" : "sales"
+      } over the last 12 months, the neighborhood is absorbing inventory at a rate of approximately ${
+        absorption != null ? (Math.round(absorption * 10) / 10).toFixed(1) : DASH
+      } months.`
+    );
+    if (avgDomActive != null) {
+      parts.push(
+        `Active listings are averaging ${fmtInt(avgDomActive)} days on market.`
+      );
+    }
+    if (activePpsf && sold12Ppsf && pricingPct != null && pricingPct > 0) {
+      parts.push(
+        `Current active asking prices average ${fmtPpsf(
+          activePpsf
+        )} per square foot, sitting ${Math.abs(pricingPct).toFixed(
+          1
+        )}% above the 12-month closed average of ${fmtPpsf(
+          sold12Ppsf
+        )} per square foot across ${fmtInt(sold12Count)} sales. The 12-month closed average remains the most reliable reference point for where buyers have been willing to transact.`
+      );
+    } else if (activePpsf && sold12Ppsf) {
+      parts.push(
+        `Current active asking prices average ${fmtPpsf(
+          activePpsf
+        )} per square foot against a 12-month closed average of ${fmtPpsf(
+          sold12Ppsf
+        )} per square foot across ${fmtInt(sold12Count)} sales.`
+      );
+    }
+    return parts.join(" ");
+  })();
+
+  return (
+    <section className="bg-white py-20 md:py-28 overflow-hidden">
+      <div className="w-full px-6 md:px-16">
+        <p className="eyebrow text-gold-600 mb-4">{neighborhood}</p>
+        <h2 className="font-display font-light text-3xl md:text-4xl text-navy-950 mb-5">
+          Detailed Analysis
+        </h2>
+        <span className="gold-rule-dark mb-8" />
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 mb-10">
+          {cards.map((c) => (
+            <div
+              key={c.title}
+              className="flex flex-col bg-[#f6f3ec] border border-gold-500/50 p-6 shadow-sm"
+            >
+              <h3 className="font-display font-medium text-lg text-navy-950 mb-2">
+                {c.title}
+              </h3>
+              <p className="text-sm text-navy-950/60 leading-relaxed mb-5">
+                {c.blurb}
+              </p>
+              <p className="font-display text-3xl md:text-4xl font-semibold text-navy-950 mb-5">
+                {c.headline}
+              </p>
+              <dl className="mt-auto flex flex-col gap-2">
+                {c.rows.map((r) => (
+                  <div
+                    key={r.label}
+                    className="flex items-baseline justify-between border-b border-navy-950/10 pb-1.5"
+                  >
+                    <dt className="text-sm text-navy-950/70">{r.label}</dt>
+                    <dd className="text-sm font-medium text-navy-950">{r.value}</dd>
+                  </div>
+                ))}
+              </dl>
+            </div>
+          ))}
+        </div>
+        {summary && (() => {
+          const LABEL = "Misraje Real Estate Partners:";
+          const hasLabel = summary.startsWith(LABEL);
+          const rest = hasLabel ? summary.slice(LABEL.length) : summary;
+          return (
+            <p className="text-lg md:text-xl leading-relaxed text-navy-950/80">
+              {hasLabel && <span className="font-semibold">{LABEL}</span>}
+              {hasLabel ? rest : summary}
+            </p>
+          );
+        })()}
+      </div>
+    </section>
+  );
+}
+
+// --- CTA box (renders INSIDE a band, adapts to tone) ------------------------
+
+function CtaBox({
+  heading,
+  body,
+  cta,
+  href,
+  tone,
+}: {
+  heading: string;
+  body: string;
+  cta: string;
+  href: string;
+  tone: "navy" | "white";
+}) {
+  const navy = tone === "navy";
+  return (
+    <div
+      className={`mt-12 rounded-xl border px-8 py-12 text-center ${
+        navy
+          ? "border-gold-500/30 bg-white/[0.03]"
+          : "border-gold-600/30 bg-navy-950/[0.03]"
+      }`}
+    >
+      <h3
+        className={`font-display font-light text-2xl md:text-3xl mb-4 ${
+          navy ? "text-gold-500" : "text-gold-600"
+        }`}
+      >
+        {heading}
+      </h3>
+      <p
+        className={`text-lg max-w-2xl mx-auto mb-8 leading-relaxed ${
+          navy ? "text-ink-100" : "text-navy-950/75"
+        }`}
+      >
+        {body}
+      </p>
+      <a
+        href={href}
+        className="inline-block bg-gold-500 text-navy-950 font-display font-medium tracking-wide px-8 py-3 rounded-full hover:bg-gold-400 transition-colors"
+      >
+        {cta}
+      </a>
+    </div>
+  );
+}
+
+// --- Section nav (three jump buttons, placed after the gallery) -------------
+// Anchor links to the three listing sections. Always shows all three; the
+// Under Contract target may be an empty-state section when nothing is pending.
+
+function SectionNav() {
+  const items = [
+    { label: "Active Listings", href: "#active" },
+    { label: "Under Contract", href: "#under-contract" },
+    { label: "Solds", href: "#recent-sales" },
+  ];
+  return (
+    <section className="bg-navy-950 pb-12 md:pb-16 overflow-hidden">
+      <div className="w-full px-6 md:px-16">
+        <div className="flex flex-wrap justify-center gap-4">
+          {items.map((it) => (
+            <a
+              key={it.href}
+              href={it.href}
+              className="inline-block border border-gold-500/50 text-gold-500 font-display font-medium tracking-wide px-6 py-2.5 rounded-full hover:bg-gold-500 hover:text-navy-950 transition-colors"
+            >
+              {it.label}
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 // --- Page composition ------------------------------------------------------
 
 export function MarketReport({
@@ -388,6 +781,8 @@ export function MarketReport({
       {/* Photo gallery (NAVY), three across on desktop, between hero and snapshot. */}
       <GalleryBand neighborhood={neighborhood} images={galleryImages} />
 
+      <SectionNav />
+
       {!data ? (
         <MessageBand message="Market data is temporarily unavailable. Please try again shortly." />
       ) : (
@@ -407,15 +802,27 @@ export function MarketReport({
             tone="navy"
             neighborhood={neighborhood}
             heading="Active Listings"
+            id="active"
             rows={data.buckets.active}
             emptyText="No active listings at this time."
             commentary={data.commentary?.active_listings_analysis ?? null}
+            averages={<AveragesPanel stats={data.stats} tone="navy" />}
+            cta={
+              <CtaBox
+                tone="navy"
+                heading={`Thinking of selling in ${neighborhood}?`}
+                body="Get a custom opinion of value based on the most recent sales, current competition, and buyer demand in your section of Laurelwood."
+                cta="Request a Home Valuation"
+                href="/contact"
+              />
+            }
           />
           {/* 5. Under Contract — WHITE (server-rendered) */}
           <ListingsBand
             tone="white"
             neighborhood={neighborhood}
             heading="Under Contract"
+            id="under-contract"
             rows={data.buckets.underContract}
             emptyText="Nothing under contract at this time."
             commentary={data.commentary?.under_contract_analysis ?? null}
@@ -425,11 +832,25 @@ export function MarketReport({
             tone="navy"
             neighborhood={neighborhood}
             heading="Recent Sales"
+            id="recent-sales"
             note="last 12 months"
             rows={data.buckets.soldLast12Months}
             emptyText="No recent sales in this period."
             commentary={data.commentary?.recent_sales_analysis ?? null}
+            averages={<RecentSalesAveragesPanel data={data} tone="navy" />}
+            cta={
+              <CtaBox
+                tone="navy"
+                heading="Want to know about new listings first?"
+                body={`Stay ahead of the market with updates on new listings, escrow activity, and recent closings in ${neighborhood}.`}
+                cta="Get Market Updates"
+                href="/contact"
+              />
+            }
           />
+
+          {/* 7. Detailed Analysis — WHITE (server-rendered) */}
+          <DetailedAnalysisBand neighborhood={neighborhood} data={data} />
         </>
       )}
     </>

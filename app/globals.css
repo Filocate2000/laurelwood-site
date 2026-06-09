@@ -22,6 +22,12 @@
     -moz-osx-font-smoothing: grayscale;
   }
 
+  /* Offset jump-anchor targets so section-nav links don't land under the
+     fixed header. */
+  section[id] {
+    scroll-margin-top: 2rem;
+  }
+
   body {
     @apply bg-navy-950 text-ink-100 font-sans;
   }
