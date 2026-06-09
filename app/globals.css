@@ -25,7 +25,7 @@
   /* Offset jump-anchor targets so section-nav links don't land under the
      fixed header. */
   section[id] {
-    scroll-margin-top: 2rem;
+    scroll-margin-top: 6rem;
   }
 
   body {
