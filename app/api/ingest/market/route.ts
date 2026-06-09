@@ -216,6 +216,7 @@ async function handleCommentary(body: AnyRow) {
   put(row, "active_listings_analysis", body.activeListingsAnalysis);
   put(row, "under_contract_analysis", body.underContractAnalysis);
   put(row, "recent_sales_analysis", body.recentSalesAnalysis);
+  put(row, "detailed_analysis", body.detailedAnalysis);
   const nowIso = new Date().toISOString();
   row.report_date = nowIso;
   row.updated_at = nowIso;
