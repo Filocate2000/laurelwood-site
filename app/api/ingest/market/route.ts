@@ -274,6 +274,110 @@ export async function POST(req: NextRequest) {
   }
 }
 
-export async function GET() {
-  return NextResponse.json({ ok: true, service: "ingest/market", status: "alive" });
+export async function GET(req: NextRequest) {
+  const { searchParams } = new URL(req.url);
+  const mode = searchParams.get("mode");
+
+  // Health check (unchanged behavior when no mode is supplied).
+  if (mode !== "solds") {
+    return NextResponse.json({ ok: true, service: "ingest/market", status: "alive" });
+  }
+
+  // Archive-solds read: returns trailing 12-month and 90-day Sold rows for a
+  // neighborhood, shaped for the commentary Lambda. Auth via x-ingest-secret.
+  const supplied = req.headers.get("x-ingest-secret");
+  if (!secretMatches(supplied)) {
+    return NextResponse.json({ ok: false, error: "Unauthorized" }, { status: 401 });
+  }
+
+  const neighborhood = (searchParams.get("neighborhood") ?? "").trim();
+  if (!neighborhood) {
+    return NextResponse.json(
+      { ok: false, error: "missing neighborhood" },
+      { status: 400 }
+    );
+  }
+
+  const today = new Date();
+  const cutoff365 = new Date(today.getTime() - 365 * 24 * 60 * 60 * 1000)
+    .toISOString()
+    .slice(0, 10);
+  const cutoff90 = new Date(today.getTime() - 90 * 24 * 60 * 60 * 1000)
+    .toISOString()
+    .slice(0, 10);
+
+  try {
+    const { data, error } = await supabase
+      .from("laurelwood_listings")
+      .select(
+        "mls_number,address_formatted,street_name,city,bedrooms,bathrooms,sqft,lot_size,year_built,pool,dom,status_label,change_type,change_date,list_price,current_price,sale_price,lp_per_sqft,sp_lp_ratio,description"
+      )
+      .eq("neighborhood", neighborhood)
+      .eq("status_label", "Sold")
+      .gte("change_date", cutoff365)
+      .order("change_date", { ascending: false });
+
+    if (error) {
+      return NextResponse.json(
+        { ok: false, mode: "solds", error: error.message },
+        { status: 500 }
+      );
+    }
+
+    // Map DB columns back into the camelCase listing shape the commentary
+    // Lambda consumes. ppsf computed from sale_price / sqft when both present.
+    const shape = (r: AnyRow) => {
+      const sqft = toNum(r.sqft);
+      const sale = toNum(r.sale_price);
+      const ppsf = sqft && sale && sqft > 0 ? Math.round(sale / sqft) : null;
+      return {
+        mlsNumber: r.mls_number ?? null,
+        address: r.address_formatted ?? null,
+        street: r.street_name ?? null,
+        city: r.city ?? null,
+        statusLabel: r.status_label ?? "Sold",
+        changeType: r.change_type ?? "S",
+        changeDate: r.change_date ?? null,
+        close_date: r.change_date ?? null,
+        br: r.bedrooms ?? null,
+        baths: r.bathrooms ?? null,
+        sqFt: sqft,
+        lotSz: r.lot_size ?? null,
+        yb: r.year_built ?? null,
+        pool: r.pool ?? null,
+        dom: r.dom ?? null,
+        lp: toNum(r.list_price),
+        currentPrice: toNum(r.current_price),
+        salePrice: sale,
+        sp: sale,
+        lpSqFt: toNum(r.lp_per_sqft),
+        ppsf,
+        spLpRatio: toNum(r.sp_lp_ratio),
+        description: r.description ?? null,
+      };
+    };
+
+    const rows = (data ?? []) as AnyRow[];
+    const sold12 = rows.map(shape);
+    const sold90 = rows
+      .filter((r) => {
+        const d = String(r.change_date ?? "");
+        return d && d >= cutoff90;
+      })
+      .map(shape);
+
+    return NextResponse.json({
+      ok: true,
+      mode: "solds",
+      neighborhood,
+      sold_last_90_days: sold90,
+      sold_last_12_months: sold12,
+      counts: { sold_90: sold90.length, sold_12: sold12.length },
+    });
+  } catch (e) {
+    return NextResponse.json(
+      { ok: false, mode: "solds", error: e instanceof Error ? e.message : String(e) },
+      { status: 500 }
+    );
+  }
 }
