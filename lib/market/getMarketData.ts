@@ -192,6 +192,8 @@ async function loadNeighborhood(
       "market_snapshot, active_listings_analysis, under_contract_analysis, recent_sales_analysis, detailed_analysis"
     )
     .eq("neighborhood", neighborhood)
+    .order("updated_at", { ascending: false })
+    .limit(1)
     .maybeSingle();
 
   if (cErr) {
