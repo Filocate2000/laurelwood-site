@@ -74,6 +74,64 @@
     @apply mx-auto max-w-editorial px-6 lg:px-12;
   }
 
+  /* LARE Report typography. Overrides global heading + body styles which are
+     tuned for dark-background contexts; LARE Report pages render on white.
+     Targets the raw HTML injected via dangerouslySetInnerHTML. Ported verbatim
+     from misraje-site so the article HTML renders identically on both sites. */
+  .lare-content {
+    @apply text-navy-950;
+    font-family: var(--font-sans);
+  }
+  .lare-content > * + * {
+    margin-top: 1.25rem;
+  }
+  .lare-content h2 {
+    @apply font-display font-light text-navy-950;
+    font-size: clamp(1.75rem, 3vw, 2.25rem);
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+    margin-top: 2.5rem;
+    margin-bottom: 0.5rem;
+    color: #0A1F3D;
+  }
+  .lare-content h3 {
+    @apply font-display font-normal text-navy-950;
+    font-size: 1.25rem;
+    line-height: 1.35;
+    letter-spacing: -0.005em;
+    margin-top: 2rem;
+    margin-bottom: 0.5rem;
+    color: #0A1F3D;
+  }
+  .lare-content p {
+    @apply text-stone-700;
+    font-size: 1rem;
+    line-height: 1.75;
+    color: #3A3A3A;
+  }
+  .lare-content strong {
+    @apply text-navy-950;
+    font-weight: 600;
+    color: #0A1F3D;
+  }
+  .lare-content ul {
+    list-style: disc;
+    padding-left: 1.5rem;
+    margin: 1rem 0;
+  }
+  .lare-content ul li {
+    @apply text-stone-700;
+    line-height: 1.75;
+    margin: 0.5rem 0;
+    color: #3A3A3A;
+  }
+  /* Wix-era spacer paragraphs: collapse them so vertical rhythm comes from
+     the > * + * sibling margin rule instead. */
+  .lare-content p:empty,
+  .lare-content p:has(> br:only-child) {
+    display: none;
+  }
+
   /* Editorial prose body for ported page copy. Renders on navy bands by
      default; the .editorial-prose-light variant flips it for white bands. */
   .editorial-prose {

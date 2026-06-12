@@ -13,7 +13,6 @@ import { siteConfig } from "@/lib/site-config";
 //
 // COMING LATER (do not render until the hub-side recon + registration lands):
 //   { label: "Blog", href: "/blog" },
-//   { label: "LARE Report", href: "/lare-report" },
 const NAV_ITEMS: { label: string; href: string }[] = [
   { label: "Home", href: "/" },
   { label: "West Laurelwood", href: "/west-laurelwood" },
@@ -24,6 +23,7 @@ const NAV_ITEMS: { label: string; href: string }[] = [
   { label: "About", href: "/about" },
   { label: "What We Do", href: "/what-we-do" },
   { label: "Contact", href: "/contact" },
+  { label: "LARE Report", href: "/lare-report" },
   { label: "Buying or Selling in West Laurelwood Guide", href: "/report" },
   { label: "Buying or Selling in East Laurelwood Guide", href: "/marketreport" },
 ];
