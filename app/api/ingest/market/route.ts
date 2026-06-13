@@ -354,6 +354,16 @@ async function handleCompAuditConcern(body: AnyRow) {
     set_aside: Array.isArray(c.set_aside) ? c.set_aside : [],
     audit_s3_key: c.audit_s3_key ?? null,
     audit_generated_at: c.audit_generated_at ?? null,
+    // Phase 2: narrative, rich property cards, and which comps the concern
+    // references (the page auto-expands those descriptions). Stored as-is.
+    concern: {
+      headline: c.headline ?? null,
+      report_says: c.report_says ?? null,
+      why: c.why ?? null,
+      what_to_confirm: c.what_to_confirm ?? null,
+    },
+    properties: c.properties ?? null,
+    references: Array.isArray(c.references) ? c.references : [],
   };
 
   const row: AnyRow = {
@@ -435,6 +445,11 @@ export async function POST(req: NextRequest) {
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const mode = searchParams.get("mode");
+
+  // Phase B: rulings read - resolved comp-audit concerns for the learning loop.
+  if (mode === "comp_audit_rulings") {
+    return handleCompAuditRulings(req, searchParams);
+  }
 
   // Health check (unchanged behavior when no mode is supplied).
   if (mode !== "solds") {
@@ -535,6 +550,94 @@ export async function GET(req: NextRequest) {
   } catch (e) {
     return NextResponse.json(
       { ok: false, mode: "solds", error: e instanceof Error ? e.message : String(e) },
+      { status: 500 }
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Phase B: rulings read.
+//
+// Returns the comp-audit concerns the team has already RESOLVED (status done or
+// cancelled) for a neighborhood + brokerage, within a recency window. The
+// reviewer (feedback.js) turns these into downrank/suppress rulings so repeat
+// reports stop re-nagging about a property you already handled. Read-only;
+// reuses the module `supabase` client and the x-ingest-secret auth.
+//
+// v1 returns status-based facts plus any `dismissal_reason` found in metadata
+// (null today); when the detail page starts writing a reason, v2 consumes it
+// here with no endpoint change.
+async function handleCompAuditRulings(
+  req: NextRequest,
+  searchParams: URLSearchParams
+) {
+  const supplied = req.headers.get("x-ingest-secret");
+  if (!secretMatches(supplied)) {
+    return NextResponse.json({ ok: false, error: "Unauthorized" }, { status: 401 });
+  }
+
+  const neighborhood = (searchParams.get("neighborhood") ?? "").trim();
+  if (!neighborhood) {
+    return NextResponse.json(
+      { ok: false, mode: "comp_audit_rulings", error: "missing neighborhood" },
+      { status: 400 }
+    );
+  }
+  const brokerageId = (searchParams.get("brokerage_id") ?? "").trim();
+  const windowDays = Number(searchParams.get("window_days")) || 45;
+  const cutoffMs = Date.now() - windowDays * 24 * 60 * 60 * 1000;
+
+  try {
+    let q = supabase
+      .from("assignment")
+      .select("metadata,status,completed_at,updated_at")
+      .filter("metadata->>source", "eq", "comp_audit")
+      .filter("metadata->>neighborhood", "eq", neighborhood)
+      .in("status", ["done", "cancelled"])
+      .is("deleted_at", null);
+    if (brokerageId) q = q.eq("brokerage_id", brokerageId);
+
+    const { data, error } = await q;
+    if (error) {
+      return NextResponse.json(
+        { ok: false, mode: "comp_audit_rulings", error: error.message },
+        { status: 500 }
+      );
+    }
+
+    const resolved = ((data ?? []) as AnyRow[])
+      .map((r) => {
+        const meta = (r.metadata ?? {}) as AnyRow;
+        const resolvedAt = (r.completed_at ?? r.updated_at ?? null) as string | null;
+        return {
+          subject_address: (meta.subject_address ?? null) as string | null,
+          status: (r.status ?? null) as string | null,
+          dismissal_reason: (meta.dismissal_reason ?? null) as string | null,
+          resolved_at: resolvedAt,
+        };
+      })
+      .filter((r) => {
+        if (!r.subject_address) return false;
+        if (!r.resolved_at) return true; // keep if we cannot date it
+        const t = Date.parse(r.resolved_at);
+        return Number.isNaN(t) ? true : t >= cutoffMs;
+      });
+
+    return NextResponse.json({
+      ok: true,
+      mode: "comp_audit_rulings",
+      neighborhood,
+      window_days: windowDays,
+      resolved,
+      count: resolved.length,
+    });
+  } catch (e) {
+    return NextResponse.json(
+      {
+        ok: false,
+        mode: "comp_audit_rulings",
+        error: e instanceof Error ? e.message : String(e),
+      },
       { status: 500 }
     );
   }
