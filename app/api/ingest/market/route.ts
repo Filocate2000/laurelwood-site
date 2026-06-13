@@ -354,6 +354,16 @@ async function handleCompAuditConcern(body: AnyRow) {
     set_aside: Array.isArray(c.set_aside) ? c.set_aside : [],
     audit_s3_key: c.audit_s3_key ?? null,
     audit_generated_at: c.audit_generated_at ?? null,
+    // Phase 2: narrative, rich property cards, and which comps the concern
+    // references (the page auto-expands those descriptions). Stored as-is.
+    concern: {
+      headline: c.headline ?? null,
+      report_says: c.report_says ?? null,
+      why: c.why ?? null,
+      what_to_confirm: c.what_to_confirm ?? null,
+    },
+    properties: c.properties ?? null,
+    references: Array.isArray(c.references) ? c.references : [],
   };
 
   const row: AnyRow = {
