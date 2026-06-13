@@ -10,6 +10,17 @@ const SUPABASE_SECRET_KEY = process.env.SUPABASE_SECRET_KEY as string;
 const INGEST_SHARED_SECRET = process.env.INGEST_SHARED_SECRET ?? "";
 const GEOCODING_API_KEY = process.env.GOOGLE_GEOCODING_API_KEY ?? "";
 
+// --- comp-audit assignment integration ---------------------------------------
+// Base URL used to build the deep link returned to the PACE reviewer. Set this
+// in laurelwood-site's Vercel env to the domain where the assignment queue is
+// viewed (the app that renders /brokerage/assignments). If unset, the route
+// still creates the assignment; assignment_url just comes back empty and the
+// reviewer email omits the button until you set it.
+const APP_BASE_URL = process.env.APP_BASE_URL ?? "";
+const MISRAJE_BROKERAGE_ID =
+  process.env.MISRAJE_BROKERAGE_ID ?? "852d9bdd-4293-42e1-8833-f35273dc08e7";
+// -----------------------------------------------------------------------------
+
 type AnyRow = Record<string, unknown>;
 
 function secretMatches(supplied: string | null): boolean {
@@ -238,6 +249,147 @@ async function handleCommentary(body: AnyRow) {
   return NextResponse.json({ ok: true, mode: "commentary", neighborhood: row.neighborhood });
 }
 
+// ============================================================================
+// comp_audit_concern  -  PACE comp-audit -> assignment (Phase A)
+// Inserts a `review` assignment into the shared `assignment` table for each
+// surfaced comp concern. Idempotent on metadata.concern_key (ignoring soft-
+// deleted rows). property_id / action_plan_item_id / assigned_by_user_id left
+// NULL. Reuses the module `supabase` client and the x-ingest-secret auth above.
+// ============================================================================
+
+const PRIORITY_BY_CONCERN: Record<string, "urgent" | "high" | "normal" | "low"> = {
+  high: "urgent",
+  medium: "high",
+  low: "normal",
+  none: "low",
+};
+
+function buildConcernDescription(c: AnyRow): string {
+  const lines: string[] = [];
+  const headline = String(c.headline ?? "").trim();
+  const reportSays = String(c.report_says ?? "").trim();
+  const why = String(c.why ?? "").trim();
+  const whatToConfirm = String(c.what_to_confirm ?? "").trim();
+  const setAside = Array.isArray(c.set_aside) ? (c.set_aside as AnyRow[]) : [];
+
+  if (headline) lines.push(headline);
+  if (reportSays) lines.push(`What the report says: ${reportSays}`);
+  if (why) lines.push(`Why it matters: ${why}`);
+  if (whatToConfirm) lines.push(`Confirm: ${whatToConfirm}`);
+  if (setAside.length) {
+    lines.push("Other sales worth knowing about:");
+    for (const s of setAside.slice(0, 4)) {
+      const ppsf = toNum(s.ppsf);
+      const price = ppsf !== null ? `$${Math.round(ppsf)}/sq ft` : "price n/a";
+      const note = String(s.note ?? "").trim();
+      lines.push(`- ${String(s.address ?? "").trim()} at ${price}${note ? ` (${note})` : ""}`);
+    }
+  }
+  return lines.join("\n").trim();
+}
+
+function buildAssignmentUrl(id: string): string {
+  const base = (APP_BASE_URL || "").replace(/\/+$/, "");
+  // Confirm this path matches where a single assignment is opened in the app.
+  return base ? `${base}/brokerage/assignments/${id}` : "";
+}
+
+async function handleCompAuditConcern(body: AnyRow) {
+  const c = (body.concern ?? {}) as AnyRow;
+  const concernKey = String(c.concern_key ?? "").trim();
+  const subjectAddress = String(c.subject_address ?? "").trim();
+  const neighborhood = String(body.neighborhood ?? "").trim();
+  const brokerageId = String(body.brokerage_id ?? MISRAJE_BROKERAGE_ID).trim();
+
+  if (!concernKey) {
+    return NextResponse.json(
+      { ok: false, error: "comp_audit_concern missing concern.concern_key" },
+      { status: 400 }
+    );
+  }
+  if (!subjectAddress) {
+    return NextResponse.json(
+      { ok: false, error: "comp_audit_concern missing concern.subject_address" },
+      { status: 400 }
+    );
+  }
+
+  // idempotency: re-fired audits map to the same concern_key. Ignore soft-
+  // deleted rows so a deleted one can be recreated.
+  try {
+    const { data: existing, error: selErr } = await supabase
+      .from("assignment")
+      .select("id")
+      .eq("brokerage_id", brokerageId)
+      .eq("metadata->>concern_key", concernKey)
+      .is("deleted_at", null)
+      .limit(1)
+      .maybeSingle();
+
+    if (!selErr && existing && (existing as { id: string }).id) {
+      const id = (existing as { id: string }).id;
+      return NextResponse.json({
+        ok: true,
+        mode: "comp_audit_concern",
+        created: false,
+        assignment_id: id,
+        assignment_url: buildAssignmentUrl(id),
+      });
+    }
+  } catch {
+    // non-fatal: fall through to insert (a rare duplicate beats dropping it)
+  }
+
+  const concernLevel = String(c.concern_level ?? "low");
+  const priority = PRIORITY_BY_CONCERN[concernLevel] ?? "normal";
+
+  const metadata: AnyRow = {
+    source: "comp_audit",
+    concern_key: concernKey,
+    neighborhood,
+    subject_address: subjectAddress,
+    bucket: c.bucket ?? null,
+    concern_level: concernLevel,
+    operative_comp: c.operative_comp ?? null,
+    set_aside: Array.isArray(c.set_aside) ? c.set_aside : [],
+    audit_s3_key: c.audit_s3_key ?? null,
+    audit_generated_at: c.audit_generated_at ?? null,
+  };
+
+  const row: AnyRow = {
+    brokerage_id: brokerageId,
+    assignment_kind: "review",
+    title: `${neighborhood} - ${subjectAddress}`.slice(0, 200),
+    description: buildConcernDescription(c),
+    priority,
+    status: "open",
+    metadata,
+  };
+  put(row, "assigned_to_user_id", body.assignee_user_id);
+
+  const { data: inserted, error: insErr } = await supabase
+    .from("assignment")
+    .insert(row)
+    .select("id")
+    .single();
+
+  if (insErr) {
+    return NextResponse.json(
+      { ok: false, mode: "comp_audit_concern", error: insErr.message },
+      { status: 500 }
+    );
+  }
+
+  const id = (inserted as { id: string }).id;
+  return NextResponse.json({
+    ok: true,
+    mode: "comp_audit_concern",
+    created: true,
+    assignment_id: id,
+    assignment_url: buildAssignmentUrl(id),
+  });
+}
+
 export async function POST(req: NextRequest) {
   try {
     const supplied = req.headers.get("x-ingest-secret");
@@ -250,6 +402,11 @@ export async function POST(req: NextRequest) {
       body = (await req.json()) as AnyRow;
     } catch {
       return NextResponse.json({ ok: false, error: "Invalid JSON" }, { status: 400 });
+    }
+
+    // comp-audit concern -> assignment (checked first, explicit mode field)
+    if (body.mode === "comp_audit_concern") {
+      return await handleCompAuditConcern(body);
     }
 
     if (Array.isArray(body.listings)) {
