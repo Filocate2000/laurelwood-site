@@ -400,6 +400,217 @@ async function handleCompAuditConcern(body: AnyRow) {
   });
 }
 
+// ============================================================================
+// Regeneration loop: run snapshots + standing instructions
+//
+// Two tables, written/read ONLY through these modes (the Lambda never touches
+// Supabase directly). The route expects these columns:
+//   commentary_run_snapshot(neighborhood text, stats jsonb, listings jsonb,
+//                           report_date timestamptz default now())
+//   commentary_instruction(neighborhood text, section text null,
+//                          instruction text, created_by text null,
+//                          active boolean default true,
+//                          created_at timestamptz default now())
+// Auth is the same x-ingest-secret used everywhere else (POST enforces it before
+// dispatch; the GET handlers re-check it themselves). "Instructions replace,
+// never stack" is enforced in handleSaveInstruction: a save retires prior active
+// rows for the SAME (neighborhood, section) scope before inserting the new one.
+// ============================================================================
+
+async function handleSaveRunSnapshot(body: AnyRow) {
+  const neighborhood = String(body.neighborhood ?? "").trim();
+  if (!neighborhood) {
+    return NextResponse.json(
+      { ok: false, mode: "save_run_snapshot", error: "missing neighborhood" },
+      { status: 400 }
+    );
+  }
+  const stats =
+    body.stats && typeof body.stats === "object" ? body.stats : {};
+  const listings =
+    body.listings && typeof body.listings === "object" ? body.listings : {};
+
+  const { data, error } = await supabase
+    .from("commentary_run_snapshot")
+    .insert({ neighborhood, stats, listings })
+    .select("id")
+    .single();
+
+  if (error) {
+    return NextResponse.json(
+      { ok: false, mode: "save_run_snapshot", error: error.message },
+      { status: 500 }
+    );
+  }
+  return NextResponse.json({
+    ok: true,
+    mode: "save_run_snapshot",
+    neighborhood,
+    snapshot_id: (data as { id: string }).id,
+  });
+}
+
+async function handleGetRunSnapshot(
+  req: NextRequest,
+  searchParams: URLSearchParams
+) {
+  const supplied = req.headers.get("x-ingest-secret");
+  if (!secretMatches(supplied)) {
+    return NextResponse.json({ ok: false, error: "Unauthorized" }, { status: 401 });
+  }
+  const neighborhood = (searchParams.get("neighborhood") ?? "").trim();
+  if (!neighborhood) {
+    return NextResponse.json(
+      { ok: false, mode: "get_run_snapshot", error: "missing neighborhood" },
+      { status: 400 }
+    );
+  }
+
+  const { data, error } = await supabase
+    .from("commentary_run_snapshot")
+    .select("stats,listings,report_date")
+    .eq("neighborhood", neighborhood)
+    .order("report_date", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  if (error) {
+    return NextResponse.json(
+      { ok: false, mode: "get_run_snapshot", error: error.message },
+      { status: 500 }
+    );
+  }
+  if (!data) {
+    return NextResponse.json({
+      ok: true,
+      mode: "get_run_snapshot",
+      neighborhood,
+      snapshot: null,
+    });
+  }
+  const row = data as AnyRow;
+  return NextResponse.json({
+    ok: true,
+    mode: "get_run_snapshot",
+    neighborhood,
+    snapshot: {
+      stats: row.stats ?? {},
+      listings: row.listings ?? {},
+      report_date: row.report_date ?? null,
+    },
+  });
+}
+
+async function handleSaveInstruction(body: AnyRow) {
+  const neighborhood = String(body.neighborhood ?? "").trim();
+  const instruction = String(body.instruction ?? "").trim();
+  const sectionRaw = String(body.section ?? "").trim();
+  const section = sectionRaw ? sectionRaw : null;
+  const createdByRaw = String(body.created_by ?? "").trim();
+  const createdBy = createdByRaw ? createdByRaw : null;
+
+  if (!neighborhood) {
+    return NextResponse.json(
+      { ok: false, mode: "save_instruction", error: "missing neighborhood" },
+      { status: 400 }
+    );
+  }
+  if (!instruction) {
+    return NextResponse.json(
+      { ok: false, mode: "save_instruction", error: "missing instruction" },
+      { status: 400 }
+    );
+  }
+
+  // Replace, never stack: retire prior active rows for the SAME scope
+  // (neighborhood + section). A whole-report instruction (section null) only
+  // retires prior whole-report rows; a section-scoped one only retires that
+  // section's rows. PostgREST needs .is() for null and .eq() for a value.
+  let retire = supabase
+    .from("commentary_instruction")
+    .update({ active: false })
+    .eq("neighborhood", neighborhood)
+    .eq("active", true);
+  retire =
+    section === null ? retire.is("section", null) : retire.eq("section", section);
+  const { error: retireErr } = await retire;
+  if (retireErr) {
+    return NextResponse.json(
+      { ok: false, mode: "save_instruction", error: retireErr.message },
+      { status: 500 }
+    );
+  }
+
+  const insertRow: AnyRow = {
+    neighborhood,
+    section,
+    instruction,
+    active: true,
+  };
+  put(insertRow, "created_by", createdBy);
+
+  const { data, error } = await supabase
+    .from("commentary_instruction")
+    .insert(insertRow)
+    .select("id")
+    .single();
+
+  if (error) {
+    return NextResponse.json(
+      { ok: false, mode: "save_instruction", error: error.message },
+      { status: 500 }
+    );
+  }
+  return NextResponse.json({
+    ok: true,
+    mode: "save_instruction",
+    neighborhood,
+    section,
+    instruction_id: (data as { id: string }).id,
+  });
+}
+
+async function handleGetInstructions(
+  req: NextRequest,
+  searchParams: URLSearchParams
+) {
+  const supplied = req.headers.get("x-ingest-secret");
+  if (!secretMatches(supplied)) {
+    return NextResponse.json({ ok: false, error: "Unauthorized" }, { status: 401 });
+  }
+  const neighborhood = (searchParams.get("neighborhood") ?? "").trim();
+  if (!neighborhood) {
+    return NextResponse.json(
+      { ok: false, mode: "get_instructions", error: "missing neighborhood" },
+      { status: 400 }
+    );
+  }
+
+  const { data, error } = await supabase
+    .from("commentary_instruction")
+    .select("section,instruction")
+    .eq("neighborhood", neighborhood)
+    .eq("active", true)
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    return NextResponse.json(
+      { ok: false, mode: "get_instructions", error: error.message },
+      { status: 500 }
+    );
+  }
+  const instructions = ((data ?? []) as AnyRow[]).map((r) => ({
+    section: (r.section ?? null) as string | null,
+    instruction: String(r.instruction ?? ""),
+  }));
+  return NextResponse.json({
+    ok: true,
+    mode: "get_instructions",
+    neighborhood,
+    instructions,
+  });
+}
+
 export async function POST(req: NextRequest) {
   try {
     const supplied = req.headers.get("x-ingest-secret");
@@ -417,6 +628,16 @@ export async function POST(req: NextRequest) {
     // comp-audit concern -> assignment (checked first, explicit mode field)
     if (body.mode === "comp_audit_concern") {
       return await handleCompAuditConcern(body);
+    }
+
+    // Regeneration loop writes (explicit mode field). The default POST (no
+    // mode) stays the commentary write, so the comp-audit and commentary
+    // paths below are untouched.
+    if (body.mode === "save_run_snapshot") {
+      return await handleSaveRunSnapshot(body);
+    }
+    if (body.mode === "save_instruction") {
+      return await handleSaveInstruction(body);
     }
 
     if (Array.isArray(body.listings)) {
@@ -445,6 +666,14 @@ export async function POST(req: NextRequest) {
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const mode = searchParams.get("mode");
+
+  // Regeneration loop reads.
+  if (mode === "get_run_snapshot") {
+    return handleGetRunSnapshot(req, searchParams);
+  }
+  if (mode === "get_instructions") {
+    return handleGetInstructions(req, searchParams);
+  }
 
   // Phase B: rulings read - resolved comp-audit concerns for the learning loop.
   if (mode === "comp_audit_rulings") {
