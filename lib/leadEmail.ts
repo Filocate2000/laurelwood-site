@@ -66,7 +66,7 @@ export function buildLeadEmail(input: LeadEmailInput): LeadEmail {
 
   const htmlContent = `<!DOCTYPE html>
 <html>
-<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"></head>
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="format-detection" content="telephone=no"><meta name="color-scheme" content="light only"></head>
 <body style="margin:0; padding:0; background:#f0f2f5;">
 <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#f0f2f5; padding:24px 0;">
 <tr><td align="center">
@@ -81,13 +81,15 @@ export function buildLeadEmail(input: LeadEmailInput): LeadEmail {
         <td style="text-align:center; padding:0 12px; border-right:1px solid rgba(255,255,255,0.2); vertical-align:top;">
           <div style="color:#ffffff; font-size:13px; font-weight:bold; margin-bottom:5px;">Jack Misraje</div>
           <div style="color:rgba(255,255,255,0.75); font-size:12px; line-height:1.7;">
-            jack@misraje.com<br>323-209-5225
+            <a href="mailto:jack@misraje.com" style="color:#ffffff; text-decoration:none;">jack@misraje.com</a><br>
+            <span style="color:rgba(255,255,255,0.75);">323-209-5225</span>
           </div>
         </td>
         <td style="text-align:center; padding:0 12px; vertical-align:top;">
           <div style="color:#ffffff; font-size:13px; font-weight:bold; margin-bottom:5px;">Karen Misraje</div>
           <div style="color:rgba(255,255,255,0.75); font-size:12px; line-height:1.7;">
-            karen@misraje.com<br>310-488-1030
+            <a href="mailto:karen@misraje.com" style="color:#ffffff; text-decoration:none;">karen@misraje.com</a><br>
+            <span style="color:rgba(255,255,255,0.75);">310-488-1030</span>
           </div>
         </td>
       </tr>
