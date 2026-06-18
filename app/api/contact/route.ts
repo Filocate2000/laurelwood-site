@@ -1,5 +1,6 @@
 ﻿import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
+import { buildLeadEmail } from "@/lib/leadEmail";
 import { siteConfig } from "@/lib/site-config";
 
 const MISRAJE_BROKERAGE_ID =
@@ -76,15 +77,6 @@ function deriveOriginSite(req: NextRequest): string {
     (req.headers.get("host")?.split(":")[0] || null);
   if (!host) return "unknown";
   return host.replace(/^www\./, "");
-}
-
-function escapeHtml(value: string): string {
-  return value
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#39;");
 }
 
 async function verifyTurnstile(
@@ -248,27 +240,14 @@ export async function POST(req: NextRequest) {
         console.error("BREVO_API_KEY missing; skipping lead notification email");
       } else {
         const displayName = row.display_name;
-        const fields: Array<[string, string]> = [
-          ["Name", displayName],
-          ["Email", email],
-          ["Phone", phone ?? "(not provided)"],
-          ["Message", message ?? "(none)"],
-          ["Site", originSite],
-          ["Lead source", leadSource],
-        ];
-        const textContent = fields.map(([k, v]) => `${k}: ${v}`).join("\n");
-        const htmlContent =
-          `<h2>New lead from ${escapeHtml(originSite)}</h2>` +
-          `<table cellpadding="6" style="border-collapse:collapse">` +
-          fields
-            .map(
-              ([k, v]) =>
-                `<tr><td style="vertical-align:top"><strong>${escapeHtml(
-                  k
-                )}</strong></td><td>${escapeHtml(v).replace(/\n/g, "<br>")}</td></tr>`
-            )
-            .join("") +
-          `</table>`;
+        const { subject, htmlContent, textContent } = buildLeadEmail({
+          displayName,
+          email,
+          phone,
+          message,
+          originSite,
+          leadSource,
+        });
 
         const mailRes = await fetch("https://api.brevo.com/v3/smtp/email", {
           method: "POST",
@@ -284,7 +263,7 @@ export async function POST(req: NextRequest) {
               { email: "karen@misraje.com" },
             ],
             replyTo: { email, name: displayName },
-            subject: `New lead from ${originSite} — ${displayName}`,
+            subject,
             htmlContent,
             textContent,
           }),
