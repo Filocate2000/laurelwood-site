@@ -58,6 +58,35 @@ function annotatedNotes(
   return body + "\n\n[" + meta + "]";
 }
 
+// Best-effort hostname of the site the lead came from, so a laurelwoodestates.com
+// submission is distinguishable from a misraje.com one. Prefer Origin, then
+// Referer (both full URLs), then the Host header. Strip a leading "www.".
+function deriveOriginSite(req: NextRequest): string {
+  const fromUrl = (value: string | null): string | null => {
+    if (!value) return null;
+    try {
+      return new URL(value).hostname;
+    } catch {
+      return null;
+    }
+  };
+  const host =
+    fromUrl(req.headers.get("origin")) ??
+    fromUrl(req.headers.get("referer")) ??
+    (req.headers.get("host")?.split(":")[0] || null);
+  if (!host) return "unknown";
+  return host.replace(/^www\./, "");
+}
+
+function escapeHtml(value: string): string {
+  return value
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
 async function verifyTurnstile(
   token: string,
   remoteIp: string | null
@@ -125,6 +154,7 @@ export async function POST(req: NextRequest) {
 
     const ipAddress = req.headers.get("x-forwarded-for") ?? null;
     const userAgent = req.headers.get("user-agent") ?? null;
+    const originSite = deriveOriginSite(req);
 
     const turnstileResult = await verifyTurnstile(body.turnstile_token, ipAddress);
     if (!turnstileResult.success) {
@@ -208,6 +238,69 @@ export async function POST(req: NextRequest) {
         { error: "We could not save your message. Please try again." },
         { status: 500 }
       );
+    }
+
+    // Notify the team via Brevo. Fail-open: the lead is already saved above, so a
+    // mail error must only be logged — it must never 500 the visitor.
+    try {
+      const brevoKey = process.env.BREVO_API_KEY;
+      if (!brevoKey) {
+        console.error("BREVO_API_KEY missing; skipping lead notification email");
+      } else {
+        const displayName = row.display_name;
+        const fields: Array<[string, string]> = [
+          ["Name", displayName],
+          ["Email", email],
+          ["Phone", phone ?? "(not provided)"],
+          ["Message", message ?? "(none)"],
+          ["Site", originSite],
+          ["Lead source", leadSource],
+        ];
+        const textContent = fields.map(([k, v]) => `${k}: ${v}`).join("\n");
+        const htmlContent =
+          `<h2>New lead from ${escapeHtml(originSite)}</h2>` +
+          `<table cellpadding="6" style="border-collapse:collapse">` +
+          fields
+            .map(
+              ([k, v]) =>
+                `<tr><td style="vertical-align:top"><strong>${escapeHtml(
+                  k
+                )}</strong></td><td>${escapeHtml(v).replace(/\n/g, "<br>")}</td></tr>`
+            )
+            .join("") +
+          `</table>`;
+
+        const mailRes = await fetch("https://api.brevo.com/v3/smtp/email", {
+          method: "POST",
+          headers: {
+            "api-key": brevoKey,
+            "content-type": "application/json",
+            accept: "application/json",
+          },
+          body: JSON.stringify({
+            sender: { email: "jack@misraje.com", name: "Misraje Web Leads" },
+            to: [
+              { email: "jack@misraje.com" },
+              { email: "karen@misraje.com" },
+            ],
+            replyTo: { email, name: displayName },
+            subject: `New lead from ${originSite} — ${displayName}`,
+            htmlContent,
+            textContent,
+          }),
+        });
+
+        if (!mailRes.ok) {
+          const detail = await mailRes.text().catch(() => "");
+          console.error(
+            "Brevo notification failed:",
+            mailRes.status,
+            detail.slice(0, 500)
+          );
+        }
+      }
+    } catch (mailErr) {
+      console.error("Brevo notification exception:", mailErr);
     }
 
     return NextResponse.json({ ok: true });
