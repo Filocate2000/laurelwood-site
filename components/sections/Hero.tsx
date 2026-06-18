@@ -44,9 +44,13 @@ export function Hero() {
         {/* Hero wordmark: matches the Fryman hero treatment exactly. DM Sans
             (font-display), uppercase, light weight, letter-spacing 0.08em,
             single line (nowrap). Same family as the tagline and italic line
-            below; no longer diverges from the sibling sites' heroes. */}
+            below; no longer diverges from the sibling sites' heroes.
+            flex + justify-center keeps the line centered on the viewport even
+            when it overflows the max-w-6xl column: block text-align left-anchors
+            an overflowing nowrap line (shifts it right of center), but flex
+            centering overflows symmetrically. Do not remove flex/justify-center. */}
         <h1
-          className="font-display font-light text-white animate-fade-up uppercase"
+          className="font-display font-light text-white animate-fade-up uppercase flex justify-center"
           style={{
             fontSize: "clamp(1.75rem, 7vw, 7rem)",
             letterSpacing: "0.08em",
