@@ -41,16 +41,18 @@ export function Hero() {
       />
 
       <div className="relative w-full text-center px-6 animate-fade-in max-w-6xl mx-auto">
-        {/* Hero type treatment replicated verbatim from misraje-site's home
-            Hero: DM Sans (font-display) wordmark + tagline + italic line, with
-            misraje's exact sizes and letter-spacing. (misraje's home wordmark
-            uses font-display, NOT the Cormorant serif used on inner PageHeroes.) */}
+        {/* Hero wordmark: elegant serif (Cormorant Garamond via font-serif),
+            uppercase, light weight, letter-spaced, single line (nowrap). The
+            tagline and italic line below intentionally keep the DM Sans
+            (font-display) treatment, so this title diverges from the sibling
+            sites' heroes by design. */}
         <h1
-          className="font-display font-light text-white animate-fade-up"
+          className="font-serif font-light text-white animate-fade-up uppercase"
           style={{
-            fontSize: "clamp(3rem, 11vw, 11rem)",
-            letterSpacing: "0.06em",
-            lineHeight: "1",
+            fontSize: "clamp(1.75rem, 7vw, 6rem)",
+            letterSpacing: "0.08em",
+            lineHeight: "1.02",
+            whiteSpace: "nowrap",
             textShadow: "0 4px 40px rgba(0,0,0,0.9), 0 2px 8px rgba(0,0,0,0.7)",
           }}
         >
