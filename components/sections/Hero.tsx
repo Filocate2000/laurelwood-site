@@ -52,7 +52,7 @@ export function Hero() {
         <h1
           className="font-display font-light text-white animate-fade-up uppercase flex justify-center"
           style={{
-            fontSize: "clamp(1.75rem, 7vw, 7rem)",
+            fontSize: "clamp(1.25rem, 5vw, 4.5rem)",
             letterSpacing: "0.08em",
             lineHeight: "1.02",
             whiteSpace: "nowrap",
@@ -65,9 +65,9 @@ export function Hero() {
         <p
           className="font-display font-light text-white animate-fade-up uppercase mt-4"
           style={{
-            fontSize: "clamp(0.7rem, 1.8vw, 1.5rem)",
-            letterSpacing: "0.62em",
-            paddingLeft: "0.62em",
+            fontSize: "clamp(0.7rem, 1.6vw, 1.35rem)",
+            letterSpacing: "0.5em",
+            paddingLeft: "0.5em",
             textShadow: "0 2px 16px rgba(0,0,0,0.9)",
             animationDelay: "0.2s",
           }}
@@ -78,7 +78,7 @@ export function Hero() {
         <p
           className="font-display italic text-white mt-12 animate-fade-up"
           style={{
-            fontSize: "clamp(1.1rem, 2vw, 1.5rem)",
+            fontSize: "clamp(1.1rem, 2vw, 1.6rem)",
             animationDelay: "0.4s",
             textShadow: "0 2px 16px rgba(0,0,0,0.9)",
           }}
