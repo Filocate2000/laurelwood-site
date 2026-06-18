@@ -41,15 +41,14 @@ export function Hero() {
       />
 
       <div className="relative w-full text-center px-6 animate-fade-in max-w-6xl mx-auto">
-        {/* Hero wordmark: elegant serif (Cormorant Garamond via font-serif),
-            uppercase, light weight, letter-spaced, single line (nowrap). The
-            tagline and italic line below intentionally keep the DM Sans
-            (font-display) treatment, so this title diverges from the sibling
-            sites' heroes by design. */}
+        {/* Hero wordmark: matches the Fryman hero treatment exactly. DM Sans
+            (font-display), uppercase, light weight, letter-spacing 0.08em,
+            single line (nowrap). Same family as the tagline and italic line
+            below; no longer diverges from the sibling sites' heroes. */}
         <h1
-          className="font-serif font-light text-white animate-fade-up uppercase"
+          className="font-display font-light text-white animate-fade-up uppercase"
           style={{
-            fontSize: "clamp(1.75rem, 7vw, 6rem)",
+            fontSize: "clamp(1.75rem, 7vw, 7rem)",
             letterSpacing: "0.08em",
             lineHeight: "1.02",
             whiteSpace: "nowrap",
