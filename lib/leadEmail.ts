@@ -1,6 +1,6 @@
 // Shared builder for the internal "new lead" notification email.
 //
-// Presentation only. Given the lead fields, it returns the Brevo subject, a
+// Presentation only. Given the lead fields, it returns the Brevo subject, the
 // branded HTML body, and a plain-text fallback. Keep this file byte-identical
 // across misraje-site, laurelwood-site, and fryman-estates so every site's
 // alert renders the same. No em dashes or en dashes anywhere in the copy.
@@ -20,14 +20,17 @@ export interface LeadEmail {
   textContent: string;
 }
 
-// Corporate palette.
-const NAVY = "#001D38";
-const GOLD = "#c8a96e";
-const PAGE_BG = "#f3f4f6";
-const CARD_BG = "#ffffff";
-const BORDER = "#e5e7eb";
-const TEXT = "#1f2937";
-const NAVY_MUTED = "#9fb0c2";
+// Human-readable label for the originating site (originSite has any leading
+// "www." already stripped). Falls back to the raw host when unmapped.
+const SITE_FRIENDLY: Record<string, string> = {
+  "laurelwoodestates.com": "Laurelwood Estates",
+  "eastlaurelwood.com": "East Laurelwood",
+  "westlaurelwood.com": "West Laurelwood",
+  "thedonastreets.com": "The Dona Streets",
+  "frymanestates.com": "Fryman Canyon Estates",
+  "misraje.com": "Misraje Real Estate",
+  "trose.com": "Trose",
+};
 
 function escapeHtml(value: string): string {
   return value
@@ -43,6 +46,8 @@ export function buildLeadEmail(input: LeadEmailInput): LeadEmail {
 
   const phoneValue = phone ?? "(not provided)";
   const messageValue = message ?? "(none)";
+  const siteFriendly = SITE_FRIENDLY[originSite] ?? originSite;
+  const emailHref = encodeURIComponent(email);
 
   const subject = `New lead from ${originSite}: ${displayName}`;
 
@@ -59,83 +64,76 @@ export function buildLeadEmail(input: LeadEmailInput): LeadEmail {
     `Sent automatically from the ${originSite} contact form. Reply directly to reach this lead.`,
   ].join("\n");
 
-  const emailCell = `<a href="mailto:${escapeHtml(
-    email
-  )}" style="color:${NAVY};text-decoration:underline;">${escapeHtml(email)}</a>`;
-
-  const rows: Array<[string, string]> = [
-    ["Name", escapeHtml(displayName)],
-    ["Email", emailCell],
-    ["Phone", escapeHtml(phoneValue)],
-    ["Message", escapeHtml(messageValue).replace(/\n/g, "<br>")],
-    ["Site", escapeHtml(originSite)],
-    ["Lead source", escapeHtml(leadSource)],
-  ];
-
-  const fieldRows = rows
-    .map(([label, value], i) => {
-      const topBorder = i === 0 ? "" : `border-top:1px solid ${BORDER};`;
-      return `
-                <tr>
-                  <td style="padding:16px 0;${topBorder}font-family:Arial,Helvetica,sans-serif;">
-                    <div style="font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:${GOLD};font-weight:bold;margin:0 0 5px 0;">${label}</div>
-                    <div style="font-size:15px;line-height:1.6;color:${TEXT};">${value}</div>
-                  </td>
-                </tr>`;
-    })
-    .join("");
-
   const htmlContent = `<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>${escapeHtml(subject)}</title>
-</head>
-<body style="margin:0;padding:0;background-color:${PAGE_BG};-webkit-text-size-adjust:100%;-ms-text-size-adjust:100%;">
-  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:${PAGE_BG};">
-    <tr>
-      <td align="center" style="padding:24px 12px;">
-        <table role="presentation" width="620" cellpadding="0" cellspacing="0" border="0" style="max-width:620px;width:100%;background-color:${CARD_BG};border-radius:8px;overflow:hidden;border:1px solid ${BORDER};">
+<html>
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"></head>
+<body style="margin:0; padding:0; background:#f0f2f5;">
+<table width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#f0f2f5; padding:24px 0;">
+<tr><td align="center">
+<table width="620" cellpadding="0" cellspacing="0" border="0" style="max-width:620px; width:100%; background:#ffffff; border-radius:8px; overflow:hidden; font-family:Arial,Helvetica,sans-serif;">
 
-          <tr>
-            <td style="background-color:${NAVY};padding:0;">
-              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
-                <tr>
-                  <td style="padding:28px 32px 24px 32px;font-family:Arial,Helvetica,sans-serif;">
-                    <p style="margin:0 0 8px 0;font-size:12px;letter-spacing:2px;text-transform:uppercase;color:${GOLD};font-weight:bold;">New Lead</p>
-                    <p style="margin:0;font-family:Georgia,'Times New Roman',serif;font-size:24px;line-height:1.25;color:#ffffff;">${escapeHtml(
-                      originSite
-                    )}</p>
-                    <p style="margin:6px 0 0 0;font-size:13px;color:${NAVY_MUTED};">Misraje Real Estate Partners</p>
-                  </td>
-                </tr>
-                <tr><td style="height:3px;line-height:3px;font-size:0;background-color:${GOLD};">&nbsp;</td></tr>
-              </table>
-            </td>
-          </tr>
+  <!-- HEADER -->
+  <tr><td style="background:#001D38; padding:28px 36px; text-align:center;">
+    <div style="color:#ffffff; font-size:20px; font-weight:bold; letter-spacing:0.5px; margin-bottom:4px;">Misraje Real Estate Partners</div>
+    <div style="color:#c8a96e; font-size:12px; letter-spacing:0.08em; text-transform:uppercase; margin-bottom:20px;">Jack Misraje &amp; Karen Misraje</div>
+    <table width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:420px; margin:0 auto;">
+      <tr>
+        <td style="text-align:center; padding:0 12px; border-right:1px solid rgba(255,255,255,0.2); vertical-align:top;">
+          <div style="color:#ffffff; font-size:13px; font-weight:bold; margin-bottom:5px;">Jack Misraje</div>
+          <div style="color:rgba(255,255,255,0.75); font-size:12px; line-height:1.7;">
+            jack@misraje.com<br>323-209-5225
+          </div>
+        </td>
+        <td style="text-align:center; padding:0 12px; vertical-align:top;">
+          <div style="color:#ffffff; font-size:13px; font-weight:bold; margin-bottom:5px;">Karen Misraje</div>
+          <div style="color:rgba(255,255,255,0.75); font-size:12px; line-height:1.7;">
+            karen@misraje.com<br>310-488-1030
+          </div>
+        </td>
+      </tr>
+    </table>
+  </td></tr>
 
-          <tr>
-            <td style="padding:12px 32px 24px 32px;">
-              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">${fieldRows}
-              </table>
-            </td>
-          </tr>
+  <!-- GOLD ACCENT BAR -->
+  <tr><td style="height:4px; background:#c8a96e; font-size:0; line-height:0;">&nbsp;</td></tr>
 
-          <tr>
-            <td style="background-color:${NAVY};padding:18px 32px;">
-              <p style="margin:0;font-family:Arial,Helvetica,sans-serif;font-size:12px;line-height:1.6;color:${NAVY_MUTED};">
-                Sent automatically from the ${escapeHtml(
-                  originSite
-                )} contact form. Reply directly to reach this lead.
-              </p>
-            </td>
-          </tr>
+  <!-- NEW LEAD BANNER -->
+  <tr><td style="background:#f7f4ee; padding:16px 36px; text-align:center; border-bottom:1px solid #e8e0d0;">
+    <div style="color:#c8a96e; font-size:12px; font-weight:bold; letter-spacing:0.1em; text-transform:uppercase; margin-bottom:4px;">New Lead</div>
+    <div style="color:#001D38; font-size:17px; font-weight:bold;">Generated from: ${escapeHtml(siteFriendly)}</div>
+  </td></tr>
 
-        </table>
-      </td>
-    </tr>
-  </table>
+  <!-- FIELDS -->
+  <tr><td style="padding:28px 36px;">
+    <table width="100%" cellpadding="0" cellspacing="0" border="0">
+      <tr><td style="padding:0 0 6px 0; color:#c8a96e; font-size:12px; font-weight:bold; letter-spacing:0.08em; text-transform:uppercase;">Name</td></tr>
+      <tr><td style="padding:0 0 16px 0; color:#222222; font-size:15px; border-bottom:1px solid #eeeeee;">${escapeHtml(displayName)}</td></tr>
+
+      <tr><td style="padding:16px 0 6px 0; color:#c8a96e; font-size:12px; font-weight:bold; letter-spacing:0.08em; text-transform:uppercase;">Email</td></tr>
+      <tr><td style="padding:0 0 16px 0; font-size:15px; border-bottom:1px solid #eeeeee;"><a href="mailto:${emailHref}" style="color:#001D38; text-decoration:underline;">${escapeHtml(email)}</a></td></tr>
+
+      <tr><td style="padding:16px 0 6px 0; color:#c8a96e; font-size:12px; font-weight:bold; letter-spacing:0.08em; text-transform:uppercase;">Phone</td></tr>
+      <tr><td style="padding:0 0 16px 0; color:#222222; font-size:15px; border-bottom:1px solid #eeeeee;">${escapeHtml(phoneValue)}</td></tr>
+
+      <tr><td style="padding:16px 0 6px 0; color:#c8a96e; font-size:12px; font-weight:bold; letter-spacing:0.08em; text-transform:uppercase;">Message</td></tr>
+      <tr><td style="padding:0 0 16px 0; color:#222222; font-size:15px; line-height:1.6; border-bottom:1px solid #eeeeee;">${escapeHtml(messageValue).replace(/\n/g, "<br>")}</td></tr>
+
+      <tr><td style="padding:16px 0 6px 0; color:#c8a96e; font-size:12px; font-weight:bold; letter-spacing:0.08em; text-transform:uppercase;">Generated From</td></tr>
+      <tr><td style="padding:0 0 16px 0; color:#222222; font-size:15px; border-bottom:1px solid #eeeeee;">${escapeHtml(siteFriendly)}</td></tr>
+
+      <tr><td style="padding:16px 0 6px 0; color:#c8a96e; font-size:12px; font-weight:bold; letter-spacing:0.08em; text-transform:uppercase;">Lead Source</td></tr>
+      <tr><td style="padding:0; color:#222222; font-size:15px;">${escapeHtml(leadSource)}</td></tr>
+    </table>
+  </td></tr>
+
+  <!-- FOOTER -->
+  <tr><td style="background:#001D38; padding:16px 36px; text-align:center;">
+    <div style="color:rgba(255,255,255,0.7); font-size:11px; line-height:1.6;">This lead was submitted through your website contact form.</div>
+  </td></tr>
+
+</table>
+</td></tr>
+</table>
 </body>
 </html>`;
 
