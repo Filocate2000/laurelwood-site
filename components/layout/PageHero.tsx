@@ -17,8 +17,9 @@ type PageHeroProps = {
 
 /**
  * PageHero, the canonical hero treatment for every inner page. Full-bleed image
- * (or a navy gradient when no photo is supplied), centered serif title, navy
- * gradient at top so the fixed nav stays readable on light backgrounds.
+ * (or a navy gradient when no photo is supplied), centered DM Sans uppercase
+ * title matching the homepage hero, navy gradient at top so the fixed nav stays
+ * readable on light backgrounds.
  */
 export function PageHero({
   image,
@@ -86,8 +87,8 @@ export function PageHero({
             </div>
           )}
           <h1
-            className={`font-serif text-4xl md:text-6xl font-normal text-white ${titleClassName}`}
-            style={{ letterSpacing: "-0.01em" }}
+            className={`font-display font-light uppercase text-4xl md:text-6xl text-white ${titleClassName}`}
+            style={{ letterSpacing: "0.08em" }}
           >
             {title}
           </h1>
