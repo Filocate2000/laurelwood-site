@@ -5,15 +5,12 @@ import { useEffect, useState } from "react";
 import {
   GoogleMap,
   PolygonF,
-  OverlayView,
   useLoadScript,
 } from "@react-google-maps/api";
 import { MAP_ID } from "@/lib/commute/mapStyle";
 import {
   WEST_LAURELWOOD_BOUNDARY,
   EAST_LAURELWOOD_BOUNDARY,
-  centroid,
-  type LatLng,
 } from "@/lib/laurelwood-boundaries";
 
 // Reuse the SAME loader id + libraries as the commute widget so the two maps on
@@ -50,49 +47,6 @@ const AREAS = [
     style: AREA_STYLE.east,
   },
 ] as const;
-
-// Gold map pin + white pill label, centered on the polygon, rendered through an
-// OverlayView so it tracks the map. The map has no default google.maps.Marker;
-// this custom SVG pin replaces it while keeping the readable label below.
-// Ported verbatim from fryman-estates so both sites' neighborhood markers match.
-function AreaLabel({ position, text }: { position: LatLng; text: string }) {
-  return (
-    <OverlayView
-      position={position}
-      mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
-      getPixelPositionOffset={(width, height) => ({
-        x: -(width / 2),
-        y: -(height / 2),
-      })}
-    >
-      <div className="flex flex-col items-center pointer-events-none select-none">
-        <svg
-          width="30"
-          height="40"
-          viewBox="0 0 30 40"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-          aria-hidden="true"
-          style={{ filter: "drop-shadow(0 2px 3px rgba(0,0,0,0.4))" }}
-        >
-          <path
-            d="M15 0C6.716 0 0 6.716 0 15c0 10.5 15 25 15 25s15-14.5 15-25C30 6.716 23.284 0 15 0z"
-            fill="#C8A75B"
-            stroke="#9A7A31"
-            strokeWidth="1.5"
-          />
-          <circle cx="15" cy="15" r="5.5" fill="#0A1F3D" />
-        </svg>
-        <div
-          className="-mt-1 px-2.5 py-1 bg-white/95 text-[11px] font-semibold tracking-wide whitespace-nowrap shadow-sm ring-1 ring-black/5"
-          style={{ color: "#0e1a2e", textShadow: "0 1px 0 rgba(255,255,255,0.6)" }}
-        >
-          {text}
-        </div>
-      </div>
-    </OverlayView>
-  );
-}
 
 function MapCanvas() {
   const browserApiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_BROWSER_KEY;
@@ -161,9 +115,6 @@ function MapCanvas() {
             strokeColor: a.style.strokeColor,
           }}
         />
-      ))}
-      {AREAS.map((a) => (
-        <AreaLabel key={`lbl-${a.key}`} position={centroid(a.path)} text={a.label} />
       ))}
     </GoogleMap>
   );
