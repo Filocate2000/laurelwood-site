@@ -32,7 +32,7 @@ At the heart of Jack's practice is a commitment to protecting and growing his cl
 
 ### Extensive Local Market Knowledge Across Los Angeles
 
-Jack's expertise extends to the diverse neighborhoods of Los Angeles, from Malibu's iconic coastline to the estates of Beverly Hills and vibrant communities like Studio City, Laurelwood, Sherman Oaks, and Toluca Lake. His thorough knowledge of these markets, combined with strategic marketing and cutting-edge technology, ensures a tailored, results-focused approach for each client.
+Jack's expertise extends across the diverse neighborhoods of Los Angeles, but it runs deepest in the hills he works every day: West Laurelwood, East Laurelwood, and the Doña streets above Studio City. That close knowledge of the Laurelwood market, combined with strategic marketing and cutting-edge technology, ensures a tailored, results-focused approach for every client on these streets.
 
 ### Choose Jack Misraje for Real Estate Success
 

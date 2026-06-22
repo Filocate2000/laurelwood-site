@@ -1,32 +1,15 @@
-# Who We Are
+# Meet the Partners
 
-Misraje Real Estate Partners: Luxury Real Estate Experts in Laurelwood and Studio City
+Misraje Real Estate Partners: Laurelwood Estates Specialists in Studio City
 
-## Proven Real Estate Experience in Southern California
+## A mother-and-son partnership, rooted above Studio City
 
-Misraje Real Estate Partners, founded by Karen Misraje and Jack Misraje, is a mother-and-son real estate team with a reputation for inspiring trust and delivering exceptional results. As licensed real estate brokers and Realtors in California, Karen and Jack specialize in luxury properties throughout Los Angeles, Ventura, and South Bay, operating in conjunction with Coldwell Banker.
+Karen Misraje and Jack Misraje represent buyers and sellers across Laurelwood Estates, the hillside enclave of West Laurelwood, East Laurelwood, and the Doña streets that climbs the ridge above Studio City. They are a mother-and-son team, both licensed California real estate brokers and Realtors, working in conjunction with Coldwell Banker, and they are recognized as the #1 Two-Member Team in Coldwell Banker Global Luxury. Their reputation here is built the slow way, on transactions closed and clients who come back.
 
-## Exclusive Access to Off-Market Luxury Properties in LA
+## What local knowledge looks like in Laurelwood
 
-Through advanced technology, market research, and cultivated relationships, Misraje Real Estate Partners maintains an exclusive database of properties coming soon to market. Unlike typical listings on the MLS, Zillow, or Trulia, these off-market properties offer unique opportunities for clients. By working with Misraje Real Estate Partners, buyers and sellers gain a competitive edge and exclusive access to some of LA's most sought-after homes.
+Pricing a Laurelwood home is rarely a matter of square footage alone. It is a question of which side of the hill the house sits on, how the lot meets the grade, how the light falls in the canyon afternoons, and what a buyer will pay for the quiet this pocket of Studio City is known for. Over more than three decades, Karen and Jack have built the comparative judgment that a tract this small rewards, the kind that comes only from watching the same streets trade through several markets.
 
-## Decades of Success in Luxury Real Estate Marketing Across LA, Ventura, and South Bay
+## Two principals, one practice
 
-Karen and Jack Misraje bring over three decades of experience managing luxury residential transactions, successfully marketing mid-range and high-end properties across Los Angeles, Ventura, and South Bay. Their comprehensive approach includes expertise in:
-
-* Design and Staging: Crafting visually compelling listings to enhance property appeal
-* Professional Photography and Videography: Capturing properties to create lasting impressions
-* Targeted Digital Marketing Campaigns: Leveraging SEO, social media, and email marketing to reach a refined buyer audience
-* Strategic Print Advertising: Reaching high-net-worth clients through exclusive publications
-
-This strategic approach has contributed to closing nearly half a billion dollars in real estate transactions.
-
-## The Power of Partnership: Unmatched Service and Results in LA Luxury Real Estate
-
-Misraje Real Estate Partners is defined by tenacity, skill, and the seamless balance of expertise between Karen and Jack. Their collaborative approach and attention to detail set them apart in the competitive Los Angeles luxury market, ensuring that each client receives a tailored experience from a team that truly understands the art of real estate.
-
-## Why Choose Misraje Real Estate Partners for Luxury Real Estate in Studio City and Laurelwood
-
-With Misraje Real Estate Partners, clients gain a partner who values their goals, handles every detail, and provides market insights backed by decades of success. Trust Karen and Jack Misraje to deliver unparalleled service, exclusive opportunities, and results that exceed expectations in the luxury real estate market.
-
-Inspiring Trust and Delivering Results in Laurelwood's Luxury Real Estate Market.
+Misraje Real Estate Partners is defined by tenacity, discipline, and the complementary strengths Karen and Jack bring to each side of a transaction. Two principals means two sets of eyes on every decision and a client experience that does not get handed off. In a neighborhood where most owners know their neighbors, that continuity is part of why Laurelwood sellers and buyers keep choosing this team.

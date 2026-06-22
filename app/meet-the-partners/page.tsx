@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import { PageHero } from "@/components/layout/PageHero";
 import { Prose } from "@/components/Prose";
 import { ContactCTA } from "@/components/sections/ContactCTA";
@@ -7,27 +8,16 @@ import { loadDoc } from "@/lib/content";
 import { siteConfig, absoluteUrl } from "@/lib/site-config";
 
 const DESCRIPTION =
-  "Misraje Real Estate Partners, founded by Karen and Jack Misraje, a mother-and-son team specializing in Laurelwood, the Doña streets, and Studio City luxury real estate.";
+  "Meet Karen and Jack Misraje, the mother-and-son partnership behind Misraje Real Estate Partners, specializing in Laurelwood Estates and Studio City luxury real estate.";
 
 export const metadata: Metadata = {
-  title: "About",
+  title: "Meet the Partners",
   description: DESCRIPTION,
-  alternates: { canonical: absoluteUrl("/about") },
-  openGraph: { title: "About", description: DESCRIPTION, url: absoluteUrl("/about") },
+  alternates: { canonical: absoluteUrl("/meet-the-partners") },
+  openGraph: { title: "Meet the Partners", description: DESCRIPTION, url: absoluteUrl("/meet-the-partners") },
 };
 
-function Monogram({ initials }: { initials: string }) {
-  return (
-    <div
-      aria-hidden="true"
-      className="flex h-16 w-16 flex-shrink-0 items-center justify-center rounded-full border border-gold-600/50 bg-navy-950 font-serif text-2xl text-gold-500"
-    >
-      {initials}
-    </div>
-  );
-}
-
-export default function AboutPage() {
+export default function MeetThePartnersPage() {
   const partners = loadDoc("misraje-partners");
 
   return (
@@ -37,19 +27,19 @@ export default function AboutPage() {
       ))}
 
       <PageHero
-        eyebrow="Who We Are"
-        title="About Misraje"
-        subtitle="A mother-and-son partnership that lives where it works."
+        eyebrow="The Partners"
+        title="Meet the Partners"
+        subtitle="Two principals, one practice, on the streets of Laurelwood."
       />
 
       {/* Partnership intro */}
       <section className="bg-white py-20 md:py-28">
-        <div className="w-full px-6 md:px-16">
+        <div className="editorial">
           <Prose variant="light">{partners}</Prose>
         </div>
       </section>
 
-      {/* Agent bios, anchored for the /about#karen and /about#jack links */}
+      {/* Partner bios, anchored for the /meet-the-partners#karen and #jack links */}
       {siteConfig.agents.map((a, i) => {
         const bio = loadDoc(`${a.slug}-misraje`);
         const light = i % 2 === 1;
@@ -59,9 +49,23 @@ export default function AboutPage() {
             id={a.slug}
             className={`scroll-mt-24 py-20 md:py-28 ${light ? "bg-white" : "bg-navy-950"}`}
           >
-            <div className="w-full px-6 md:px-16">
-              <div className="flex items-center gap-5 mb-8">
-                <Monogram initials={`${a.firstName[0]}${a.lastName[0]}`} />
+            <div className="editorial">
+              <div className="flex flex-col sm:flex-row items-start gap-8 mb-10">
+                {a.photo && (
+                  <div
+                    className="relative w-[160px] h-[200px] flex-shrink-0 overflow-hidden border-2 border-gold-500"
+                    style={{ borderRadius: "2px" }}
+                  >
+                    <Image
+                      src={a.photo}
+                      alt={`${a.firstName} ${a.lastName}`}
+                      fill
+                      sizes="160px"
+                      className="object-cover"
+                      style={{ objectPosition: "center 25%" }}
+                    />
+                  </div>
+                )}
                 <div>
                   <h2
                     className={`font-display font-light text-3xl ${

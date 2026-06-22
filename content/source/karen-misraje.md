@@ -9,11 +9,11 @@
 
 ### Years of Wisdom, Unparalleled Expertise
 
-With a career spanning over three decades, Karen stands as a cornerstone of the Los Angeles real estate market. Her deep understanding of market cycles and client-centered approach have earned her a reputation as one of the most trusted names in the industry. Navigating both booming markets and economic challenges, Karen has consistently achieved outstanding results for her clients in buyer's and seller's markets alike.
+With a career spanning over three decades, Karen stands as a cornerstone of the Los Angeles real estate market and a trusted name to homeowners across Laurelwood and the Doña streets. Her deep understanding of market cycles and her client-centered approach have earned her a reputation as one of the most reliable advisors in the industry. Navigating both booming markets and economic challenges, Karen has consistently achieved outstanding results for her clients in buyer's and seller's markets alike.
 
 ### Exceptional Market Knowledge Across Los Angeles
 
-Karen's insight into the Los Angeles market is unmatched. She has a unique understanding of neighborhoods throughout the area, from the coastal allure of Malibu to the vibrant pulse of Downtown LA. Her expertise in the distinct cultures and rhythms of each community makes her an invaluable resource, guiding clients through the nuances of locations like Beverly Hills, West Hollywood, and Studio City.
+Karen's insight into the Los Angeles market is unmatched, and it narrows to a fine point in the hills above Studio City. She reads the distinct rhythms of West Laurelwood, East Laurelwood, and the Doña streets the way she reads Beverly Hills and the Westside, understanding how a single ridge or grade separates one Laurelwood pocket from the next. That command of neighborhood nuance makes her an invaluable resource to buyers and sellers who want more than a number.
 
 ### Strategic and Adaptive Approach to Real Estate
 

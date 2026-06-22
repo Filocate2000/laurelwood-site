@@ -38,8 +38,10 @@ const FOOTER_LINKS: { heading: string; links: { label: string; href: string }[] 
   {
     heading: "The Firm",
     links: [
-      { label: "About", href: "/about" },
-      { label: "What We Do", href: "/what-we-do" },
+      { label: "Who We Are", href: "/who-we-are" },
+      { label: "Meet the Partners", href: "/meet-the-partners" },
+      { label: "Why Use Us", href: "/why-use-us" },
+      { label: "Past Transactions", href: "/past-transactions" },
       { label: "Buying", href: "/buying" },
       { label: "Selling", href: "/selling" },
       { label: "Contact", href: "/contact" },

@@ -20,8 +20,10 @@ const NAV_ITEMS: { label: string; href: string }[] = [
   { label: "The Doña Streets", href: "/dona-streets" },
   { label: "Development History", href: "/development-history" },
   { label: "Laurelwood Homeowners", href: "/homeowners" },
-  { label: "About", href: "/about" },
-  { label: "What We Do", href: "/what-we-do" },
+  { label: "Who We Are", href: "/who-we-are" },
+  { label: "Meet the Partners", href: "/meet-the-partners" },
+  { label: "Why Use Us", href: "/why-use-us" },
+  { label: "Past Transactions", href: "/past-transactions" },
   { label: "Contact", href: "/contact" },
   { label: "LARE Report", href: "/lare-report" },
   { label: "Buying or Selling in West Laurelwood Guide", href: "/report" },
@@ -164,7 +166,7 @@ export function Navigation() {
             {siteConfig.agents.map((agent) => (
               <div key={agent.slug} className="flex flex-col items-center text-center">
                 <Link
-                  href={`/about#${agent.slug}`}
+                  href={`/meet-the-partners#${agent.slug}`}
                   className="group block overflow-hidden rounded-sm mb-3"
                   aria-label={`View ${agent.firstName} ${agent.lastName} bio`}
                 >
@@ -181,7 +183,7 @@ export function Navigation() {
                   )}
                 </Link>
                 <Link
-                  href={`/about#${agent.slug}`}
+                  href={`/meet-the-partners#${agent.slug}`}
                   className="block text-white text-[13px] font-medium hover:text-gold-500 transition-colors mb-1.5"
                 >
                   {agent.firstName} {agent.lastName}

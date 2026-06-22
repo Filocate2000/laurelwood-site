@@ -50,7 +50,7 @@ export function OrganizationJsonLd() {
   );
 }
 
-/** Per-agent RealEstateAgent (used on /about). */
+/** Per-agent RealEstateAgent (used on /meet-the-partners). */
 export function AgentJsonLd({ slug }: { slug: string }) {
   const a = siteConfig.agents.find((x) => x.slug === slug);
   if (!a) return null;
@@ -65,7 +65,7 @@ export function AgentJsonLd({ slug }: { slug: string }) {
         telephone: a.phoneHref.replace("tel:", ""),
         ...(a.calRE ? { identifier: `CalRE# ${a.calRE}` } : {}),
         worksFor: { "@type": "Organization", name: siteConfig.brokerage.name },
-        url: absoluteUrl(`/about#${a.slug}`),
+        url: absoluteUrl(`/meet-the-partners#${a.slug}`),
         address: { "@type": "PostalAddress", description: officeAddressOneLine() },
       }}
     />
