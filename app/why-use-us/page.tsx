@@ -3,6 +3,7 @@ import { PageHero } from "@/components/layout/PageHero";
 import { Prose } from "@/components/Prose";
 import { ContactCTA } from "@/components/sections/ContactCTA";
 import { loadDoc } from "@/lib/content";
+import { photo } from "@/lib/photos";
 import { absoluteUrl } from "@/lib/site-config";
 
 const DESCRIPTION =
@@ -17,9 +18,13 @@ export const metadata: Metadata = {
 
 export default function WhyUseUsPage() {
   const body = loadDoc("why-use-us");
+  const hero = photo("laurelwood-scenic-2");
   return (
     <>
       <PageHero
+        image={hero?.src}
+        alt={hero?.alt}
+        scrim="dark"
         eyebrow="Our Practice"
         title="Why Use Us"
         subtitle="Representation built for the Laurelwood market."

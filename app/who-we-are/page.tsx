@@ -3,6 +3,7 @@ import { PageHero } from "@/components/layout/PageHero";
 import { Prose } from "@/components/Prose";
 import { ContactCTA } from "@/components/sections/ContactCTA";
 import { loadDoc } from "@/lib/content";
+import { photo } from "@/lib/photos";
 import { absoluteUrl } from "@/lib/site-config";
 
 const DESCRIPTION =
@@ -17,9 +18,13 @@ export const metadata: Metadata = {
 
 export default function WhoWeArePage() {
   const body = loadDoc("who-we-are");
+  const hero = photo("laurelwood-scenic-1");
   return (
     <>
       <PageHero
+        image={hero?.src}
+        alt={hero?.alt}
+        scrim="dark"
         eyebrow="The Firm"
         title="Who We Are"
         subtitle="A two-principal practice rooted in the hills above Studio City."

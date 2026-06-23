@@ -3,6 +3,7 @@ import { PageHero } from "@/components/layout/PageHero";
 import { ContactCTA } from "@/components/sections/ContactCTA";
 import { PastTransactionsList } from "@/components/sections/PastTransactionsList";
 import { SITE_TRANSACTIONS } from "@/lib/site-transactions";
+import { photo } from "@/lib/photos";
 import { absoluteUrl } from "@/lib/site-config";
 
 const DESCRIPTION =
@@ -16,9 +17,13 @@ export const metadata: Metadata = {
 };
 
 export default function PastTransactionsPage() {
+  const hero = photo("laurelwood-scenic-4");
   return (
     <>
       <PageHero
+        image={hero?.src}
+        alt={hero?.alt}
+        scrim="dark"
         eyebrow="Track Record"
         title="Past Transactions"
         subtitle="A record of recent work in and around Laurelwood."

@@ -5,6 +5,7 @@ import { Prose } from "@/components/Prose";
 import { ContactCTA } from "@/components/sections/ContactCTA";
 import { AgentJsonLd } from "@/components/seo/JsonLd";
 import { loadDoc } from "@/lib/content";
+import { photo } from "@/lib/photos";
 import { siteConfig, absoluteUrl } from "@/lib/site-config";
 
 const DESCRIPTION =
@@ -19,6 +20,7 @@ export const metadata: Metadata = {
 
 export default function MeetThePartnersPage() {
   const partners = loadDoc("misraje-partners");
+  const hero = photo("laurelwood-scenic-3");
 
   return (
     <>
@@ -27,6 +29,9 @@ export default function MeetThePartnersPage() {
       ))}
 
       <PageHero
+        image={hero?.src}
+        alt={hero?.alt}
+        scrim="dark"
         eyebrow="The Partners"
         title="Meet the Partners"
         subtitle="Two principals, one practice, on the streets of Laurelwood."
