@@ -11,6 +11,7 @@
     "photos": "node scripts/process-photos.mjs"
   },
   "dependencies": {
+    "@googlemaps/markerclusterer": "^2.6.2",
     "@marsidev/react-turnstile": "^1.5.2",
     "@react-google-maps/api": "^2.20.8",
     "@supabase/supabase-js": "^2.106.1",

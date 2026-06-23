@@ -1,13 +1,14 @@
 import type { Metadata } from "next";
+import { getPastTransactions } from "@/lib/past-transactions";
 import { PageHero } from "@/components/layout/PageHero";
-import { ContactCTA } from "@/components/sections/ContactCTA";
-import { PastTransactionsList } from "@/components/sections/PastTransactionsList";
-import { SITE_TRANSACTIONS } from "@/lib/site-transactions";
+import { PastTransactionsExplorer } from "@/components/sections/PastTransactionsExplorer";
 import { photo } from "@/lib/photos";
 import { absoluteUrl } from "@/lib/site-config";
 
+export const revalidate = 3600;
+
 const DESCRIPTION =
-  "Recent and notable homes sold and leased in and around Laurelwood Estates and Studio City by Misraje Real Estate Partners.";
+  "A record of homes closed across Los Angeles and the South Bay by Misraje Real Estate Partners.";
 
 export const metadata: Metadata = {
   title: "Past Transactions",
@@ -16,10 +17,12 @@ export const metadata: Metadata = {
   openGraph: { title: "Past Transactions", description: DESCRIPTION, url: absoluteUrl("/past-transactions") },
 };
 
-export default function PastTransactionsPage() {
+export default async function PastTransactionsPage() {
+  const all = await getPastTransactions();
   const hero = photo("laurelwood-scenic-4");
+
   return (
-    <>
+    <div className="bg-navy-950 text-white">
       <PageHero
         image={hero?.src}
         alt={hero?.alt}
@@ -28,8 +31,7 @@ export default function PastTransactionsPage() {
         title="Past Transactions"
         subtitle="A record of recent work in and around Laurelwood."
       />
-      <PastTransactionsList transactions={SITE_TRANSACTIONS} area="Laurelwood Estates" />
-      <ContactCTA />
-    </>
+      <PastTransactionsExplorer transactions={all} />
+    </div>
   );
 }
