@@ -64,6 +64,18 @@ const nextConfig = {
         destination: "https://www.laurelwoodestates.com/dona-streets",
         permanent: true,
       },
+      {
+        source: "/:path*",
+        has: [{ type: "host", value: "laurelwoodwest.com" }],
+        destination: "https://www.laurelwoodestates.com/west-laurelwood",
+        permanent: true,
+      },
+      {
+        source: "/:path*",
+        has: [{ type: "host", value: "www.laurelwoodwest.com" }],
+        destination: "https://www.laurelwoodestates.com/west-laurelwood",
+        permanent: true,
+      },
     ];
   },
 };
