@@ -1,12 +1,5 @@
 import { createPublicServerClient } from "@/lib/supabase/server";
-
-/**
- * Misraje brokerage ID, the tenant filter for every query. Mirrors lib/blog.ts:
- * read from env with a hardcoded fallback so pages still render if unset.
- */
-const MISRAJE_BROKERAGE_ID =
-  process.env.NEXT_PUBLIC_MISRAJE_BROKERAGE_ID ??
-  "4796aec0-1843-4a30-80ba-871a994604b1";
+import { resolveBrokerageId } from "@/lib/brokerage";
 
 /**
  * Site key in past_transaction_site (same convention as blog_post_site). Pass
@@ -103,11 +96,12 @@ export async function getPastTransactions(
   siteKey: string = MISRAJE_SITE_KEY
 ): Promise<PastTransaction[]> {
   const supabase = createPublicServerClient();
+  const brokerageId = await resolveBrokerageId();
 
   const { data, error } = await supabase
     .from("past_transaction")
     .select(FIELDS)
-    .eq("brokerage_id", MISRAJE_BROKERAGE_ID)
+    .eq("brokerage_id", brokerageId)
     .eq("published", true)
     .is("deleted_at", null)
     .eq("past_transaction_site.site_key", siteKey)
@@ -135,11 +129,12 @@ export async function getTransactionCountsByCity(
   siteKey: string = MISRAJE_SITE_KEY
 ): Promise<Map<string, number>> {
   const supabase = createPublicServerClient();
+  const brokerageId = await resolveBrokerageId();
 
   const { data, error } = await supabase
     .from("past_transaction")
     .select("city, past_transaction_site!inner ( site_key )")
-    .eq("brokerage_id", MISRAJE_BROKERAGE_ID)
+    .eq("brokerage_id", brokerageId)
     .eq("published", true)
     .is("deleted_at", null)
     .eq("past_transaction_site.site_key", siteKey);

@@ -2,10 +2,7 @@
 import { createClient } from "@supabase/supabase-js";
 import { buildLeadEmail } from "@/lib/leadEmail";
 import { siteConfig } from "@/lib/site-config";
-
-const MISRAJE_BROKERAGE_ID =
-  process.env.NEXT_PUBLIC_MISRAJE_BROKERAGE_ID ??
-  "4796aec0-1843-4a30-80ba-871a994604b1";
+import { resolveBrokerageId } from "@/lib/brokerage";
 
 // Lead source is keyed off this site's domain (siteConfig.domain), NOT the
 // shared NEXT_PUBLIC_SITE_KEY env (which the cloned .env.local still sets to
@@ -174,9 +171,10 @@ export async function POST(req: NextRequest) {
 
     const leadSource = leadSourceFromSiteKey(SITE_KEY);
     const consentTimestamp = new Date().toISOString();
+    const brokerageId = await resolveBrokerageId();
 
     const row = {
-      brokerage_id: MISRAJE_BROKERAGE_ID,
+      brokerage_id: brokerageId,
       entity_kind: "person",
       lifecycle_stage: "lead",
       visibility: "team",

@@ -1,13 +1,5 @@
 ﻿import { createPublicServerClient } from "./supabase/server";
-
-/**
- * Misraje brokerage ID, used as the tenant filter for every team query.
- * Matches NEXT_PUBLIC_MISRAJE_BROKERAGE_ID env var; hardcoded fallback ensures
- * pages render even if the env var is unset.
- */
-const MISRAJE_BROKERAGE_ID =
-  process.env.NEXT_PUBLIC_MISRAJE_BROKERAGE_ID ??
-  "4796aec0-1843-4a30-80ba-871a994604b1";
+import { resolveBrokerageId } from "./brokerage";
 
 export type Stat = {
   label: string;
@@ -47,13 +39,14 @@ export type TeamMember = {
  */
 export async function getTeamMembers(): Promise<TeamMember[]> {
   const supabase = createPublicServerClient();
+  const brokerageId = await resolveBrokerageId();
 
   const { data, error } = await supabase
     .from("team_directory")
     .select(
       "id, slug, name, title, email, phone, phone_href, dre_license, nmls_license, photo_path, photo_object_position, short_bio, long_bio, stats, credentials, sort_order"
     )
-    .eq("brokerage_id", MISRAJE_BROKERAGE_ID)
+    .eq("brokerage_id", brokerageId)
     .eq("published", true)
     .order("sort_order", { ascending: true });
 
@@ -71,13 +64,14 @@ export async function getTeamMembers(): Promise<TeamMember[]> {
  */
 export async function getTeamMemberBySlug(slug: string): Promise<TeamMember | null> {
   const supabase = createPublicServerClient();
+  const brokerageId = await resolveBrokerageId();
 
   const { data, error } = await supabase
     .from("team_directory")
     .select(
       "id, slug, name, title, email, phone, phone_href, dre_license, nmls_license, photo_path, photo_object_position, short_bio, long_bio, stats, credentials, sort_order"
     )
-    .eq("brokerage_id", MISRAJE_BROKERAGE_ID)
+    .eq("brokerage_id", brokerageId)
     .eq("slug", slug)
     .eq("published", true)
     .maybeSingle();

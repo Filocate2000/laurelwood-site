@@ -1,4 +1,5 @@
 import { createClient } from "@supabase/supabase-js";
+import { resolveBrokerageId } from "@/lib/brokerage";
 
 /**
  * Read-only port of misraje-site/lib/lare.ts. laurelwood-site reads the SAME
@@ -7,17 +8,6 @@ import { createClient } from "@supabase/supabase-js";
  * no ingest route, no Lambda, no service/admin key. Reads use the public anon
  * key (RLS allows anon SELECT on lare_reports).
  */
-
-/**
- * Misraje brokerage ID, used as the tenant filter for every report query.
- * Matches NEXT_PUBLIC_MISRAJE_BROKERAGE_ID env var; hardcoded fallback ensures
- * pages render even if the env var is unset (defensive default). This is the
- * EXACT same brokerage_id misraje-site filters by, so both sites surface the
- * same reports.
- */
-const MISRAJE_BROKERAGE_ID =
-  process.env.NEXT_PUBLIC_MISRAJE_BROKERAGE_ID ??
-  "4796aec0-1843-4a30-80ba-871a994604b1";
 
 /**
  * Public anon Supabase client for reading published reports. RLS policy on
@@ -162,11 +152,12 @@ export type LareReport = {
  */
 export async function getLatestLareReport(): Promise<LareReport | null> {
   const supabase = publicClient();
+  const brokerageId = await resolveBrokerageId();
 
   const { data, error } = await supabase
     .from("lare_reports")
     .select("id, brokerage_id, slug, title, excerpt, html_content, meta_description, publish_date, is_latest, s3_key, ai_model")
-    .eq("brokerage_id", MISRAJE_BROKERAGE_ID)
+    .eq("brokerage_id", brokerageId)
     .eq("is_latest", true)
     .maybeSingle();
 
@@ -191,11 +182,12 @@ export async function getLatestLareReport(): Promise<LareReport | null> {
  */
 export async function getLareReportBySlug(slug: string): Promise<LareReport | null> {
   const supabase = publicClient();
+  const brokerageId = await resolveBrokerageId();
 
   const { data, error } = await supabase
     .from("lare_reports")
     .select("id, brokerage_id, slug, title, excerpt, html_content, meta_description, publish_date, is_latest, s3_key, ai_model")
-    .eq("brokerage_id", MISRAJE_BROKERAGE_ID)
+    .eq("brokerage_id", brokerageId)
     .eq("slug", slug)
     .maybeSingle();
 
@@ -224,6 +216,7 @@ export type LareReportSummary = Pick<LareReport, "id" | "slug" | "title" | "exce
 
 export async function getRecentLareReports(limit: number = 12): Promise<LareReportSummary[]> {
   const supabase = publicClient();
+  const brokerageId = await resolveBrokerageId();
 
   // Include html_content so we can extract a per-row headline for sidebar
   // display. Without it, every archive entry would read "The LARE Report",
@@ -232,7 +225,7 @@ export async function getRecentLareReports(limit: number = 12): Promise<LareRepo
   const { data, error } = await supabase
     .from("lare_reports")
     .select("id, slug, title, excerpt, publish_date, html_content")
-    .eq("brokerage_id", MISRAJE_BROKERAGE_ID)
+    .eq("brokerage_id", brokerageId)
     .order("publish_date", { ascending: false })
     .limit(limit);
 
@@ -262,11 +255,12 @@ export async function getAllLareReportSlugs(): Promise<
   { slug: string; publish_date: string }[]
 > {
   const supabase = publicClient();
+  const brokerageId = await resolveBrokerageId();
 
   const { data, error } = await supabase
     .from("lare_reports")
     .select("slug, publish_date")
-    .eq("brokerage_id", MISRAJE_BROKERAGE_ID)
+    .eq("brokerage_id", brokerageId)
     .order("publish_date", { ascending: false });
 
   if (error) {
