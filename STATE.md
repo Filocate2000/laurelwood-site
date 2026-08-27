@@ -313,33 +313,48 @@ before any content-affecting deploy.
 
 ## Future work
 
-- **Wire the blog.** This is the one recon item that cannot be finished from
-  inside this repo, because the blocker is hub-side. Order matters:
+- **Wire the blog.** Blocked hub-side, and the block is BIGGER than this file
+  previously claimed. An earlier version of this entry said the hub change was
+  "one entry in AVAILABLE_SITES ... the whole change on that side". That was
+  wrong. Corrected 2026-08-27 after reading the hub and misraje-site directly.
 
-  1. **Hub first** (`Filocate2000/realestategpa`, a different repo). In
-     `app/(authenticated)/(main)/brokerage/marketing/newsletter/new/setup-fields.tsx`
-     around line 118, `AVAILABLE_SITES` is `[{ key: 'misraje', label: 'misraje' }]`
-     with a comment saying laurelwood and fryman are "reserved but not yet live".
-     Adding `{ key: 'laurelwood', label: 'laurelwood' }` is the whole change on
-     that side: migration 036 already permits the value
-     (`blog_post_site.site_key CHECK IN ('misraje','laurelwood','fryman')`), the
-     `site` table already carries a published `laurelwood` row, and
-     `newsletter/[id]/actions.ts` validates against the same key set. Verify the
-     composer's Blog Distribution section then offers Laurelwood, and publish one
-     post to it.
-  2. **Then here.** Build `lib/blog.ts` mirroring `lib/lare.ts` (same anon read,
-     same `resolveBrokerageId`, but joined through `blog_post_site` filtered on
-     `siteConfig.siteKey`), then `/blog` + `/blog/[slug]` mirroring the LARE
-     pages, with chrome in `content/blog.ts`.
-  3. **Then wire it up.** Add `/blog` to `lib/routes.ts` (sitemap and llms.txt
-     both follow automatically), uncomment the nav placeholder in
-     `components/layout/Navigation.tsx`, add a Market-column footer link, and add
-     the `/blog/categories/neighborhood-news` redirect that
-     `content/redirect-map.md` currently lists as deliberately absent.
+  **What is confirmed:**
 
-  Deliberately NOT built ahead of step 1: an unreachable `/blog` would either
-  ship an empty page to visitors or sit as dead unlinked code, and neither is
-  worth carrying until the hub can actually publish to it.
+  1. The spoke side is a PORT, not a build. misraje-site has a complete
+     implementation: `lib/blog.ts` (266 lines, four query functions),
+     `app/blog/page.tsx`, `app/blog/[slug]/page.tsx`,
+     `components/blog/CategorySelect.tsx`. Every query already takes `siteKey`
+     first and filters `blog_post_site.site_key` / `blog_category_site.site_key`;
+     its own header comment says "pass an explicit siteKey when a future site
+     (laurelwood, fryman) needs its own blog". No new dependencies:
+     react-markdown and remark-gfm are already in this repo's package.json.
+  2. Porting it MUST drop `siteKey: string = MISRAJE_SITE_KEY` from all four
+     functions. That is the same default-parameter trap fixed here in 5a8b01c.
+     Safe to drop: misraje-site's own five call sites all pass the key
+     explicitly, and on `getPostBySlug` / `getAdjacentPosts` the default is
+     already unreachable (a defaulted parameter before a required one). Also swap
+     `createPublicServerClient` for the `*OrNull` variant to keep the
+     credential-less build working.
+  3. The hub gate is TWO places, not one:
+     `.../newsletter/new/setup-fields.tsx:118` `AVAILABLE_SITES` (the UI
+     checklist) and `.../newsletter/[id]/actions.ts:35` `VALID_SITE_KEYS` (server
+     validation). Changing only the first lets you tick Laurelwood and then be
+     rejected on save.
+
+  **What is OPEN, and must be answered first:** nothing in the entire hub repo
+  inserts into `blog_post` or `blog_post_site`, in any language. The composer
+  stores `target_sites: string[]` on the newsletter record and deliberately
+  leaves `blog_post_id` unset at creation. So either the newsletter-to-blog_post
+  publish step lives in an external Lambda (the pattern used for lare_reports and
+  the market ingest, neither of which is in the repo), or it was never built.
+  Hub followup NEWS-2 ("Blog has no management surface", 2026-08-23) leans toward
+  the latter.
+
+  **The decisive test takes ten seconds: open misraje.com/blog.** Posts showing
+  means a write path exists somewhere external and `laurelwood` has to be added
+  there too. An empty page means the publish step does not exist and this is a
+  build, not a configuration change. Do not scope the port before running it.
+
 - **Confirm the `team_directory` slugs** (`select slug from team_directory;`).
   Not blocking anything: `/karen-misraje` and `/jack-misraje` now deep-link to
   `/meet-the-partners/<siteConfig agent slug>`, and the bio route redirects a
