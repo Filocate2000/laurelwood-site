@@ -44,11 +44,22 @@ hub, **realestategpa.com**, and distributed to the spoke sites. See
 **To spawn a sibling: clone the repo, then replace `lib/site-config.ts`, the
 `content/` directory, and `source-photos/`. Nothing else should need to change.**
 
-**Template drift found 2026-08-27, unfixed:** `/who-we-are` and `/why-use-us`
-carry their prose inline in the page component and import nothing from
-`content/`. A Fryman clone would inherit Laurelwood and Misraje copy hardcoded in
-two pages, which is exactly what the rule above exists to prevent. Everything
-else obeys it: pages read `content/*.ts` or `loadDoc()`.
+**Template drift, partly fixed 2026-08-27.** `/who-we-are` and `/why-use-us`
+were carrying whole pages of prose inline; their copy now lives in
+`content/who-we-are.ts` and `content/why-use-us.ts`. Auditing that fix turned up
+four smaller violations still outstanding, all of which a frymanestates.com clone
+would inherit:
+
+- `app/privacy/PrivacyContent.tsx` holds the entire privacy policy hardcoded,
+  with zero `siteConfig` references, naming Misraje Real Estate Partners,
+  Laurelwood Estates and jack@misraje.com in the prose. The largest of the four.
+- `app/lare-report/page.tsx` and `app/lare-report/[slug]/page.tsx` each hardcode
+  the hero subtitle "Los Angeles Real Estate. Weekly analysis from Karen and Jack
+  Misraje." (duplicated across the two files).
+- `app/report/page.tsx` and `app/marketreport/page.tsx` hardcode a `DESCRIPTION`
+  naming West / East Laurelwood. Their `NEIGHBORHOOD` constant is a different
+  thing and should stay: it is a data key that must match
+  `laurelwood_listings.neighborhood`, not display copy.
 
 Corollary learned the hard way (2026-08-27): a **default value** in a shared
 helper defeats this. `getPastTransactions()` defaulted to `site_key "misraje"`,
@@ -144,7 +155,8 @@ work, not a blocker.
 | `/homeowners/neighborhood-watch` | `content/neighborhood-watch.ts` |
 | `/homeowners/community-news` | `content/source/community-news.md` (frozen snapshot, see Hub integration) |
 | `/homeowners/emergency-contacts` | `content/emergency-contacts.ts` |
-| `/who-we-are`, `/why-use-us` | **Copy inline in the page component.** See Template drift below |
+| `/who-we-are` | `content/who-we-are.ts` |
+| `/why-use-us` | `content/why-use-us.ts` |
 | `/meet-the-partners` + `/meet-the-partners/[slug]` | **Supabase** `team_directory` |
 | `/past-transactions` | **Supabase** `past_transaction` + `past_transaction_site` |
 | `/buying`, `/selling` | `content/` |
@@ -284,15 +296,14 @@ before any content-affecting deploy.
   already tagged to all three sites. Unverified. If true, switching
   `siteConfig.pastTransactionsSiteKey` to `"laurelwood"` is a one-line change
   whenever a curated list is wanted.
+- **Finish the content lift.** Four hardcoded-copy sites remain, listed under
+  Template-repo note. `PrivacyContent.tsx` is the substantial one; the LARE hero
+  subtitle is duplicated across two files and should be lifted once.
 - **Reconnect Google** to restore Search Console reporting (see Hub integration).
 - **Move `/api/ingest/market` to `resolveBrokerageId`.** It still uses an
   env-driven `MISRAJE_BROKERAGE_ID` with a hardcoded fallback. The value is
   currently correct; the pattern is the one that caused the ghost-brokerage
   incident. The hub's phase-3 handoff tracks this as a deliberate deferral.
-- **Lift `/who-we-are` and `/why-use-us` copy into `content/`.** They are the
-  only two pages violating the template rule (see Template-repo note). Do this
-  before cloning for frymanestates.com, or that clone starts with Laurelwood
-  prose baked into two page components.
 - **`getTransactionCountsByCity` has no callers.** Dead code; remove or use.
 - **Team portraits exist now** (`public/images/team/{jack,karen}-portrait.jpg`),
   so the nav drawer could carry photo cards instead of text-only agent cards.
