@@ -1,4 +1,4 @@
-import { createPublicServerClient } from "@/lib/supabase/server";
+import { createPublicServerClientOrNull } from "@/lib/supabase/server";
 import { resolveBrokerageId } from "@/lib/brokerage";
 
 /**
@@ -95,7 +95,8 @@ function mapRow(r: Row): PastTransaction {
 export async function getPastTransactions(
   siteKey: string = MISRAJE_SITE_KEY
 ): Promise<PastTransaction[]> {
-  const supabase = createPublicServerClient();
+  const supabase = createPublicServerClientOrNull();
+  if (!supabase) return [];
   const brokerageId = await resolveBrokerageId();
 
   const { data, error } = await supabase
@@ -128,7 +129,8 @@ export async function getPastTransactions(
 export async function getTransactionCountsByCity(
   siteKey: string = MISRAJE_SITE_KEY
 ): Promise<Map<string, number>> {
-  const supabase = createPublicServerClient();
+  const supabase = createPublicServerClientOrNull();
+  if (!supabase) return new Map();
   const brokerageId = await resolveBrokerageId();
 
   const { data, error } = await supabase

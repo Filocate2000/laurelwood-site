@@ -1,12 +1,12 @@
-import { createClient } from "@supabase/supabase-js";
+import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import { NextRequest, NextResponse } from "next/server";
 import crypto from "node:crypto";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL as string;
-const SUPABASE_SECRET_KEY = process.env.SUPABASE_SECRET_KEY as string;
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const SUPABASE_SECRET_KEY = process.env.SUPABASE_SECRET_KEY;
 const INGEST_SHARED_SECRET = process.env.INGEST_SHARED_SECRET ?? "";
 const GEOCODING_API_KEY = process.env.GOOGLE_GEOCODING_API_KEY ?? "";
 
@@ -143,20 +143,37 @@ function buildListingRow(l: AnyRow, fallbackHood: string): AnyRow {
   return row;
 }
 
-const supabase = createClient(SUPABASE_URL, SUPABASE_SECRET_KEY, {
-  auth: { persistSession: false },
-});
+// Service-role client, built on FIRST USE rather than at module load. Building it
+// at module scope made `next build` fail whenever the Supabase env vars were
+// absent: collecting page data imports this route, createClient throws
+// "supabaseUrl is required", and the whole build dies on a route that is never
+// invoked during a build. Lazy + memoized keeps one client per process (same as
+// before) while letting the module import cleanly without credentials. Same
+// pattern as lib/market/getMarketData.ts, which builds its client inside
+// loadNeighborhood() and throws this exact message.
+let supabaseClient: SupabaseClient | null = null;
+
+function db(): SupabaseClient {
+  if (supabaseClient) return supabaseClient;
+  if (!SUPABASE_URL || !SUPABASE_SECRET_KEY) {
+    throw new Error("Supabase credentials are not configured");
+  }
+  supabaseClient = createClient(SUPABASE_URL, SUPABASE_SECRET_KEY, {
+    auth: { persistSession: false },
+  });
+  return supabaseClient;
+}
 
 async function upsertListing(row: AnyRow): Promise<{ ok: boolean; error?: string }> {
   try {
     if (row.mls_number) {
-      const { error } = await supabase
+      const { error } = await db()
         .from("laurelwood_listings")
         .upsert(row, { onConflict: "mls_number" });
       if (error) return { ok: false, error: error.message };
       return { ok: true };
     }
-    const { data: existing } = await supabase
+    const { data: existing } = await db()
       .from("laurelwood_listings")
       .select("id")
       .eq("neighborhood", row.neighborhood as string)
@@ -165,14 +182,14 @@ async function upsertListing(row: AnyRow): Promise<{ ok: boolean; error?: string
       .limit(1)
       .maybeSingle();
     if (existing && (existing as { id: number }).id) {
-      const { error } = await supabase
+      const { error } = await db()
         .from("laurelwood_listings")
         .update(row)
         .eq("id", (existing as { id: number }).id);
       if (error) return { ok: false, error: error.message };
       return { ok: true };
     }
-    const { error } = await supabase.from("laurelwood_listings").insert(row);
+    const { error } = await db().from("laurelwood_listings").insert(row);
     if (error) return { ok: false, error: error.message };
     return { ok: true };
   } catch (e) {
@@ -239,7 +256,7 @@ async function handleCommentary(body: AnyRow) {
     );
   }
 
-  const { error } = await supabase
+  const { error } = await db()
     .from("laurelwood_commentary")
     .upsert(row, { onConflict: "neighborhood" });
 
@@ -254,7 +271,7 @@ async function handleCommentary(body: AnyRow) {
 // Inserts a `review` assignment into the shared `assignment` table for each
 // surfaced comp concern. Idempotent on metadata.concern_key (ignoring soft-
 // deleted rows). property_id / action_plan_item_id / assigned_by_user_id left
-// NULL. Reuses the module `supabase` client and the x-ingest-secret auth above.
+// NULL. Reuses the shared db() service client and the x-ingest-secret auth above.
 // ============================================================================
 
 const PRIORITY_BY_CONCERN: Record<string, "urgent" | "high" | "normal" | "low"> = {
@@ -317,7 +334,7 @@ async function handleCompAuditConcern(body: AnyRow) {
   // idempotency: re-fired audits map to the same concern_key. Ignore soft-
   // deleted rows so a deleted one can be recreated.
   try {
-    const { data: existing, error: selErr } = await supabase
+    const { data: existing, error: selErr } = await db()
       .from("assignment")
       .select("id")
       .eq("brokerage_id", brokerageId)
@@ -377,7 +394,7 @@ async function handleCompAuditConcern(body: AnyRow) {
   };
   put(row, "assigned_to_user_id", body.assignee_user_id);
 
-  const { data: inserted, error: insErr } = await supabase
+  const { data: inserted, error: insErr } = await db()
     .from("assignment")
     .insert(row)
     .select("id")
@@ -430,7 +447,7 @@ async function handleSaveRunSnapshot(body: AnyRow) {
   const listings =
     body.listings && typeof body.listings === "object" ? body.listings : {};
 
-  const { data, error } = await supabase
+  const { data, error } = await db()
     .from("commentary_run_snapshot")
     .insert({ neighborhood, stats, listings })
     .select("id")
@@ -466,7 +483,7 @@ async function handleGetRunSnapshot(
     );
   }
 
-  const { data, error } = await supabase
+  const { data, error } = await db()
     .from("commentary_run_snapshot")
     .select("stats,listings,report_date")
     .eq("neighborhood", neighborhood)
@@ -526,7 +543,7 @@ async function handleSaveInstruction(body: AnyRow) {
   // (neighborhood + section). A whole-report instruction (section null) only
   // retires prior whole-report rows; a section-scoped one only retires that
   // section's rows. PostgREST needs .is() for null and .eq() for a value.
-  let retire = supabase
+  let retire = db()
     .from("commentary_instruction")
     .update({ active: false })
     .eq("neighborhood", neighborhood)
@@ -549,7 +566,7 @@ async function handleSaveInstruction(body: AnyRow) {
   };
   put(insertRow, "created_by", createdBy);
 
-  const { data, error } = await supabase
+  const { data, error } = await db()
     .from("commentary_instruction")
     .insert(insertRow)
     .select("id")
@@ -586,7 +603,7 @@ async function handleGetInstructions(
     );
   }
 
-  const { data, error } = await supabase
+  const { data, error } = await db()
     .from("commentary_instruction")
     .select("section,instruction")
     .eq("neighborhood", neighborhood)
@@ -709,7 +726,7 @@ export async function GET(req: NextRequest) {
     .slice(0, 10);
 
   try {
-    const { data, error } = await supabase
+    const { data, error } = await db()
       .from("laurelwood_listings")
       .select(
         "mls_number,address_formatted,street_name,city,bedrooms,bathrooms,sqft,lot_size,year_built,pool,dom,status_label,change_type,change_date,list_price,current_price,sale_price,lp_per_sqft,sp_lp_ratio,description"
@@ -791,7 +808,7 @@ export async function GET(req: NextRequest) {
 // cancelled) for a neighborhood + brokerage, within a recency window. The
 // reviewer (feedback.js) turns these into downrank/suppress rulings so repeat
 // reports stop re-nagging about a property you already handled. Read-only;
-// reuses the module `supabase` client and the x-ingest-secret auth.
+// reuses the shared db() service client and the x-ingest-secret auth.
 //
 // v1 returns status-based facts plus any `dismissal_reason` found in metadata
 // (null today); when the detail page starts writing a reason, v2 consumes it
@@ -817,7 +834,7 @@ async function handleCompAuditRulings(
   const cutoffMs = Date.now() - windowDays * 24 * 60 * 60 * 1000;
 
   try {
-    let q = supabase
+    let q = db()
       .from("assignment")
       .select("metadata,status,completed_at,updated_at")
       .filter("metadata->>source", "eq", "comp_audit")

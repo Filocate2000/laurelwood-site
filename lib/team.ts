@@ -1,4 +1,4 @@
-﻿import { createPublicServerClient } from "./supabase/server";
+﻿import { createPublicServerClientOrNull } from "./supabase/server";
 import { resolveBrokerageId } from "./brokerage";
 
 export type Stat = {
@@ -38,7 +38,8 @@ export type TeamMember = {
  * render (the UI handles the empty case with a friendly message).
  */
 export async function getTeamMembers(): Promise<TeamMember[]> {
-  const supabase = createPublicServerClient();
+  const supabase = createPublicServerClientOrNull();
+  if (!supabase) return [];
   const brokerageId = await resolveBrokerageId();
 
   const { data, error } = await supabase
@@ -63,7 +64,8 @@ export async function getTeamMembers(): Promise<TeamMember[]> {
  * or on error so the dynamic route can call notFound().
  */
 export async function getTeamMemberBySlug(slug: string): Promise<TeamMember | null> {
-  const supabase = createPublicServerClient();
+  const supabase = createPublicServerClientOrNull();
+  if (!supabase) return null;
   const brokerageId = await resolveBrokerageId();
 
   const { data, error } = await supabase

@@ -16,11 +16,32 @@ import { resolveBrokerageId } from "@/lib/brokerage";
  * vars (same Supabase project as misraje-site).
  */
 function publicClient() {
-  return createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    { auth: { persistSession: false, autoRefreshToken: false } }
-  );
+  // See lib/supabase/server.ts: validate instead of asserting, so a missing key
+  // is a catchable error with a clear message rather than supabase-js's opaque
+  // "supabaseUrl is required" thrown out of a build.
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  if (!url || !key) {
+    throw new Error("Supabase credentials are not configured");
+  }
+  return createClient(url, key, {
+    auth: { persistSession: false, autoRefreshToken: false },
+  });
+}
+
+/**
+ * publicClient() that returns null instead of throwing when credentials are
+ * absent. Every reader below already returns an empty result on a query error;
+ * this extends that contract to a missing key, so a credential-less `next build`
+ * prerenders the LARE pages in their empty state instead of failing outright.
+ */
+function publicClientOrNull() {
+  try {
+    return publicClient();
+  } catch (e) {
+    console.error("LARE Supabase client unavailable:", e);
+    return null;
+  }
 }
 
 /**
@@ -151,7 +172,8 @@ export type LareReport = {
  * Returns null if no reports exist yet, so the page can render an empty state.
  */
 export async function getLatestLareReport(): Promise<LareReport | null> {
-  const supabase = publicClient();
+  const supabase = publicClientOrNull();
+  if (!supabase) return null;
   const brokerageId = await resolveBrokerageId();
 
   const { data, error } = await supabase
@@ -181,7 +203,8 @@ export async function getLatestLareReport(): Promise<LareReport | null> {
  * Returns null if not found so the dynamic route can call notFound().
  */
 export async function getLareReportBySlug(slug: string): Promise<LareReport | null> {
-  const supabase = publicClient();
+  const supabase = publicClientOrNull();
+  if (!supabase) return null;
   const brokerageId = await resolveBrokerageId();
 
   const { data, error } = await supabase
@@ -215,7 +238,8 @@ export async function getLareReportBySlug(slug: string): Promise<LareReport | nu
 export type LareReportSummary = Pick<LareReport, "id" | "slug" | "title" | "excerpt" | "publish_date" | "headline">;
 
 export async function getRecentLareReports(limit: number = 12): Promise<LareReportSummary[]> {
-  const supabase = publicClient();
+  const supabase = publicClientOrNull();
+  if (!supabase) return [];
   const brokerageId = await resolveBrokerageId();
 
   // Include html_content so we can extract a per-row headline for sidebar
@@ -254,7 +278,8 @@ export async function getRecentLareReports(limit: number = 12): Promise<LareRepo
 export async function getAllLareReportSlugs(): Promise<
   { slug: string; publish_date: string }[]
 > {
-  const supabase = publicClient();
+  const supabase = publicClientOrNull();
+  if (!supabase) return [];
   const brokerageId = await resolveBrokerageId();
 
   const { data, error } = await supabase
