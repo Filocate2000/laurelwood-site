@@ -17,6 +17,22 @@ import { siteConfig } from "@/lib/site-config";
 // client-rendered, via <MarketCharts/>. `data` is null when the server fetch
 // failed, in which case a graceful error band renders instead of the sections.
 
+// Speaker labels are embedded in the commentary text the ingest Lambda writes,
+// so these are DATA matchers, not display copy. Derived from siteConfig so a
+// sibling site matches its own labels, with the known Misraje literals kept as a
+// fallback: the Lambda's exact output was not verifiable from here, and a wider
+// match can only fail to bold a label, never corrupt the prose. Deduped because
+// on this site the derived values and the fallbacks are the same strings.
+const SPEAKERS = Array.from(
+  new Set([
+    `${siteConfig.legalName}:`,
+    ...siteConfig.agents.map((a) => `${a.firstName} ${a.lastName}:`),
+    "Misraje Real Estate Partners:",
+    "Jack Misraje:",
+    "Karen Misraje:",
+  ])
+);
+
 // --- Commentary prose (verbatim) -------------------------------------------
 
 /** Stored neighborhood commentary, rendered VERBATIM (speaker labels and all).
@@ -34,18 +50,6 @@ function CommentaryProse({
 }) {
   if (!text || text.trim() === "") return null;
 
-  // Speaker labels are embedded in the commentary text the ingest Lambda writes,
-  // so these are DATA matchers, not display copy. Derived from siteConfig so a
-  // sibling site matches its own labels, with the known Misraje literals kept as
-  // a fallback: the Lambda's exact output was not verifiable from here, and a
-  // wider match can only fail to bold a label, never corrupt the prose.
-  const SPEAKERS = [
-    `${siteConfig.legalName}:`,
-    ...siteConfig.agents.map((a) => `${a.firstName} ${a.lastName}:`),
-    "Misraje Real Estate Partners:",
-    "Jack Misraje:",
-    "Karen Misraje:",
-  ];
   const trimmed = text.trimStart();
   const label = SPEAKERS.find((s) => trimmed.startsWith(s)) ?? null;
   const rest = label ? trimmed.slice(label.length) : trimmed;
