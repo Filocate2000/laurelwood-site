@@ -161,10 +161,13 @@ three.
     `www.misraje.com` and `www.laurelwoodestates.com`. Add the apex only. An
     earlier version of this entry said to add apex AND www; that was wrong, and
     at 10/10 it is also impossible.
-  - **The next sibling site will hit the cap.** Slots that look reclaimable:
-    `localhost` (local dev), `misraje-site.vercel.app` (a preview domain), and
-    `trose.com` (unrecognised, appears in none of the three repos). Check before
-    removing any of them.
+  - **The next sibling site will hit the cap.** Only two slots look reclaimable:
+    `localhost` (local dev) and `misraje-site.vercel.app` (a preview domain).
+    **Do NOT remove `trose.com`.** An earlier version of this entry called it
+    unrecognised because it appears in none of the three repos. It is a real
+    site in the family: `lib/leadEmail.ts` `SITE_FRIENDLY` maps it to "Trose",
+    so it has its own contact form feeding the shared backend. Removing it from
+    the widget would break that form exactly the way Fryman's was broken.
 
   Also confirm the secret key is the pair for this same widget: the hostname fix
   is instant and needs no redeploy, but a secret fix is a Vercel env change and
