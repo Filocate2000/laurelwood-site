@@ -54,6 +54,16 @@ export type SiteConfig = {
   /** Default meta description. */
   description: string;
 
+  /**
+   * Which `past_transaction_site.site_key` the /past-transactions page reads.
+   * NOT necessarily this site's own `siteKey`: the track record belongs to the
+   * firm, and showing the whole book is the stronger credibility signal on a
+   * listing pitch. Set this to a site's own key to show only the transactions
+   * tagged to that site. Deliberate and explicit, because a sibling site cloned
+   * from this repo must make the same choice consciously rather than inherit it.
+   */
+  pastTransactionsSiteKey: string;
+
   /** Commute widget origin key (a key in lib/commute/origins.ts). */
   commuteOriginKey: string;
   /** Destination slugs checked by default in the commute widget (max 5). */
@@ -104,6 +114,11 @@ export const siteConfig: SiteConfig = {
   url: "https://www.laurelwoodestates.com",
   description:
     "Laurelwood Estates, the hyperlocal guide to the Laurelwood and Dona streets of Studio City, presented by Misraje Real Estate Partners.",
+
+  // The firm's full Los Angeles / South Bay book, not just Laurelwood-tagged
+  // rows. Decided 2026-08-27: the page is a credibility surface for the firm,
+  // and its copy now says so.
+  pastTransactionsSiteKey: "misraje",
 
   // Laurelwood Estates is its own commute origin: coords in lib/commute/cities.ts
   // (the midpoint of the West+East Laurelwood KML polygons) and an entry in

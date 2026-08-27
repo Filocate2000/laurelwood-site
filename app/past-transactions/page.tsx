@@ -3,7 +3,7 @@ import { getPastTransactions } from "@/lib/past-transactions";
 import { PageHero } from "@/components/layout/PageHero";
 import { PastTransactionsExplorer } from "@/components/sections/PastTransactionsExplorer";
 import { photo } from "@/lib/photos";
-import { absoluteUrl } from "@/lib/site-config";
+import { absoluteUrl, siteConfig } from "@/lib/site-config";
 
 export const revalidate = 3600;
 
@@ -18,7 +18,9 @@ export const metadata: Metadata = {
 };
 
 export default async function PastTransactionsPage() {
-  const all = await getPastTransactions();
+  // The firm's whole book, not only Laurelwood-tagged rows. Which key this reads
+  // is a site-config decision, never a default buried in the data layer.
+  const all = await getPastTransactions(siteConfig.pastTransactionsSiteKey);
   const hero = photo("laurelwood-scenic-4");
 
   return (
@@ -29,7 +31,7 @@ export default async function PastTransactionsPage() {
         scrim="dark"
         eyebrow="Track Record"
         title="Past Transactions"
-        subtitle="A record of recent work in and around Laurelwood."
+        subtitle="A record of homes closed across Los Angeles and the South Bay."
       />
       <PastTransactionsExplorer transactions={all} />
     </div>

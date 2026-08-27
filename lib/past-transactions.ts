@@ -1,12 +1,6 @@
 import { createPublicServerClientOrNull } from "@/lib/supabase/server";
 import { resolveBrokerageId } from "@/lib/brokerage";
 
-/**
- * Site key in past_transaction_site (same convention as blog_post_site). Pass
- * an explicit key when a future site (laurelwood/fryman) needs its own list.
- */
-export const MISRAJE_SITE_KEY = "misraje";
-
 export type PastTransaction = {
   id: string;
   address: string;
@@ -86,14 +80,18 @@ function mapRow(r: Row): PastTransaction {
 }
 
 /**
- * All published, non-deleted past transactions on the given site. The site
+ * All published, non-deleted past transactions on the given site. The key is a
+ * REQUIRED argument on purpose: it used to default to "misraje", so this site
+ * served the firm's book while siteConfig.siteKey said "laurelwood" and nobody
+ * could tell from the call site. Callers pass siteConfig.pastTransactionsSiteKey.
+ * The site
  * filter is enforced by !inner-joining past_transaction_site and filtering its
  * site_key (same shape as getPublishedPosts in lib/blog.ts). The page derives
  * the map pins (rows with coordinates) and the tiles (rows with specs) from
  * this single list, so it is one round-trip.
  */
 export async function getPastTransactions(
-  siteKey: string = MISRAJE_SITE_KEY
+  siteKey: string
 ): Promise<PastTransaction[]> {
   const supabase = createPublicServerClientOrNull();
   if (!supabase) return [];
@@ -127,7 +125,7 @@ export async function getPastTransactions(
  * lowercased, trimmed city name so callers can look up by any casing.
  */
 export async function getTransactionCountsByCity(
-  siteKey: string = MISRAJE_SITE_KEY
+  siteKey: string
 ): Promise<Map<string, number>> {
   const supabase = createPublicServerClientOrNull();
   if (!supabase) return new Map();
