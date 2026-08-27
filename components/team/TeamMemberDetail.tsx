@@ -1,6 +1,7 @@
 ﻿import Image from "next/image";
 import { PageHero } from "@/components/layout/PageHero";
 import type { TeamMember, Credential } from "@/lib/team";
+import { siteConfig } from "@/lib/site-config";
 
 type CredentialGroup = {
   heading: string;
@@ -55,7 +56,7 @@ export function TeamMemberDetail({ person }: { person: TeamMember }) {
     <>
       <PageHero
         image={heroImage}
-        alt={`${person.name} of Misraje Real Estate Partners`}
+        alt={`${person.name} of ${siteConfig.legalName}`}
         eyebrow="PRINCIPAL"
         title={person.name}
         subtitle={person.title}

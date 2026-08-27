@@ -1,4 +1,4 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 import type { ReactNode } from "react";
 import { Hero } from "@/components/sections/Hero";
 import { CommuteWidget } from "@/components/sections/CommuteWidget";
@@ -9,10 +9,11 @@ import { FloatFigure } from "@/components/FloatFigure";
 import { YouTubeEmbed } from "@/components/YouTubeEmbed";
 import { homeContent } from "@/content/home";
 import { photo } from "@/lib/photos";
+import { siteConfig } from "@/lib/site-config";
 
 export const metadata = {
   description:
-    "Laurelwood Estates: the hyperlocal guide to West Laurelwood, East Laurelwood, and the Doña streets of Studio City, presented by Misraje Real Estate Partners.",
+    `${siteConfig.name}: the hyperlocal guide to West Laurelwood, East Laurelwood, and the Doña streets of ${siteConfig.tagline}, presented by ${siteConfig.legalName}.`,
 };
 
 // "West Laurelwood" / "East Laurelwood" are linked to their pages where they
@@ -94,7 +95,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* 2. Commute widget (NAVY) — keeps its native navy theme, moved up. */}
+      {/* 2. Commute widget (NAVY), keeps its native navy theme, moved up. */}
       <CommuteWidget />
 
       {/* 3. A Neighborhood of History, Charm, and Community (WHITE).
@@ -132,7 +133,7 @@ export default function HomePage() {
       {/* 4. West and East Laurelwood map (NAVY) */}
       <LaurelwoodMap />
 
-      {/* 5. Neighborhood teasers (WHITE — directly below the navy map). Two split
+      {/* 5. Neighborhood teasers (WHITE, directly below the navy map). Two split
           blocks: text left (~58%), canon plate right, vertically centered; mobile
           stacks text -> button -> photo. Copy verbatim from the Wix homepage.
           This WHITE band re-parities everything beneath it, so the sections below

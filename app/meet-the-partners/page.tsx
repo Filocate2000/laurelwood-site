@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { PageHero } from "@/components/layout/PageHero";
@@ -6,15 +6,14 @@ import { ContactCTA } from "@/components/sections/ContactCTA";
 import { getTeamMembers, type TeamMember } from "@/lib/team";
 import { photo } from "@/lib/photos";
 import { absoluteUrl } from "@/lib/site-config";
+import { meetThePartnersContent as c } from "@/content/meet-the-partners";
 
-const DESCRIPTION =
-  "Two principals, one practice. Karen and Jack Misraje, the #1 Two-Member Team in Coldwell Banker Global Luxury, representing buyers and sellers across Los Angeles.";
 
 export const metadata: Metadata = {
   title: "Meet the Partners",
-  description: DESCRIPTION,
+  description: c.metaDescription,
   alternates: { canonical: absoluteUrl("/meet-the-partners") },
-  openGraph: { title: "Meet the Partners", description: DESCRIPTION, url: absoluteUrl("/meet-the-partners") },
+  openGraph: { title: "Meet the Partners", description: c.metaDescription, url: absoluteUrl("/meet-the-partners") },
 };
 
 export const revalidate = 3600;
@@ -87,21 +86,21 @@ export default async function MeetThePartnersPage() {
         image={hero?.src}
         alt={hero?.alt}
         scrim="dark"
-        eyebrow="The Partners"
-        title="Meet the Partners"
-        subtitle="Two principals, one practice, on the streets of Laurelwood."
+        eyebrow={c.eyebrow}
+        title={c.title}
+        subtitle={c.subtitle}
       />
 
       <section className="bg-white py-20 md:py-28">
         <div className="max-w-6xl mx-auto px-6 md:px-8">
           <div className="text-center mb-16 md:mb-20 max-w-2xl mx-auto">
             <p className="text-base md:text-lg text-stone-700 leading-relaxed">
-              Misraje Real Estate Partners practices residential real estate across Los Angeles, Ventura, and the South Bay. Recognized as the #1 Two-Member Team in Beverly Hills, the partnership combines complementary specialties in marketing, negotiation, and contract execution.
+              {c.intro}
             </p>
           </div>
 
           {team.length === 0 ? (
-            <p className="text-center text-stone-500">Team information temporarily unavailable. Please check back shortly.</p>
+            <p className="text-center text-stone-500">{c.emptyState}</p>
           ) : (
             <div className="grid md:grid-cols-2 gap-12 md:gap-16">
               {team.map((person) => (

@@ -231,7 +231,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Notify the team via Brevo. Fail-open: the lead is already saved above, so a
-    // mail error must only be logged — it must never 500 the visitor.
+    // mail error must only be logged: it must never 500 the visitor.
     try {
       const brevoKey = process.env.BREVO_API_KEY;
       if (!brevoKey) {

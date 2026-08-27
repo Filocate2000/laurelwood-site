@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+﻿import type { ReactNode } from "react";
 import Image from "next/image";
 import { PageHero } from "@/components/layout/PageHero";
 import { MarketCharts } from "@/components/sections/MarketCharts";
@@ -8,6 +8,7 @@ import type {
   MarketData,
   Quarterly,
 } from "@/lib/market/getMarketData";
+import { siteConfig } from "@/lib/site-config";
 
 // Server-rendered market report for one neighborhood. The page fetches the data
 // (lib/market/getMarketData) and passes it in, so the hero, photo gallery,
@@ -33,7 +34,14 @@ function CommentaryProse({
 }) {
   if (!text || text.trim() === "") return null;
 
+  // Speaker labels are embedded in the commentary text the ingest Lambda writes,
+  // so these are DATA matchers, not display copy. Derived from siteConfig so a
+  // sibling site matches its own labels, with the known Misraje literals kept as
+  // a fallback: the Lambda's exact output was not verifiable from here, and a
+  // wider match can only fail to bold a label, never corrupt the prose.
   const SPEAKERS = [
+    `${siteConfig.legalName}:`,
+    ...siteConfig.agents.map((a) => `${a.firstName} ${a.lastName}:`),
     "Misraje Real Estate Partners:",
     "Jack Misraje:",
     "Karen Misraje:",
@@ -765,7 +773,7 @@ export function MarketReport({
 
   return (
     <>
-      {/* Hero — full-bleed photo. Whole-page band alternation below:
+      {/* Hero, full-bleed photo. Whole-page band alternation below:
           photo hero -> navy(gallery) -> white -> navy -> white -> navy -> white
           -> navy, so no two adjacent solid bands share a color. */}
       <PageHero
@@ -784,17 +792,17 @@ export function MarketReport({
         <MessageBand message="Market data is temporarily unavailable. Please try again shortly." />
       ) : (
         <>
-          {/* 1. Market Snapshot comparison table — WHITE (server-rendered) */}
+          {/* 1. Market Snapshot comparison table, WHITE (server-rendered) */}
           <SnapshotTableBand
             neighborhood={neighborhood}
             comparison={data.quarterly.comparison}
             commentary={data.commentary?.market_snapshot ?? null}
           />
 
-          {/* 2 + 3. Charts — the only client-rendered piece (NAVY + WHITE) */}
+          {/* 2 + 3. Charts, the only client-rendered piece (NAVY + WHITE) */}
           <MarketCharts neighborhood={neighborhood} quarters={recentQuarters} />
 
-          {/* Active Listings — NAVY (server-rendered) */}
+          {/* Active Listings, NAVY (server-rendered) */}
           <ListingsBand
             tone="navy"
             neighborhood={neighborhood}
@@ -805,14 +813,14 @@ export function MarketReport({
             commentary={data.commentary?.active_listings_analysis ?? null}
             averages={<AveragesPanel stats={data.stats} />}
           />
-          {/* CTA — WHITE (selling) */}
+          {/* CTA, WHITE (selling) */}
           <CtaBand
             heading={`Thinking of selling in ${neighborhood}?`}
             body="Get a custom opinion of value based on the most recent sales, current competition, and buyer demand in your section of Laurelwood."
             cta="Request a Home Valuation"
             href="/contact"
           />
-          {/* Under Contract — NAVY (server-rendered) */}
+          {/* Under Contract, NAVY (server-rendered) */}
           <ListingsBand
             tone="navy"
             neighborhood={neighborhood}
@@ -823,14 +831,14 @@ export function MarketReport({
             commentary={data.commentary?.under_contract_analysis ?? null}
             averages={<UnderContractPanel stats={data.stats} />}
           />
-          {/* CTA — WHITE (new-listing updates) */}
+          {/* CTA, WHITE (new-listing updates) */}
           <CtaBand
             heading="Want to know about new listings first?"
             body={`Stay ahead of the market with updates on new listings, escrow activity, and recent closings in ${neighborhood}.`}
             cta="Get Market Updates"
             href="/contact"
           />
-          {/* Recent Sales — NAVY (server-rendered) */}
+          {/* Recent Sales, NAVY (server-rendered) */}
           <ListingsBand
             tone="navy"
             neighborhood={neighborhood}
@@ -843,7 +851,7 @@ export function MarketReport({
             averages={<RecentSalesAveragesPanel data={data} />}
           />
 
-          {/* 7. Detailed Analysis — WHITE (server-rendered) */}
+          {/* 7. Detailed Analysis, WHITE (server-rendered) */}
           <DetailedAnalysisBand neighborhood={neighborhood} data={data} />
         </>
       )}

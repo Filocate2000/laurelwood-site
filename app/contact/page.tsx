@@ -1,15 +1,14 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 import { ContactForm } from "@/components/sections/ContactForm";
 import { siteConfig, absoluteUrl } from "@/lib/site-config";
+import { contactContent as cc } from "@/content/contact";
 
-const DESCRIPTION =
-  "Get in touch with Misraje Real Estate Partners about buying or selling in Laurelwood, the Doña streets, and Studio City.";
 
 export const metadata: Metadata = {
   title: "Contact",
-  description: DESCRIPTION,
+  description: cc.metaDescription,
   alternates: { canonical: absoluteUrl("/contact") },
-  openGraph: { title: "Contact", description: DESCRIPTION, url: absoluteUrl("/contact") },
+  openGraph: { title: "Contact", description: cc.metaDescription, url: absoluteUrl("/contact") },
 };
 
 export default function ContactPage() {
@@ -18,7 +17,7 @@ export default function ContactPage() {
     <div className="pt-32 pb-24">
       <div className="w-full px-6 md:px-16">
         <div className="max-w-2xl mb-16">
-          <p className="eyebrow text-gold-500 mb-4">Ways to Reach Us</p>
+          <p className="eyebrow text-gold-500 mb-4">{cc.eyebrow}</p>
           <h1 className="font-display font-light text-display text-white mb-6">
             Let&apos;s start a <span className="italic">conversation.</span>
           </h1>
@@ -29,7 +28,7 @@ export default function ContactPage() {
           {/* Contact details */}
           <div className="space-y-10">
             <div>
-              <p className="eyebrow text-gold-500 mb-3">Office</p>
+              <p className="eyebrow text-gold-500 mb-3">{cc.officeLabel}</p>
               <p className="text-ink-100 text-lg">
                 {o.street}
                 <br />
@@ -38,7 +37,7 @@ export default function ContactPage() {
             </div>
 
             <div>
-              <p className="eyebrow text-gold-500 mb-3">Email</p>
+              <p className="eyebrow text-gold-500 mb-3">{cc.emailLabel}</p>
               <div className="space-y-1 text-lg">
                 {siteConfig.agents.map((a) => (
                   <p key={a.slug}>
@@ -54,7 +53,7 @@ export default function ContactPage() {
             </div>
 
             <div>
-              <p className="eyebrow text-gold-500 mb-3">Telephone</p>
+              <p className="eyebrow text-gold-500 mb-3">{cc.telephoneLabel}</p>
               <div className="space-y-1 text-ink-100 text-lg">
                 {siteConfig.agents.map((a) => (
                   <p key={a.slug}>
@@ -66,8 +65,8 @@ export default function ContactPage() {
             </div>
 
             <div>
-              <p className="eyebrow text-gold-500 mb-3">Service Area</p>
-              <p className="text-ink-100">Laurelwood · Studio City · Los Angeles · Ventura · South Bay</p>
+              <p className="eyebrow text-gold-500 mb-3">{cc.serviceAreaLabel}</p>
+              <p className="text-ink-100">{cc.serviceArea}</p>
             </div>
           </div>
 

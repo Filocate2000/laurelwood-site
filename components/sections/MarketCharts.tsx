@@ -55,7 +55,7 @@ export function MarketCharts({
 
   return (
     <>
-      {/* Section 2: Price Trend line chart — NAVY */}
+      {/* Section 2: Price Trend line chart, NAVY */}
       <section className="bg-navy-950 py-20 md:py-28 overflow-hidden">
         <div className="w-full px-6 md:px-16">
           <p className="eyebrow text-gold-500 mb-4">{neighborhood}</p>
@@ -122,7 +122,7 @@ export function MarketCharts({
         </div>
       </section>
 
-      {/* Section 3: Price per Sq Ft grouped bar chart — WHITE */}
+      {/* Section 3: Price per Sq Ft grouped bar chart, WHITE */}
       <section className="bg-white py-20 md:py-28 overflow-hidden">
         <div className="w-full px-6 md:px-16">
           <p className="eyebrow text-gold-600 mb-4">{neighborhood}</p>

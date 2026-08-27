@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { PageHero } from "@/components/layout/PageHero";
 import { SignatureBlock } from "@/components/SignatureBlock";
 import { getLareReportBySlug, formatReportDate } from "@/lib/lare";
+import { lareReportContent as c } from "@/content/lare-report";
 
 export const revalidate = 3600;
 
@@ -32,14 +33,7 @@ export default async function LareReportArchivePage({ params }: PageProps) {
 
   return (
     <>
-      <PageHero
-        image="/images/sections/lare-report-hero.jpg"
-        alt="Los Angeles real estate market commentary"
-        eyebrow="MARKET COMMENTARY"
-        title="The LARE Report."
-        subtitle="Los Angeles Real Estate. Weekly analysis from Karen and Jack Misraje."
-        scrim="dark"
-      />
+      <PageHero {...c.hero} />
       <section className="bg-white py-20 md:py-28">
       <div className="editorial">
         <div className="max-w-3xl mx-auto">
@@ -48,7 +42,7 @@ export default async function LareReportArchivePage({ params }: PageProps) {
             className="inline-block text-[11px] font-medium text-gold-500 hover:text-gold-400 mb-8 transition-colors"
             style={{ letterSpacing: "0.18em" }}
           >
-            &larr; ALL REPORTS
+            &larr; {c.allReportsLabel}
           </Link>
           {report!.headline && (
             <h1 className="font-display font-light text-navy-950 text-3xl md:text-4xl lg:text-5xl leading-tight mb-3" style={{ letterSpacing: "-0.01em" }}>

@@ -116,39 +116,3 @@ export async function getPastTransactions(
 
   return ((data as unknown as Row[]) ?? []).map(mapRow);
 }
-
-/**
- * Count of published, non-deleted transactions per city for the given site,
- * grouped case-insensitively. Uses the SAME anon read path / filters as
- * getPastTransactions (brokerage + published + deleted_at IS NULL + the
- * past_transaction_site!inner join on site_key). Returns a Map keyed by the
- * lowercased, trimmed city name so callers can look up by any casing.
- */
-export async function getTransactionCountsByCity(
-  siteKey: string
-): Promise<Map<string, number>> {
-  const supabase = createPublicServerClientOrNull();
-  if (!supabase) return new Map();
-  const brokerageId = await resolveBrokerageId();
-
-  const { data, error } = await supabase
-    .from("past_transaction")
-    .select("city, past_transaction_site!inner ( site_key )")
-    .eq("brokerage_id", brokerageId)
-    .eq("published", true)
-    .is("deleted_at", null)
-    .eq("past_transaction_site.site_key", siteKey);
-
-  if (error) {
-    console.error("getTransactionCountsByCity error:", error);
-    return new Map();
-  }
-
-  const counts = new Map<string, number>();
-  for (const r of (data as unknown as { city: string | null }[]) ?? []) {
-    const key = (r.city ?? "").trim().toLowerCase();
-    if (!key) continue;
-    counts.set(key, (counts.get(key) ?? 0) + 1);
-  }
-  return counts;
-}

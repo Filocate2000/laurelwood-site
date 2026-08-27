@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import Link from "next/link";
 import Image from "next/image";
@@ -94,7 +94,7 @@ export function Navigation() {
                 ? "opacity-100 translate-x-0 pointer-events-auto"
                 : "opacity-0 -translate-x-3 pointer-events-none"
             )}
-            aria-label="Misraje Real Estate Partners home"
+            aria-label={`${siteConfig.legalName} home`}
             tabIndex={showLogo ? 0 : -1}
             aria-hidden={!showLogo}
           >

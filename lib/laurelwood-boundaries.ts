@@ -14,7 +14,7 @@
 
 export type LatLng = { lat: number; lng: number };
 
-// WEST LAURELWOOD (gold) — KML placemark "West Laurelwood", 18 vertices.
+// WEST LAURELWOOD (gold). KML placemark "West Laurelwood", 18 vertices.
 export const WEST_LAURELWOOD_BOUNDARY: LatLng[] = [
   { lat: 34.126397, lng: -118.3884022 },
   { lat: 34.1265568, lng: -118.3869646 },
@@ -36,7 +36,7 @@ export const WEST_LAURELWOOD_BOUNDARY: LatLng[] = [
   { lat: 34.1273739, lng: -118.3875225 },
 ];
 
-// EAST LAURELWOOD (teal) — KML placemark "East Laurelwood", 39 vertices.
+// EAST LAURELWOOD (teal). KML placemark "East Laurelwood", 39 vertices.
 export const EAST_LAURELWOOD_BOUNDARY: LatLng[] = [
   { lat: 34.1338371, lng: -118.3756158 },
   { lat: 34.1332687, lng: -118.3752939 },

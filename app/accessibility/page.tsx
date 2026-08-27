@@ -1,9 +1,9 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 import { siteConfig, absoluteUrl } from "@/lib/site-config";
 
 export const metadata: Metadata = {
   title: "Accessibility",
-  description: "Accessibility statement for Misraje Real Estate Partners.",
+  description: `Accessibility statement for ${siteConfig.legalName}.`,
   alternates: { canonical: absoluteUrl("/accessibility") },
 };
 

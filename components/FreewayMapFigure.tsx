@@ -8,7 +8,7 @@ import { photo, type Photo } from "@/lib/photos";
 // so the map and the shields float together as one unit. Shared verbatim by
 // west-laurelwood and east-laurelwood so the two can never drift; the only
 // per-page difference is the caption text (and the map asset, if it ever
-// differs — the "Open full size" link points at map.src either way).
+// differs: the "Open full size" link points at map.src either way).
 const SHIELD_IDS = ["ca-170-shield", "ca-90-shield"];
 
 export function FreewayMapFigure({ map, caption }: { map: Photo; caption: string }) {

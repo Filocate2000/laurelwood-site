@@ -2,18 +2,16 @@ import type { Metadata } from "next";
 import { MarketReport } from "@/components/sections/MarketReport";
 import { getMarketData, type MarketData } from "@/lib/market/getMarketData";
 import { absoluteUrl } from "@/lib/site-config";
+import { westMarketReport as page } from "@/content/market-report";
 
-const NEIGHBORHOOD = "West Laurelwood";
-const DESCRIPTION =
-  "Active listings, pending sales, and recent sales for West Laurelwood.";
 
 export const metadata: Metadata = {
-  title: "West Laurelwood Market Overview",
-  description: DESCRIPTION,
+  title: page.title,
+  description: page.description,
   alternates: { canonical: absoluteUrl("/report") },
   openGraph: {
-    title: "West Laurelwood Market Overview",
-    description: DESCRIPTION,
+    title: page.title,
+    description: page.description,
     url: absoluteUrl("/report"),
   },
 };
@@ -27,9 +25,9 @@ export default async function ReportPage() {
   // Supabase failure, render the page shell gracefully instead of crashing.
   let data: MarketData | null = null;
   try {
-    data = await getMarketData(NEIGHBORHOOD);
+    data = await getMarketData(page.neighborhood);
   } catch (err) {
     console.error("report page data error:", err);
   }
-  return <MarketReport neighborhood={NEIGHBORHOOD} data={data} />;
+  return <MarketReport neighborhood={page.neighborhood} data={data} />;
 }

@@ -102,6 +102,8 @@ export type SiteConfig = {
     franchise: string;
     /** Full accessibility statement, verbatim (also rendered on /accessibility). */
     accessibility: string;
+    /** Address the privacy policy directs data-rights requests to. */
+    privacyContactEmail: string;
   };
 };
 
@@ -188,6 +190,9 @@ export const siteConfig: SiteConfig = {
       "The Coldwell Banker System is comprised of company owned offices which are owned by a subsidiary of Realogy Brokerage Group LLC and franchised offices which are independently owned and operated. The Coldwell Banker System fully supports the principles of the Fair Housing Act and the Equal Opportunity Act.",
     accessibility:
       "Misraje Real Estate Partners is committed to providing a website that is accessible to the broadest possible audience, regardless of technology or ability. We are actively working to increase the accessibility and usability of our website and, in doing so, adhere to many of the available standards and guidelines. Misraje Real Estate Partners does not discriminate on the basis of religion, age, race, color, national origin, gender, marital or parental status, or disability. In order to further our commitment to nondiscrimination, we are working to ensure our site conforms to level Double-A world wide web consortium (W3C) web content accessibility guidelines (WCAG 2.1 AA). Such guidelines detail best practices for ensuring assistive technology users can access the site. The guidelines also make the site more user-friendly for all people. If anyone finds information or functionality inaccessible, please get in touch with us at 323-209-5225. We will make every reasonable effort to accommodate.",
+    // Privacy-rights requests go to Jack, matching the address the policy
+    // carried before the copy was lifted into content/privacy.ts.
+    privacyContactEmail: "jack@misraje.com",
   },
 };
 

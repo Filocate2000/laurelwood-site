@@ -176,7 +176,7 @@ export default function DevelopmentHistoryPage() {
             </ul>
             <p className="mb-0">{c.dream.decorators}</p>
             {/* Floorplan/rendering area: staging caption centered above, then a
-                two-column paired grid — row N = floorplan-strip-N (left, the
+                two-column paired grid. Row N = floorplan-strip-N (left, the
                 gold-labeled montage) + exterior plan N (right, the "plan number
                 N" plate). Equal column widths, tops aligned (items-start). */}
             <p className="mt-10 mb-10 text-lg md:text-xl text-ink-100 leading-relaxed">
@@ -362,7 +362,7 @@ export default function DevelopmentHistoryPage() {
         </div>
       </section>
 
-      {/* Closing CTA (WHITE) — alternation lands on white after the navy
+      {/* Closing CTA (WHITE). Alternation lands on white after the navy
           Then-and-Now band (the Scenic band was merged up into the 21st Century band). */}
       <ContactCTA tone="white" width="full" />
     </>

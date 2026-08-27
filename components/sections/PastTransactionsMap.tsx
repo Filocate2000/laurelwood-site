@@ -1,8 +1,9 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useRef, useState, useCallback } from "react";
 import { GoogleMap, useLoadScript } from "@react-google-maps/api";
 import { MarkerClusterer, type Renderer } from "@googlemaps/markerclusterer";
+import { siteConfig } from "@/lib/site-config";
 
 // Own Vector map ID (tail f3fe4b27), separate from the commute raster map.
 const PAST_TX_MAP_ID = "31246812a827e7f5f3fe4b27";
@@ -66,7 +67,7 @@ function infoHtml(pin: MapPin): string {
     `<div style="font-size:10px;letter-spacing:.04em;color:rgba(14,26,46,0.55);` +
     `text-transform:uppercase">${verb}</div>` +
     `<div style="font-size:11px;letter-spacing:.04em;color:#9c7521;` +
-    `text-transform:uppercase;margin-top:1px">Misraje Real Estate Partners</div>` +
+    `text-transform:uppercase;margin-top:1px">${siteConfig.legalName}</div>` +
     `</div>`;
 
   // No photo: address + two-line attribution only, no image element, no gap.

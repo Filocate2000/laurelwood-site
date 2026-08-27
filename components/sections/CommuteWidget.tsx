@@ -19,7 +19,7 @@ const DEFAULT_DESTINATIONS = siteConfig.commuteDefaultDestinations;
 const MAX_CHECKED = 5;
 
 // Studio City is the origin neighborhood (pinned in the narrative below), so it
-// must never be a selectable destination. Filtered out in the UI only — the
+// must never be a selectable destination. Filtered out in the UI only: the
 // commute_cities data layer is left untouched.
 const EXCLUDED_DESTINATION_SLUG = "studio-city";
 

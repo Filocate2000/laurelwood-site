@@ -302,7 +302,7 @@ export const PHOTOS: Photo[] = [
   {
     // Aug 23, 1964 ad. Single scan that carries BOTH the "Nature's Penthouse
     // in the Sky" headline AND the "$47,500-$66,000 / Louise Rogers Realty"
-    // block — i.e. the task's "Nature's Penthouse" and "Louise Rogers" ads are
+    // block, i.e. the task's "Nature's Penthouse" and "Louise Rogers" ads are
     // the same image. Caption from the extraction file.
     id: "aug-23-1964-laurelwood-ad",
     src: "/images/aug-23-1964-laurelwood-ad.jpg",
@@ -317,7 +317,7 @@ export const PHOTOS: Photo[] = [
   {
     // Aug 16, 1964 ad. Single scan that carries BOTH the "ONLY ONCE in a
     // LIFETIME" free-car offer AND the "FREE!! 9 NEW HOMES" Doña-streets
-    // address list — i.e. the task's "free-car" and "9 NEW HOMES" ads are the
+    // address list, i.e. the task's "free-car" and "9 NEW HOMES" ads are the
     // same image. Caption from the extraction file.
     id: "aug-16-1964-free-car-ad",
     src: "/images/aug-16-1964-free-car-ad.jpg",

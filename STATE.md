@@ -44,22 +44,32 @@ hub, **realestategpa.com**, and distributed to the spoke sites. See
 **To spawn a sibling: clone the repo, then replace `lib/site-config.ts`, the
 `content/` directory, and `source-photos/`. Nothing else should need to change.**
 
-**Template drift, partly fixed 2026-08-27.** `/who-we-are` and `/why-use-us`
-were carrying whole pages of prose inline; their copy now lives in
-`content/who-we-are.ts` and `content/why-use-us.ts`. Auditing that fix turned up
-four smaller violations still outstanding, all of which a frymanestates.com clone
-would inherit:
+**Template drift, resolved 2026-08-27.** An audit for hardcoded identity found
+15 places where the firm name, the agents' names or a neighborhood name were
+typed into a page or component rather than read from config. All are lifted:
 
-- `app/privacy/PrivacyContent.tsx` holds the entire privacy policy hardcoded,
-  with zero `siteConfig` references, naming Misraje Real Estate Partners,
-  Laurelwood Estates and jack@misraje.com in the prose. The largest of the four.
-- `app/lare-report/page.tsx` and `app/lare-report/[slug]/page.tsx` each hardcode
-  the hero subtitle "Los Angeles Real Estate. Weekly analysis from Karen and Jack
-  Misraje." (duplicated across the two files).
-- `app/report/page.tsx` and `app/marketreport/page.tsx` hardcode a `DESCRIPTION`
-  naming West / East Laurelwood. Their `NEIGHBORHOOD` constant is a different
-  thing and should stay: it is a data key that must match
-  `laurelwood_listings.neighborhood`, not display copy.
+- `content/who-we-are.ts`, `content/why-use-us.ts` (whole pages of prose)
+- `content/privacy.ts` (the entire policy, which had zero `siteConfig`
+  references and named the wrong firm for any clone)
+- `content/lare-report.ts` (one hero block that had been typed out three times
+  across two files)
+- `content/market-report.ts`, `content/meet-the-partners.ts`,
+  `content/contact.ts` (page furniture and the TCPA consent sentence)
+- seven page-metadata descriptions, the nav aria-label, the team-bio alt text
+  and the past-transactions map attribution now interpolate `siteConfig`
+
+**The one deliberate exception** is `SPEAKERS` in
+`components/sections/MarketReport.tsx`. Those strings match speaker labels
+embedded in commentary text written by the ingest Lambda, so they are DATA
+matchers, not display copy. They now derive from `siteConfig` AND keep the known
+Misraje literals as a fallback, because the Lambda's exact output could not be
+verified from here and a wider match can only fail to bold a label, never
+corrupt the prose.
+
+Verified by simulating a clone: `siteConfig` was temporarily rewritten with a
+different firm name and a different agent, the site rebuilt, and the legal page
+came back naming the new firm and licensee with zero occurrences of the old
+ones.
 
 Corollary learned the hard way (2026-08-27): a **default value** in a shared
 helper defeats this. `getPastTransactions()` defaulted to `site_key "misraje"`,
@@ -89,13 +99,14 @@ canon. Read its `STATE.md`, `app/layout.tsx`, `app/globals.css`,
 No em dashes anywhere in site content. Rewrite with a comma, period or colon;
 never substitute " - ". Numeric-range hyphens (K-5, 2021-2025) are fine.
 
-**Status 2026-08-27: this rule has drifted.** `grep -rn` for the em dash across
-`app/`, `components/`, `lib/`, `content/` returns **33 occurrences across 15
-files**, of which 4 are in `content/` (user-visible copy; the East Laurelwood
-source quote carries one verbatim from Wix) and the rest are in code comments and
-one `DASH` constant in `lib/market/format.ts` where the character is the intended
-glyph. The rule stands for new work. Cleaning up the existing 33 is unclaimed
-work, not a blocker.
+**Status 2026-08-27: swept.** The rule had drifted to 33 occurrences across 15
+files. 30 were rewritten (26 code comments, plus the East Laurelwood copy that
+still carried an em dash verbatim from Wix). **Three remain, deliberately**, all
+places where the em dash is a display glyph rather than prose: `DASH` in
+`lib/market/format.ts` and the two commute placeholders in `CommuteWidget.tsx`.
+Those are the "no data" character, which is what an em dash is for. A `grep -rn`
+across `app/`, `components/`, `lib/`, `content/` should return exactly those
+three.
 
 ---
 
@@ -148,20 +159,21 @@ work, not a blocker.
 | `/east-laurelwood` | `content/east.ts` + `lib/photos.ts` |
 | `/dona-streets` | `content/dona.ts` |
 | `/development-history` | `content/dev-history.ts`, `content/land-acquisition.ts`, `content/history-extra.ts` |
-| `/report` | **Supabase** `laurelwood_listings` + `laurelwood_commentary` (West) |
-| `/marketreport` | **Supabase**, same tables (East) |
-| `/lare-report` + `/lare-report/[slug]` | **Supabase** `lare_reports`, read-only, hub-authored |
+| `/report` | **Supabase** `laurelwood_listings` + `laurelwood_commentary` (West); chrome in `content/market-report.ts` |
+| `/marketreport` | **Supabase**, same tables (East); chrome in `content/market-report.ts` |
+| `/lare-report` + `/lare-report/[slug]` | **Supabase** `lare_reports`, read-only, hub-authored; chrome in `content/lare-report.ts` |
 | `/homeowners` | `content/` markdown via `lib/content.ts` |
 | `/homeowners/neighborhood-watch` | `content/neighborhood-watch.ts` |
 | `/homeowners/community-news` | `content/source/community-news.md` (frozen snapshot, see Hub integration) |
 | `/homeowners/emergency-contacts` | `content/emergency-contacts.ts` |
 | `/who-we-are` | `content/who-we-are.ts` |
 | `/why-use-us` | `content/why-use-us.ts` |
-| `/meet-the-partners` + `/meet-the-partners/[slug]` | **Supabase** `team_directory` |
+| `/meet-the-partners` + `/meet-the-partners/[slug]` | **Supabase** `team_directory`; chrome in `content/meet-the-partners.ts` |
 | `/past-transactions` | **Supabase** `past_transaction` + `past_transaction_site` |
 | `/buying`, `/selling` | `content/` |
-| `/contact` | Turnstile + Supabase `contact` + Brevo notification |
-| `/accessibility`, `/privacy` | `siteConfig.legal`, verbatim |
+| `/contact` | Turnstile + Supabase `contact` + Brevo notification; copy in `content/contact.ts` |
+| `/accessibility` | `siteConfig.legal.accessibility`, verbatim |
+| `/privacy` | `content/privacy.ts`, legal text verbatim, identity from `siteConfig` |
 
 **API routes:** `/api/contact`, `/api/listings`, `/api/commute`,
 `/api/commute-cities`, `/api/routes`, `/api/ingest/market`.
@@ -282,10 +294,33 @@ before any content-affecting deploy.
 
 ## Future work
 
-- **Wire the blog** once the hub can target `laurelwood`: add `AVAILABLE_SITES`
-  entries hub-side, build `/blog` + `/blog/[slug]` on the LARE pattern
-  (`lib/lare.ts` is the model), then uncomment the nav placeholder and add a
-  `/blog/*` redirect to `content/redirect-map.md`.
+- **Wire the blog.** This is the one recon item that cannot be finished from
+  inside this repo, because the blocker is hub-side. Order matters:
+
+  1. **Hub first** (`Filocate2000/realestategpa`, a different repo). In
+     `app/(authenticated)/(main)/brokerage/marketing/newsletter/new/setup-fields.tsx`
+     around line 118, `AVAILABLE_SITES` is `[{ key: 'misraje', label: 'misraje' }]`
+     with a comment saying laurelwood and fryman are "reserved but not yet live".
+     Adding `{ key: 'laurelwood', label: 'laurelwood' }` is the whole change on
+     that side: migration 036 already permits the value
+     (`blog_post_site.site_key CHECK IN ('misraje','laurelwood','fryman')`), the
+     `site` table already carries a published `laurelwood` row, and
+     `newsletter/[id]/actions.ts` validates against the same key set. Verify the
+     composer's Blog Distribution section then offers Laurelwood, and publish one
+     post to it.
+  2. **Then here.** Build `lib/blog.ts` mirroring `lib/lare.ts` (same anon read,
+     same `resolveBrokerageId`, but joined through `blog_post_site` filtered on
+     `siteConfig.siteKey`), then `/blog` + `/blog/[slug]` mirroring the LARE
+     pages, with chrome in `content/blog.ts`.
+  3. **Then wire it up.** Add `/blog` to `lib/routes.ts` (sitemap and llms.txt
+     both follow automatically), uncomment the nav placeholder in
+     `components/layout/Navigation.tsx`, add a Market-column footer link, and add
+     the `/blog/categories/neighborhood-news` redirect that
+     `content/redirect-map.md` currently lists as deliberately absent.
+
+  Deliberately NOT built ahead of step 1: an unreachable `/blog` would either
+  ship an empty page to visitors or sit as dead unlinked code, and neither is
+  worth carrying until the hub can actually publish to it.
 - **Deep-link the agent bio redirects.** `/karen-misraje` and `/jack-misraje`
   currently land on `/meet-the-partners` because the `team_directory` slugs were
   never confirmed. `select slug from team_directory;` then point each rule at the
@@ -296,15 +331,11 @@ before any content-affecting deploy.
   already tagged to all three sites. Unverified. If true, switching
   `siteConfig.pastTransactionsSiteKey` to `"laurelwood"` is a one-line change
   whenever a curated list is wanted.
-- **Finish the content lift.** Four hardcoded-copy sites remain, listed under
-  Template-repo note. `PrivacyContent.tsx` is the substantial one; the LARE hero
-  subtitle is duplicated across two files and should be lifted once.
 - **Reconnect Google** to restore Search Console reporting (see Hub integration).
 - **Move `/api/ingest/market` to `resolveBrokerageId`.** It still uses an
   env-driven `MISRAJE_BROKERAGE_ID` with a hardcoded fallback. The value is
   currently correct; the pattern is the one that caused the ghost-brokerage
   incident. The hub's phase-3 handoff tracks this as a deliberate deferral.
-- **`getTransactionCountsByCity` has no callers.** Dead code; remove or use.
 - **Team portraits exist now** (`public/images/team/{jack,karen}-portrait.jpg`),
   so the nav drawer could carry photo cards instead of text-only agent cards.
 - **Em-dash cleanup**: 33 occurrences, see Content style above.

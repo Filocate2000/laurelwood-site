@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 import { getPastTransactions } from "@/lib/past-transactions";
 import { PageHero } from "@/components/layout/PageHero";
 import { PastTransactionsExplorer } from "@/components/sections/PastTransactionsExplorer";
@@ -8,7 +8,7 @@ import { absoluteUrl, siteConfig } from "@/lib/site-config";
 export const revalidate = 3600;
 
 const DESCRIPTION =
-  "A record of homes closed across Los Angeles and the South Bay by Misraje Real Estate Partners.";
+  `A record of homes closed across Los Angeles and the South Bay by ${siteConfig.legalName}.`;
 
 export const metadata: Metadata = {
   title: "Past Transactions",

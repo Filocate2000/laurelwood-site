@@ -3,6 +3,7 @@ import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { Turnstile, type TurnstileInstance } from "@marsidev/react-turnstile";
 import { siteConfig } from "@/lib/site-config";
+import { contactContent } from "@/content/contact";
 
 // Shown whenever the challenge cannot be completed, from any cause. Points at
 // the contact details this page already renders rather than dead-ending.
@@ -224,15 +225,14 @@ export function ContactForm() {
             required
           />
           <span className="text-xs text-ink-200 leading-relaxed">
-            I agree to be contacted by Misraje Real Estate Partners via call, email,
-            and text for real estate services. To opt out, you can reply &lsquo;stop&rsquo; at
-            any time or reply &lsquo;help&rsquo; for assistance. You can also click the
-            unsubscribe link in the emails. Message and data rates may apply. Message
-            frequency may vary.{" "}
-            <Link href="/privacy" className="text-gold-500 underline hover:text-gold-400">
-              Privacy Policy
+            {contactContent.consent.pre}
+            <Link
+              href={contactContent.consent.href}
+              className="text-gold-500 underline hover:text-gold-400"
+            >
+              {contactContent.consent.linkText}
             </Link>
-            .
+            {contactContent.consent.post}
           </span>
         </label>
       </div>

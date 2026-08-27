@@ -1,13 +1,11 @@
 import type { Metadata } from "next";
 import { absoluteUrl } from "@/lib/site-config";
+import { privacyContent } from "@/content/privacy";
 import PrivacyContent from "./PrivacyContent";
 
-const DESCRIPTION =
-  "How Misraje Real Estate Partners collects, uses, and protects information for visitors to the Laurelwood Estates website.";
-
 export const metadata: Metadata = {
-  title: "Privacy Policy",
-  description: DESCRIPTION,
+  title: privacyContent.title,
+  description: privacyContent.metaDescription,
   alternates: { canonical: absoluteUrl("/privacy") },
 };
 

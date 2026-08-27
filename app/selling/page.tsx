@@ -1,12 +1,12 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 import { PageHero } from "@/components/layout/PageHero";
 import { Prose } from "@/components/Prose";
 import { ContactCTA } from "@/components/sections/ContactCTA";
 import { loadDoc } from "@/lib/content";
-import { absoluteUrl } from "@/lib/site-config";
+import { siteConfig, absoluteUrl } from "@/lib/site-config";
 
 const DESCRIPTION =
-  "Selling in Laurelwood: how Misraje Real Estate Partners positions and markets homes in this Studio City neighborhood for the strongest possible result.";
+  `Selling in Laurelwood: how ${siteConfig.legalName} positions and markets homes in this Studio City neighborhood for the strongest possible result.`;
 
 export const metadata: Metadata = {
   title: "Selling in Laurelwood",

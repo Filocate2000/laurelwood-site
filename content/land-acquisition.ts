@@ -3,7 +3,7 @@
 // content/source/land-acquisition-wix-extraction.md. ZERO text changes: the
 // source is pure ASCII, so "Dona" is rendered without an accent (the inline
 // notes claim the live page uses an accented "Dona"/tilde, but the extraction
-// source itself has none — flagged for Jack). The original's ODD SPACING is
+// source itself has none, flagged for Jack). The original's ODD SPACING is
 // preserved byte-for-byte (e.g. "Buyers :", "Laurelwood ,", '" Dona "',
 // "Studio City .", "By registering ,").
 

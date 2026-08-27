@@ -180,7 +180,7 @@ export default function EastLaurelwoodPage() {
           the range of luxury features...". GAP: the Louise Rogers and 9 NEW HOMES
           ads named for a centered row are the SAME two scans already floated here
           (Aug 23 = Nature's Penthouse + Louise Rogers; Aug 16 = free-car + 9 NEW
-          HOMES), so no distinct images exist — the centered row is omitted pending
+          HOMES), so no distinct images exist, so the centered row is omitted pending
           separate crops from Jack. Captions stay dark-muted on the cream plates. */}
       <section className="bg-white py-20 md:py-28 overflow-hidden">
         <div className="w-full px-6 md:px-16">
@@ -371,7 +371,7 @@ export default function EastLaurelwoodPage() {
         </div>
       </section>
 
-      {/* Closing CTA (NAVY) — keeps the navy/white alternation, identical to west */}
+      {/* Closing CTA (NAVY), keeps the navy/white alternation, identical to west */}
       <ContactCTA tone="navy" width="full" />
     </>
   );
