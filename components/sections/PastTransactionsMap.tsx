@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useEffect, useRef, useState, useCallback } from "react";
 import { GoogleMap, useLoadScript } from "@react-google-maps/api";

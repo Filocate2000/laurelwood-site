@@ -1,4 +1,4 @@
-﻿import type { ReactNode } from "react";
+import type { ReactNode } from "react";
 import Image from "next/image";
 import { PageHero } from "@/components/layout/PageHero";
 import { MarketCharts } from "@/components/sections/MarketCharts";

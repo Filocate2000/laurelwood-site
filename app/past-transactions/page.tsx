@@ -1,4 +1,4 @@
-﻿import type { Metadata } from "next";
+import type { Metadata } from "next";
 import { getPastTransactions } from "@/lib/past-transactions";
 import { PageHero } from "@/components/layout/PageHero";
 import { PastTransactionsExplorer } from "@/components/sections/PastTransactionsExplorer";

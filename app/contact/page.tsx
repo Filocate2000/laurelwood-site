@@ -1,4 +1,4 @@
-﻿import type { Metadata } from "next";
+import type { Metadata } from "next";
 import { ContactForm } from "@/components/sections/ContactForm";
 import { siteConfig, absoluteUrl } from "@/lib/site-config";
 import { contactContent as cc } from "@/content/contact";

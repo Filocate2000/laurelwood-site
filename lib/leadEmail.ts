@@ -28,6 +28,9 @@ const SITE_FRIENDLY: Record<string, string> = {
   "westlaurelwood.com": "West Laurelwood",
   "thedonastreets.com": "The Dona Streets",
   "frymanestates.com": "Fryman Canyon Estates",
+  // The serving hostname, not just the redirect. Without it the email printed
+  // the bare URL instead of the site name.
+  "frymancanyonhomes.com": "Fryman Canyon Estates",
   "misraje.com": "Misraje Real Estate",
   "trose.com": "Trose",
 };

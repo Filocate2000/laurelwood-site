@@ -17,7 +17,12 @@ const ALLOWED_LEAD_SOURCES = new Set([
   "westlaurelwood.com",
   "eastlaurelwood.com",
   "thedonastreets.com",
+  // Both Fryman hostnames. frymanestates.com only redirects; the site actually
+  // serves from frymancanyonhomes.com, which was missing here, so a Fryman lead
+  // fell through to the "misraje.com" fallback below and was filed under the
+  // wrong site with no error and no log. Added 2026-08-27.
   "frymanestates.com",
+  "frymancanyonhomes.com",
 ]);
 
 function leadSourceFromSiteKey(siteKey: string): string {
