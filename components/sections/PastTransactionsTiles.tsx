@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
@@ -125,7 +125,16 @@ function Tile({ t, count }: { t: PastTransaction; count: number }) {
 // Presentational: receives an ALREADY-FILTERED list (city + Sales/Lease are
 // applied by PastTransactionsExplorer, which shares that state with the map).
 // This component only sorts by display_order and paginates 25 at a time.
-export function PastTransactionsTiles({ tiles }: { tiles: PastTransaction[] }) {
+export function PastTransactionsTiles({
+  tiles,
+  filterActive,
+}: {
+  tiles: PastTransaction[];
+  /** Whether a city or Sales/Leases filter is narrowing the list. Drives the
+   *  empty-state copy: telling someone to "try a different city" is wrong when
+   *  they never picked one. */
+  filterActive: boolean;
+}) {
   const [page, setPage] = useState(1);
 
   // Group identical repeat transactions into one card. The representative row is
@@ -172,10 +181,12 @@ export function PastTransactionsTiles({ tiles }: { tiles: PastTransaction[] }) {
       {groups.length === 0 ? (
         <div className="rounded-xl border border-navy-950/10 bg-navy-950/[0.02] px-6 py-16 text-center">
           <p className="font-display font-light text-2xl text-navy-950 mb-2">
-            No transactions match
+            {filterActive ? "No transactions match" : "Nothing to show here yet"}
           </p>
           <p className="text-navy-950/60 text-sm">
-            Try a different city or clear the Sales / Leases filter.
+            {filterActive
+              ? "Try a different city or clear the Sales / Leases filter."
+              : "The properties in this record do not have listing details to display."}
           </p>
         </div>
       ) : (

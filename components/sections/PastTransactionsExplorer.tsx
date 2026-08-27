@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -166,6 +166,26 @@ export function PastTransactionsExplorer({
   const selectClass =
     "appearance-none bg-white border border-navy-950/20 hover:border-gold-600/60 rounded-sm pl-4 pr-10 py-3 text-[13px] tracking-nav uppercase text-navy-950 focus:border-gold-600 focus:outline-none focus:ring-0 transition-colors cursor-pointer";
 
+  // Nothing published for this site at all. Rendering the explorer would show an
+  // empty map, a city dropdown with a single option, and a "no transactions
+  // match" message telling the visitor to change filters they never set. Say the
+  // true thing instead. Independent of which site key this page reads.
+  if (transactions.length === 0) {
+    return (
+      <section className="editorial py-20 md:py-28">
+        <div className="border border-gold-500/30 bg-navy-800 px-6 py-16 text-center">
+          <span className="gold-rule mx-auto mb-6" />
+          <p className="font-display font-light text-2xl text-white mb-2">
+            No transactions to show yet.
+          </p>
+          <p className="text-ink-200 text-sm">
+            This record is being updated. Please check back shortly.
+          </p>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <>
       {/* Coverage map, reflects the active filter; fits to the filtered pins */}
@@ -233,7 +253,7 @@ export function PastTransactionsExplorer({
             </div>
           </div>
 
-          <PastTransactionsTiles tiles={tileList} />
+          <PastTransactionsTiles tiles={tileList} filterActive={filterActive} />
 
           {/* Source attribution, last element, below the tile pagination */}
           <p className="mt-16 text-[12px] text-navy-950/55">
