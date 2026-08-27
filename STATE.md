@@ -26,7 +26,16 @@ around it. Dated build reports at the bottom are history, not current state.
 
 A **hyperlocal neighborhood site** for Laurelwood Estates and the Doña streets of
 Studio City (laurelwoodestates.com). Second site in the Misraje family; the first
-is misraje-site (the firm's flagship). A third, frymanestates.com, is planned.
+is misraje-site (the firm's flagship).
+
+**The third sibling is already LIVE**, correcting an earlier claim in this file
+that it was "planned". It serves from **frymancanyonhomes.com**;
+`frymanestates.com` is a redirect to it, and both are mapped to the `fryman` farm
+site in the hub's `brokerage_domain` (migration
+`2026-07-23-platform-sites-03-domain-resolution.sql`). The hub's
+`lib/reporting/targets.ts` uses `www.frymancanyonhomes.com` as the canonical
+host. So the clone-safety work in this repo is not hypothetical: a sibling is in
+production, and whatever ships here is what the next clone inherits.
 
 Deliberate content (the LARE Report, and eventually a blog) is authored on the
 hub, **realestategpa.com**, and distributed to the spoke sites. See
@@ -131,6 +140,16 @@ three.
   geocoding / Distance-Matrix / Directions key (API-restricted, NOT
   referrer-restricted). A referrer-locked browser key FAILS server-side. Never
   cross them.
+- **A SHARED credential is not shared authorization.** The Turnstile keys are
+  shared across the family, but a Turnstile sitekey carries an allowed-domains
+  list in the Cloudflare dashboard. frymancanyonhomes.com hit
+  `[Cloudflare Turnstile] Error: 110200` (domain not allowed) on 2026-08-27 for
+  exactly this reason: new hostname, shared key, hostname never added to the
+  widget. Symptoms are a 400 from challenges.cloudflare.com, a postMessage origin
+  warning, an "Unable to connect to website" widget, and a permanently disabled
+  submit button. Standing up a sibling on a new domain means adding that domain
+  (apex AND www) to the Turnstile widget, and confirming the secret key is the
+  pair for that same widget. Same family of trap as the two Maps keys above.
 - **Vercel filesystem is case-sensitive. Lowercase all filenames.**
 - `.env.local`: no spaces around `=`, UTF-8 no BOM. Backend (Supabase, Maps,
   Turnstile keys) is SHARED with misraje-site / realestategpa.
