@@ -321,10 +321,12 @@ before any content-affecting deploy.
   Deliberately NOT built ahead of step 1: an unreachable `/blog` would either
   ship an empty page to visitors or sit as dead unlinked code, and neither is
   worth carrying until the hub can actually publish to it.
-- **Deep-link the agent bio redirects.** `/karen-misraje` and `/jack-misraje`
-  currently land on `/meet-the-partners` because the `team_directory` slugs were
-  never confirmed. `select slug from team_directory;` then point each rule at the
-  matching bio.
+- **Confirm the `team_directory` slugs** (`select slug from team_directory;`).
+  Not blocking anything: `/karen-misraje` and `/jack-misraje` now deep-link to
+  `/meet-the-partners/<siteConfig agent slug>`, and the bio route redirects a
+  slug that names a configured agent but has no directory row to the index
+  instead of 404ing, so the link is right when the convention holds and harmless
+  when it does not. Confirming just removes the second hop.
 - **Decide whether a Laurelwood-tagged transaction subset should exist.** The hub
   followups record 228 `past_transaction` rows against 684
   `past_transaction_site` rows, exactly 3x, which suggests every transaction is

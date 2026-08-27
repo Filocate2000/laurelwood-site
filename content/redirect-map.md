@@ -26,8 +26,8 @@ All paths are on https://www.laurelwoodestates.com.
 | `/land-aquisition-history-item` | `/development-history` | Wix URL really is misspelled "aquisition"; the rule matches it verbatim. Folded into the development-history page |
 | `/los-angeles-real-estate-report` | `/lare-report` | Wix. The LARE Report is live, hub-distributed from realestategpa.com |
 | `/misraje-partners` | `/meet-the-partners` | Wix "Who We Are" bios page |
-| `/karen-misraje` | `/meet-the-partners` | See "Per-agent bios" below |
-| `/jack-misraje` | `/meet-the-partners` | See "Per-agent bios" below |
+| `/karen-misraje` | `/meet-the-partners/karen` | See "Per-agent bios" below |
+| `/jack-misraje` | `/meet-the-partners/jack` | See "Per-agent bios" below |
 | `/about` | `/meet-the-partners` | Interim Next route, git-renamed in 006b6cc |
 | `/what-we-do` | `/why-use-us` | Wix page AND an interim Next route; git-renamed in 006b6cc |
 | `/history` | `/development-history` | Interim Next route |
@@ -36,12 +36,28 @@ All paths are on https://www.laurelwoodestates.com.
 
 ### Per-agent bios
 
-`/karen-misraje` and `/jack-misraje` currently land on the `/meet-the-partners`
-index rather than deep-linking to `/meet-the-partners/<slug>`. Those slugs live
-in the `team_directory` table and could not be verified when the rules were
-written; a redirect that lands on a 404 is worse than one extra click. To
-improve: confirm the slugs (`select slug from team_directory`) and point each
-rule at the matching bio.
+`/karen-misraje` and `/jack-misraje` deep-link to
+`/meet-the-partners/<siteConfig.agents[].slug>`, i.e. `/karen` and `/jack`.
+
+Those target slugs are a calculated guess. `team_directory.slug` is typed by hand
+in the hub admin and validated only as `[a-z0-9-]+`, so nothing guarantees it
+matches `siteConfig.agents[].slug`, even though migration 031 documents
+"karen, jack" as the intended convention.
+
+The guess is made safe in `app/meet-the-partners/[slug]/page.tsx`: a slug that
+names a CONFIGURED agent but has no directory row redirects to the index rather
+than 404ing. So the link lands on the real bio when the convention holds, and on
+the index (exactly where it used to land) when it does not. Any other unknown
+slug still 404s, deliberately, because redirecting every typo to the index is a
+soft-404 pattern search engines penalise.
+
+Both branches are verified against a stub directory. Confirming the real slugs
+(`select slug from team_directory;`) would remove the second hop in the
+convention-broken case, but nothing is broken without it.
+
+The slugs in `next.config.mjs` MUST stay in step with `siteConfig.agents[].slug`;
+they are repeated there because `next.config.mjs` cannot import the TypeScript
+config.
 
 ## Unchanged paths (no redirect needed)
 

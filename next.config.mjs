@@ -106,12 +106,20 @@ const nextConfig = {
       { source: "/about", destination: "/meet-the-partners", permanent: true },
       { source: "/what-we-do", destination: "/why-use-us", permanent: true },
       { source: "/misraje-partners", destination: "/meet-the-partners", permanent: true },
-      // The per-agent Wix bios point at the index rather than deep-linking to
-      // /meet-the-partners/<slug>: those slugs live in the team_directory table
-      // and could not be verified from here, and a redirect into a 404 is worse
-      // than one extra click. Deep-link these once the slugs are confirmed.
-      { source: "/karen-misraje", destination: "/meet-the-partners", permanent: true },
-      { source: "/jack-misraje", destination: "/meet-the-partners", permanent: true },
+      // The per-agent Wix bios deep-link to /meet-the-partners/<slug>. Those
+      // slugs live in team_directory and are typed by hand in the hub admin, so
+      // they are not guaranteed to match siteConfig.agents[].slug. This is safe
+      // anyway: app/meet-the-partners/[slug]/page.tsx redirects a slug that
+      // names a CONFIGURED agent but has no directory row to the index instead
+      // of 404ing. So the deep link lands on the bio when the convention holds
+      // (migration 031 documents "karen, jack" as the intent) and on the index
+      // when it does not, which is exactly where it used to land.
+      //
+      // The slugs below MUST stay in step with siteConfig.agents[].slug. They
+      // are repeated here because next.config.mjs cannot import the TypeScript
+      // config. A sibling site changing its agent slugs must change these too.
+      { source: "/karen-misraje", destination: "/meet-the-partners/karen", permanent: true },
+      { source: "/jack-misraje", destination: "/meet-the-partners/jack", permanent: true },
 
       // NOT redirected on purpose:
       //   /register .......... decision deferred, no destination exists
