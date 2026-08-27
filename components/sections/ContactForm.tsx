@@ -26,20 +26,20 @@ export function ContactForm() {
   const [challengeReady, setChallengeReady] = useState(false);
   const turnstileRef = useRef<TurnstileInstance | null>(null);
 
-  const siteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
+  const turnstileSiteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
 
   // Loud, once, for whoever is operating the site. Without the site key there is
   // no way to submit at all: /api/contact rejects a tokenless body with a 400,
   // so the form is dead rather than merely unprotected.
   useEffect(() => {
-    if (!siteKey) {
+    if (!turnstileSiteKey) {
       console.error(
         "NEXT_PUBLIC_TURNSTILE_SITE_KEY is not set. The contact form cannot be " +
           "submitted (the API requires a Turnstile token), so the direct-contact " +
           "fallback is being shown in its place."
       );
     }
-  }, [siteKey]);
+  }, [turnstileSiteKey]);
 
   // onError only fires once the Turnstile SCRIPT is running. If the script
   // itself never loads (blocked network, an ad blocker, a Cloudflare outage) no
@@ -48,13 +48,13 @@ export function ContactForm() {
   // has not rendered by the time it expires, say so. 12s is far beyond a normal
   // load, so a slow connection will not trip it, and onWidgetLoad cancels it.
   useEffect(() => {
-    if (!siteKey || challengeReady) return;
+    if (!turnstileSiteKey || challengeReady) return;
     const timer = setTimeout(() => {
       setStatus("error");
       setError(CHALLENGE_UNAVAILABLE);
     }, 12000);
     return () => clearTimeout(timer);
-  }, [siteKey, challengeReady]);
+  }, [turnstileSiteKey, challengeReady]);
 
   // A challenge that recovers late (slow network, a retry) must retract the
   // watchdog's complaint, or the banner would sit above a button that now works.
@@ -132,7 +132,7 @@ export function ContactForm() {
   // token and returns 400 without one, so rendering the fields would invite a
   // visitor to type a message they can never send. Show the ways to reach us
   // instead. Contact details come from siteConfig, never hardcoded here.
-  if (!siteKey) {
+  if (!turnstileSiteKey) {
     const o = siteConfig.office;
     return (
       <div className="bg-navy-800 border border-gold-500/30 p-10">
@@ -240,7 +240,7 @@ export function ContactForm() {
       <div className="pt-2">
         <Turnstile
           ref={turnstileRef}
-          siteKey={siteKey}
+          siteKey={turnstileSiteKey}
           onWidgetLoad={() => setChallengeReady(true)}
           onSuccess={(token) => {
             setChallengeReady(true);
