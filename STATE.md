@@ -140,16 +140,35 @@ three.
   geocoding / Distance-Matrix / Directions key (API-restricted, NOT
   referrer-restricted). A referrer-locked browser key FAILS server-side. Never
   cross them.
-- **A SHARED credential is not shared authorization.** The Turnstile keys are
-  shared across the family, but a Turnstile sitekey carries an allowed-domains
-  list in the Cloudflare dashboard. frymancanyonhomes.com hit
-  `[Cloudflare Turnstile] Error: 110200` (domain not allowed) on 2026-08-27 for
-  exactly this reason: new hostname, shared key, hostname never added to the
-  widget. Symptoms are a 400 from challenges.cloudflare.com, a postMessage origin
-  warning, an "Unable to connect to website" widget, and a permanently disabled
-  submit button. Standing up a sibling on a new domain means adding that domain
-  (apex AND www) to the Turnstile widget, and confirming the secret key is the
-  pair for that same widget. Same family of trap as the two Maps keys above.
+- **A SHARED credential is not shared authorization, and the Turnstile widget is
+  FULL.** One widget serves the whole family: `misraje-site-contact-form`,
+  sitekey `0x4AAAAAAADVmmrkyJ-jQNUAS`, in Jack's Cloudflare account under
+  Application security > Turnstile. It carries an allowed-hostname list, and
+  **Cloudflare caps that list at 10. As of 2026-08-27 it is at 10 of 10.**
+
+  Diagnosed and fixed that day: frymancanyonhomes.com threw
+  `[Cloudflare Turnstile] Error: 110200` (domain not allowed) because the list
+  had `frymanestates.com`, the vanity domain that only redirects, and not
+  `frymancanyonhomes.com`, the domain that actually serves. Symptoms to
+  recognise: a 400 from challenges.cloudflare.com, a postMessage origin warning,
+  an "Unable to connect to website" widget, and a permanently disabled submit
+  button. 110200 specifically means the SITEKEY resolved and the HOSTNAME was
+  rejected, which rules out a wrong or missing key.
+
+  Two facts worth keeping, both established by observation rather than docs:
+  - **The apex covers its subdomains.** The list holds no `www.` entry of any
+    kind, yet the widget's own analytics recorded solved challenges on
+    `www.misraje.com` and `www.laurelwoodestates.com`. Add the apex only. An
+    earlier version of this entry said to add apex AND www; that was wrong, and
+    at 10/10 it is also impossible.
+  - **The next sibling site will hit the cap.** Slots that look reclaimable:
+    `localhost` (local dev), `misraje-site.vercel.app` (a preview domain), and
+    `trose.com` (unrecognised, appears in none of the three repos). Check before
+    removing any of them.
+
+  Also confirm the secret key is the pair for this same widget: the hostname fix
+  is instant and needs no redeploy, but a secret fix is a Vercel env change and
+  does. Same family of trap as the two Maps keys above.
 - **Vercel filesystem is case-sensitive. Lowercase all filenames.**
 - `.env.local`: no spaces around `=`, UTF-8 no BOM. Backend (Supabase, Maps,
   Turnstile keys) is SHARED with misraje-site / realestategpa.
