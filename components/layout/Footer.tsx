@@ -1,4 +1,4 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 import Image from "next/image";
 import { siteConfig } from "@/lib/site-config";
 
@@ -19,12 +19,19 @@ const FOOTER_LINKS: { heading: string; links: { label: string; href: string }[] 
       { label: "West Laurelwood", href: "/west-laurelwood" },
       { label: "East Laurelwood", href: "/east-laurelwood" },
       { label: "The Doña Streets", href: "/dona-streets" },
+      { label: "Development History", href: "/development-history" },
     ],
   },
   {
-    heading: "History",
+    // Was a "History" column holding one link. The market pages were reachable
+    // from the nav but from nowhere in the footer, which left the site's most
+    // frequently updated pages with the least internal linking. Labels match
+    // each page's own <title> rather than the nav's longer marketing phrasing.
+    heading: "Market",
     links: [
-      { label: "Development History", href: "/development-history" },
+      { label: "West Laurelwood Market", href: "/report" },
+      { label: "East Laurelwood Market", href: "/marketreport" },
+      { label: "The LARE Report", href: "/lare-report" },
     ],
   },
   {
@@ -33,6 +40,7 @@ const FOOTER_LINKS: { heading: string; links: { label: string; href: string }[] 
       { label: "Resources", href: "/homeowners" },
       { label: "Emergency Contacts", href: "/homeowners/emergency-contacts" },
       { label: "Neighborhood Watch", href: "/homeowners/neighborhood-watch" },
+      { label: "Community News", href: "/homeowners/community-news" },
     ],
   },
   {
