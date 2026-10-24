@@ -4,9 +4,9 @@ import { siteConfig } from "@/lib/site-config";
 
 // Footer design + branding are aligned 1:1 with misraje-site's Footer (the firm
 // brand carried across every neighborhood site, inherited by the future Fryman
-// site via this template): the oversized "MISRAJE" watermark, the Coldwell
-// Banker Global Luxury affiliation logo, and the Coldwell Banker legal block are
-// reproduced verbatim from misraje-site. Contact details still read from
+// site via this template): the oversized "MISRAJE" watermark, the Equity
+// Union Real Estate affiliation logo, and the brokerage legal block match
+// misraje-site. Contact details still read from
 // siteConfig (they resolve to the same Misraje office + agents).
 //
 // One deliberate addition over misraje-site's footer: the FOOTER_LINKS columns
@@ -120,13 +120,13 @@ export function Footer() {
           </div>
         </div>
 
-        {/* Affiliation logos band: Coldwell Banker Global Luxury + Equal Housing Opportunity */}
+        {/* Affiliation logos band: Equity Union Real Estate + Equal Housing Opportunity */}
         <div className="border-t border-white/5 py-10 flex flex-col md:flex-row items-center justify-center gap-10 md:gap-16">
           <Image
-            src="/images/cb-global-luxury-white.png"
-            alt="Coldwell Banker Global Luxury"
-            width={220}
-            height={55}
+            src="/images/equity-union-white.webp"
+            alt="Equity Union Real Estate"
+            width={182}
+            height={75}
             className="opacity-80"
           />
           <div className="flex items-center gap-3 text-white/70">
@@ -155,21 +155,15 @@ export function Footer() {
           </div>
         </div>
 
-        {/* Fine print: Coldwell Banker legal block, reproduced verbatim from
-            misraje-site's footer. */}
+        {/* Fine print: brokerage legal block, matching misraje-site's footer. */}
         <div className="border-t border-white/5 py-8 text-[11px] text-ink-300 leading-relaxed space-y-3">
-          <p>CalRE# - 00616212 Southern California 450 Exchange | Irvine, CA 92602</p>
+          <p>Equity Union Real Estate | DRE# 01811831 | 13412 Ventura Boulevard #350, Sherman Oaks, CA 91423</p>
           <p>
             All material presented herein is intended for informational purposes only and is compiled
             from sources deemed reliable but not verified. Equal Housing Opportunity.
           </p>
           <p>
-            &copy; {year} Coldwell Banker. All rights reserved. Coldwell Banker, the Coldwell Banker
-            logo and the Coldwell Banker Global Luxury&reg; logo are trademarks of Coldwell Banker
-            Real Estate LLC. The Coldwell Banker System is comprised of company owned offices which
-            are owned by a subsidiary of Anywhere Advisors LLC and franchised offices which are
-            independently owned and operated. Coldwell Banker Real Estate LLC fully supports the
-            principles of the Fair Housing Act and the Equal Opportunity Act. Listing information is
+            Equity Union fully supports the principles of the Fair Housing Act and the Equal Opportunity Act. Listing information is
             deemed reliable but is not guaranteed. This website may contain content created by AI and
             is provided for informational purposes only and should not be relied upon without
             verification of its accuracy or completeness.

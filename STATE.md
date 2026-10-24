@@ -106,7 +106,7 @@ must return nothing.
   corrected). `content/redirect-map.md` seeded. Verified from the Wix footer/bio
   pages and folded into `lib/site-config.ts`: Karen CalRE# 00592639; Jack CalRE#
   01015912, NMLS# 259077, US patents 8,145,563 / 8,117,120 / 7,769,681; office
-  301 N Canon Dr Suite E, Beverly Hills CA 90210; phones J 323-209-5225 /
+  13400 Ventura Boulevard, Sherman Oaks CA 91423; phones J 323-209-5225 /
   K 310-488-1030 / O 855-888-SOLD; full Wix legal + accessibility text ported
   verbatim. Doña streets named in source copy: Doña Emilia Dr., Doña Rosa Dr.,
   Doña Pegita Dr. (there may be more on the live site; only these appear in the

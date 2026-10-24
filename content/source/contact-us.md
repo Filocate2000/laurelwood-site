@@ -9,8 +9,8 @@ Whether you're looking to buy, sell, or simply have questions about the real est
 ### Ways to Reach Us
 
 **Address:**
-301 N Canon Dr Suite E
-Beverly Hills, CA 90210
+13400 Ventura Boulevard
+Sherman Oaks, CA 91423
 
 **Email Addresses:**
 - jack@misraje.com

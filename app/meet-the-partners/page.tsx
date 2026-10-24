@@ -8,7 +8,7 @@ import { photo } from "@/lib/photos";
 import { absoluteUrl } from "@/lib/site-config";
 
 const DESCRIPTION =
-  "Two principals, one practice. Karen and Jack Misraje, the #1 Two-Member Team in Coldwell Banker Global Luxury, representing buyers and sellers across Los Angeles.";
+  "Two principals, one practice. Karen and Jack Misraje of Equity Union Real Estate, representing buyers and sellers across Los Angeles.";
 
 export const metadata: Metadata = {
   title: "Meet the Partners",
@@ -96,7 +96,7 @@ export default async function MeetThePartnersPage() {
         <div className="max-w-6xl mx-auto px-6 md:px-8">
           <div className="text-center mb-16 md:mb-20 max-w-2xl mx-auto">
             <p className="text-base md:text-lg text-stone-700 leading-relaxed">
-              Misraje Real Estate Partners practices residential real estate across Los Angeles, Ventura, and the South Bay. Recognized as the #1 Two-Member Team in Beverly Hills, the partnership combines complementary specialties in marketing, negotiation, and contract execution.
+              Misraje Real Estate Partners practices residential real estate across Los Angeles, Ventura, and the South Bay. The partnership combines complementary specialties in marketing, negotiation, and contract execution.
             </p>
           </div>
 
