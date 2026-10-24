@@ -84,11 +84,9 @@ export type SiteConfig = {
   legal: {
     /** MLS data attribution line, verbatim. */
     mlsAttribution: string;
-    /** Guaranteed Rate Affinity common-ownership disclosure, verbatim. */
-    guaranteedRate: string;
     /** Equal Housing + informational disclosure, verbatim. */
     disclosure: string;
-    /** Coldwell Banker System / fair-housing franchise statement, verbatim. */
+    /** Brokerage fair-housing statement (Equity Union). */
     franchise: string;
     /** Full accessibility statement, verbatim (also rendered on /accessibility). */
     accessibility: string;
@@ -119,10 +117,10 @@ export const siteConfig: SiteConfig = {
   ],
 
   office: {
-    street: "301 N Canon Dr Suite E",
-    city: "Beverly Hills",
+    street: "13400 Ventura Boulevard",
+    city: "Sherman Oaks",
     state: "CA",
-    zip: "90210",
+    zip: "91423",
     phone: "855-888-SOLD",
     phoneHref: "tel:+18558887653",
   },
@@ -155,9 +153,9 @@ export const siteConfig: SiteConfig = {
   ],
 
   brokerage: {
-    name: "Coldwell Banker Global Luxury",
-    license: "CalRE# 00616212",
-    addressLine: "Southern California 450 Exchange | Irvine, CA 92602",
+    name: "Equity Union Real Estate",
+    license: "DRE# 01811831",
+    addressLine: "13412 Ventura Boulevard #350, Sherman Oaks, CA 91423",
   },
 
   social: [],
@@ -165,18 +163,16 @@ export const siteConfig: SiteConfig = {
   // Ported verbatim from the Wix footer (Phase 1). NO em dashes (the source had none here).
   legal: {
     mlsAttribution: "Real Estate Data obtained from theMLS.com",
-    guaranteedRate:
-      "Coldwell Banker Realty and Guaranteed Rate Affinity, LLC share common ownership and because of this relationship the brokerage may receive a financial or other benefit. You are not required to use Guaranteed Rate Affinity, LLC as a condition of purchase or sale of any real estate. Operating in the state of New York as GR Affinity, LLC in lieu of the legal name Guaranteed Rate Affinity, LLC.",
     disclosure:
       "All material presented herein is intended for informational purposes only and is compiled from sources deemed reliable but not verified. Changes in prices, conditions, sale or withdrawal may be made without notice. No statement is made as to the accuracy of any description. All measurements and square footage are approximated. Equal Housing Opportunity.",
     franchise:
-      "The Coldwell Banker System is comprised of company owned offices which are owned by a subsidiary of Realogy Brokerage Group LLC and franchised offices which are independently owned and operated. The Coldwell Banker System fully supports the principles of the Fair Housing Act and the Equal Opportunity Act.",
+      "Equity Union fully supports the principles of the Fair Housing Act and the Equal Opportunity Act.",
     accessibility:
       "Misraje Real Estate Partners is committed to providing a website that is accessible to the broadest possible audience, regardless of technology or ability. We are actively working to increase the accessibility and usability of our website and, in doing so, adhere to many of the available standards and guidelines. Misraje Real Estate Partners does not discriminate on the basis of religion, age, race, color, national origin, gender, marital or parental status, or disability. In order to further our commitment to nondiscrimination, we are working to ensure our site conforms to level Double-A world wide web consortium (W3C) web content accessibility guidelines (WCAG 2.1 AA). Such guidelines detail best practices for ensuring assistive technology users can access the site. The guidelines also make the site more user-friendly for all people. If anyone finds information or functionality inaccessible, please get in touch with us at 323-209-5225. We will make every reasonable effort to accommodate.",
   },
 };
 
-/** Convenience: "301 N Canon Dr Suite E, Beverly Hills, CA 90210". */
+/** Convenience: "13400 Ventura Boulevard, Sherman Oaks, CA 91423". */
 export function officeAddressOneLine(): string {
   const o = siteConfig.office;
   return `${o.street}, ${o.city}, ${o.state} ${o.zip}`;

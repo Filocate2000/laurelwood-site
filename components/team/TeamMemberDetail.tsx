@@ -152,7 +152,7 @@ export function TeamMemberDetail({ person }: { person: TeamMember }) {
               )}
               <div>
                 <p className="text-[10px] uppercase text-stone-500 mb-2" style={{ letterSpacing: "0.15em" }}>Office</p>
-                <p className="text-navy-950 text-base">301 N Canon Dr, Suite E · Beverly Hills, CA 90210</p>
+                <p className="text-navy-950 text-base">13400 Ventura Boulevard · Sherman Oaks, CA 91423</p>
               </div>
             </div>
           </div>

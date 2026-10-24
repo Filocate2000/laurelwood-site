@@ -6,7 +6,7 @@ rules, the project state, and what happens next.
 
 ## WHO I AM AND HOW WE WORK
 I'm Jack Misraje of Misraje Real Estate Partners (Jack & Karen,
-Coldwell Banker, Studio City). I am NOT a developer. I run Claude
+Equity Union Real Estate, Studio City). I am NOT a developer. I run Claude
 Code in a terminal on Windows (PowerShell - no `&&`; separate
 commands or `;`). Your job in this chat: write paste-ready Claude
 Code prompts, interpret its reports, write SQL I paste into the

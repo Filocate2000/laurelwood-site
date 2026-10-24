@@ -7,7 +7,7 @@ import { photo } from "@/lib/photos";
 import { absoluteUrl } from "@/lib/site-config";
 
 const DESCRIPTION =
-  "A two-principal practice representing buyers and sellers across Los Angeles, the Westside, and the San Fernando Valley. Karen and Jack Misraje, the #1 Two-Member Team in Coldwell Banker Global Luxury.";
+  "A two-principal practice representing buyers and sellers across Los Angeles, the Westside, and the San Fernando Valley. Karen and Jack Misraje of Equity Union Real Estate.";
 
 export const metadata: Metadata = {
   title: "Who We Are",
@@ -36,7 +36,7 @@ export default function WhoWeArePage() {
             {/* Opening: lead prose, no heading */}
             <div className="space-y-5 text-lg text-stone-700 leading-relaxed">
               <p>
-                Misraje Real Estate Partners is the practice of Karen and Jack Misraje, recognized as the #1 Two-Member Team in Coldwell Banker Global Luxury. Across more than three decades and over a billion dollars in transactions, the partnership has represented buyers and sellers throughout Beverly Hills, the Westside, and the San Fernando Valley, with additional depth in the coastal and Valley submarkets that surround them.
+                Misraje Real Estate Partners is the practice of Karen and Jack Misraje, with Equity Union Real Estate. Across more than three decades and over a billion dollars in transactions, the partnership has represented buyers and sellers throughout Beverly Hills, the Westside, and the San Fernando Valley, with additional depth in the coastal and Valley submarkets that surround them.
               </p>
             </div>
 
