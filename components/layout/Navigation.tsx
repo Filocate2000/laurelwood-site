@@ -98,17 +98,15 @@ export function Navigation() {
             tabIndex={showLogo ? 0 : -1}
             aria-hidden={!showLogo}
           >
-            {/* Misraje Real Estate Partners wordmark, copied verbatim from
-                misraje-site's Navigation (the firm brand carried across every
-                neighborhood site). NOTE: `font-cormorant` is an undefined
-                Tailwind utility in misraje too, so it is a no-op and the wordmark
-                inherits the body sans (Inter Tight) exactly as misraje renders. */}
-            <span className="font-cormorant text-white text-xl md:text-[26px] tracking-[0.2em] transition-colors group-hover:text-gold-500">
-              MISRAJE
-            </span>
-            <span className="text-white/85 text-[9px] md:text-[10px] tracking-[0.28em] mt-1.5">
-              Real Estate Partners
-            </span>
+            {/* Misraje Real Estate Partners logo (white, transparent SVG), the
+                same file and size as misraje-site's Navigation (the firm brand
+                carried across every neighborhood site). */}
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/images/misraje-logo-white.svg"
+              alt=""
+              className="h-9 md:h-11 w-auto transition-opacity group-hover:opacity-80"
+            />
           </Link>
 
           <button
